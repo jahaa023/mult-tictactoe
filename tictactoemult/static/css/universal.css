@@ -1,5 +1,13 @@
 /* CSS rules for every html page */
 
+/* CSS variables */
+:root {
+    --primary-black: #212121;
+    --primary-red: #810D0D;
+    --background-white: rgb(218, 218, 218);
+}
+
 body {
-    background-color: rgb(230, 230, 230);
+    background-color: var(--background-white);
+    margin: 0;
 }
