@@ -1,1 +1,0 @@
-// JavaScript functions for all pages

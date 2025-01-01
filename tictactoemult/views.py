@@ -1,18 +1,29 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotAllowed
-from django.views.decorators.csrf import csrf_exempt
+from .forms import LoginForm
 
 # Create your views here.
 
 def index(request):
-    return render(request, 'index.html')
+    # The default index.html page, with a form for logging in
+    context = {}
+    context['form'] = LoginForm()
+    return render(request, 'index.html', context)
 
-@csrf_exempt
 def login(request):
     if request.method == "POST":
-        data = request.POST
-        username = data.get("username")
-        password = data.get("password")
-        return HttpResponse(username + password)
+        # Only POST requests are allowed
+        form = LoginForm(request.POST)
+
+        if form.is_valid():
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password"]
+
+            return HttpResponse("ok")
+        else:
+            return HttpResponse("error")
     else:
-        return HttpResponseNotAllowed()
+        return render(request, 'error_pages/405.html')
+
+def main(request):
+    return HttpResponse("test")

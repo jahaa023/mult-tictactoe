@@ -11,24 +11,64 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/universal.css">
     <link rel="stylesheet" href="/static/css/index.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
     <div class="login-center-rectangle">
         <div class="login-center-rectangle-logo"></div>
         <div class="login-center-rectangle-divider"></div>
         <div class="login-center-rectangle-form-container">
-            <form action="/login" method="post">
+            <form id='login-form' method="post" target="">
+                {% csrf_token %}
                 <h1 class="login-form-headline">Log in.</h1>
-                <input type="text" name="username" placeholder="Username">
-                <br>
-                <input type="text" name="password" placeholder="Password">
-                <br>
+                <p id="login-form-error-notif"></p>
+                {{form}}
                 <button type="submit" name="login" title="Log in">Log in</button>
             </form>
-            <p>Dont have a user? <a href="">Register.</a></p>
+            <p class="register-link">Dont have a user? <a href="">Register.</a></p>
         </div>
     </div>
 </body>
-<script src="/static/js/index.js"></script>
-<script src="/static/js/universal.js"></script>
+    <script>
+
+        // Function that shows an error wehn something goes wrong during log in
+        function showError(error) {
+            var errorElement = document.getElementById("login-form-error-notif")
+            errorElement.innerHTML = error;
+            errorElement.style.display = "block";
+        }
+
+        // When login form is submitted, do a AJAX post request
+        $('#login-form').on("submit", function (e){
+            e.preventDefault();
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: '/login',
+                type: 'POST',
+                data: formData,
+                success: function (response) {
+                    switch(response) {
+                        case "empty":
+                            showError("The required inputs are empty!")
+                            break
+                        case "error":
+                            showError("Something went wrong.")
+                            break
+                        case "wrong":
+                            showError("Username or password incorrect!")
+                            break
+                        case "ok":
+                            window.location.href = "/main";
+                    }
+                },
+                error: function() {
+                    showError("Something went wrong.")
+                },
+                cache: false,
+                contentType: false,
+                processData: false,
+            });
+        })
+    </script>
 </html>

@@ -32,7 +32,7 @@
     position: relative;
 }
 
-.login-center-rectangle-form-container p {
+.register-link {
     font-family: "Roboto", serif;
     margin: 0;
     position: absolute;
@@ -99,6 +99,13 @@ form button:hover {
     border-radius: 2px;
     width: 2px;
     height: calc(100% - 40px);
+}
+
+#login-form-error-notif {
+    color: var(--primary-red);
+    display: none;
+    position: relative;
+    margin-bottom: 10px;
 }
 
 @media screen and (max-width: 1170px) {
