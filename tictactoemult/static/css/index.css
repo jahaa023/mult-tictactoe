@@ -86,7 +86,7 @@ form button {
     font-weight: 500;
     font-size: 1.5rem;
     color: var(--primary-red);
-    margin-top: 5px;
+    margin-top: 20px;
 }
 
 form button:hover {
@@ -106,6 +106,13 @@ form button:hover {
     display: none;
     position: relative;
     margin-bottom: 10px;
+}
+
+.account-recovery-link {
+    margin: 0;
+    padding: 0;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 @media screen and (max-width: 1170px) {

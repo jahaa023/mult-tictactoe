@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,11 +10,31 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/universal.css">
-    <link rel="stylesheet" href="/static/css/create_account.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        {{create_account_css | safe}}
+    </style>
+    <style>
+        {{universal_css | safe}}
+    </style>
 </head>
 <body>
-    
+    <div class="create-account-container">
+        <form method="post" target="" id="create-account-form">
+            {% csrf_token %}
+            <h1 class="create-account-headline">Create an account.</h1>
+            <p id="create-account-form-error-notif"></p>
+            {{form}}
+            <p>By creating an account, you agree to our <a target="_blank" href="/static/terms_and_conditions.txt" title="Terms and Conditions">terms and conditions.</a></p>
+            <button type="submit" title="Create account">Create account</button>
+        </form>
+        <a class="backtologin-link" title="Back to Login" href="/">Back to Login.</a>
+    </div>
 </body>
+<script>
+    {{universal_js | safe}}
+</script>
+<script>
+    {{create_account_js | safe}}
+</script>
 </html>

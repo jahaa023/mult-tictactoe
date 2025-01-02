@@ -1,6 +1,13 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <style>
+        {{index_css | safe}}
+    </style>
+    <style>
+        {{universal_css | safe}}
+    </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tic Tac Toe - Login</title>
@@ -9,8 +16,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/universal.css">
-    <link rel="stylesheet" href="/static/css/index.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
@@ -23,49 +28,18 @@
                 <h1 class="login-form-headline">Log in.</h1>
                 <p id="login-form-error-notif"></p>
                 {{form}}
+                <a class="account-recovery-link" href="/account_recovery">I forgot my username or password</a>
+                <br>
                 <button type="submit" name="login" title="Log in">Log in</button>
             </form>
             <p class="register-link">Dont have a user? <a href="/create_account">Create an account.</a></p>
         </div>
     </div>
 </body>
-    <script>
-
-        // Function that shows an error wehn something goes wrong during log in
-        function showError(error) {
-            var errorElement = document.getElementById("login-form-error-notif")
-            errorElement.innerHTML = error;
-            errorElement.style.display = "block";
-        }
-
-        // When login form is submitted, do a AJAX post request
-        $('#login-form').on("submit", function (e){
-            e.preventDefault();
-            var formData = new FormData(this);
-
-            $.ajax({
-                url: '/login',
-                type: 'POST',
-                data: formData,
-                success: function (response) {
-                    switch(response) {
-                        case "error":
-                            showError("Something went wrong. Make sure inputs are filled.")
-                            break
-                        case "wrong":
-                            showError("Username or password incorrect!")
-                            break
-                        case "ok":
-                            window.location.href = "/main";
-                    }
-                },
-                error: function() {
-                    showError("Something went wrong.")
-                },
-                cache: false,
-                contentType: false,
-                processData: false,
-            });
-        })
-    </script>
+<script>
+    {{universal_js | safe}}
+</script>
+<script>
+    {{index_js | safe}}
+</script>
 </html>
