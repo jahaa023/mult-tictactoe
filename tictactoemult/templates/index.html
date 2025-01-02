@@ -25,7 +25,7 @@
                 {{form}}
                 <button type="submit" name="login" title="Log in">Log in</button>
             </form>
-            <p class="register-link">Dont have a user? <a href="">Register.</a></p>
+            <p class="register-link">Dont have a user? <a href="/create_account">Create an account.</a></p>
         </div>
     </div>
 </body>
@@ -49,11 +49,8 @@
                 data: formData,
                 success: function (response) {
                     switch(response) {
-                        case "empty":
-                            showError("The required inputs are empty!")
-                            break
                         case "error":
-                            showError("Something went wrong.")
+                            showError("Something went wrong. Make sure inputs are filled.")
                             break
                         case "wrong":
                             showError("Username or password incorrect!")

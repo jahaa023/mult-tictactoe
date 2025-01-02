@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseNotAllowed
+from django.http import HttpResponse
 from .forms import LoginForm
 
 # Create your views here.
@@ -19,7 +19,10 @@ def login(request):
             username = form.cleaned_data["username"]
             password = form.cleaned_data["password"]
 
+            # Check if user exists in database
+
             return HttpResponse("ok")
+
         else:
             return HttpResponse("error")
     else:
@@ -27,3 +30,6 @@ def login(request):
 
 def main(request):
     return HttpResponse("test")
+
+def create_account(request):
+    return render(request, 'create_account.html')
