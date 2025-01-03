@@ -3,6 +3,7 @@
 .create-account-container {
     width: calc(80% - 40px);
     height: fit-content;
+    max-height: 90vh;
     padding: 20px;
     border-radius: 12px;
     background-color: rgb(230, 230, 230);
@@ -13,13 +14,11 @@
     left: 50%;
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 
 .backtologin-link {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    margin: 20px;
     font-family: "Roboto", serif;
     color: var(--primary-black);
     font-weight: 600;
@@ -87,11 +86,31 @@ form button:hover {
 }
 
 form p {
-    margin-top: 15px;
+    margin-top: 5px;
 }
 
 form a:hover {
     color: var(--primary-red);
+}
+
+.username-validator-container {
+    padding: 10px;
+    width: calc(60% - 20px);
+    height: fit-content;
+    border: solid var(--primary-black) 1px;
+    border-radius: 5px;
+    background-color: white;
+    margin-bottom: 15px;
+}
+
+.username-validator-container p {
+    font-weight: 600;
+    padding: 0;
+    margin: 0;
+}
+
+.username-validator-container * {
+    opacity: 0.7;
 }
 
 #create-account-form-error-notif {
@@ -109,5 +128,9 @@ form a:hover {
 
     form textarea {
         width: calc(90% - 5px);
+    }
+
+    .username-validator-container {
+        width: calc(90% - 20px);
     }
 }

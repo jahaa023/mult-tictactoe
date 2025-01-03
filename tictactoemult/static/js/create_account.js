@@ -42,3 +42,42 @@ $('#create-account-form').on("submit", function (e){
         processData: false,
     });
 })
+
+// Validate username on keydown of username input
+document.getElementById("id_username").addEventListener("keyup", function() {
+    // Changes opacity of validator
+    $(".username-validator-container").children().css({"opacity" : "1"})
+    $("li").css({"opacity" : "1"})
+
+    // Post username input content to /username_validate
+    var username = document.getElementById("id_username").value;
+    $.ajax({
+        url: '/username_validate',
+        type: 'POST',
+        data : {'username' : username},
+        success: function (response) {
+            if ("between_letters" in response) {
+                $('#between_letters').css('color', 'red');
+            } else {
+                $('#between_letters').css('color', 'green');
+            }
+
+            if ("ascii" in response) {
+                $('#ascii').css('color', 'red');
+            } else {
+                $('#ascii').css('color', 'green');
+            }
+
+            if ("taken" in response) {
+                $('#not_taken').css('color', 'red');
+            } else {
+                $('#not_taken').css('color', 'green');
+            }
+        },
+        error: function() {
+            $(".username-validator-container").html("Something went wrong while checking username.")
+        },
+        cache: false,
+        dataType: 'json'
+    });
+})

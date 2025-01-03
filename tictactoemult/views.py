@@ -1,10 +1,13 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from .forms import LoginForm, CreateAccountForm
 from django.contrib.auth.hashers import make_password, check_password
 from .models import users
 import os
 from datetime import datetime
+from django.utils.html import escape
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 # Create your views here.
 
@@ -128,5 +131,32 @@ def create_account_form_handler(request):
             return HttpResponse("ok")
         else:
             return HttpResponse("error")
+    else:
+        return render(request, 'error_pages/405.html')
+
+# Function to validate username while user is typing it in
+@csrf_exempt
+def username_validate(request):
+    if request.method == "POST":
+        # Only POST requests are allowed
+        username = request.POST.get("username", "")
+        validate_list = {}
+
+        # Check if username has non english characters
+        whitelist = "abcdefghijklmnopqrstuvwxyz1234567890"
+        username_lower = username.lower()
+        for c in username_lower:
+            if c not in whitelist:
+                validate_list['ascii'] = "true"
+        
+        # Check if username is between 5 to 30 letters
+        if len(username) > 30 or len(username) < 5:
+            validate_list['between_letters'] = "true"
+        
+        # Check if username is taken
+        if users.objects.filter(username=username).exists():
+            validate_list["taken"] = "true"
+
+        return HttpResponse(json.dumps(validate_list), content_type = "application/json")
     else:
         return render(request, 'error_pages/405.html')

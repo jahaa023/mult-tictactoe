@@ -24,8 +24,19 @@
             {% csrf_token %}
             <h1 class="create-account-headline">Create an account.</h1>
             <p id="create-account-form-error-notif"></p>
-            {{form}}
-            <p>By creating an account, you agree to our <a target="_blank" href="/static/terms_and_conditions.txt" title="Terms and Conditions">terms and conditions.</a></p>
+            {{form.username}}
+            <div class="username-validator-container">
+                <p>Your username must: </p>
+                <ul>
+                    <li id="ascii">Only use letters from the English alphabet.</li>
+                    <li id="between_letters">Be between 5 to 30 letters.</li>
+                    <li id="not_taken">Not be taken.</li>
+                </ul>
+            </div>
+            {{form.email}}
+            {{form.password}}
+            {{form.description}}
+            <p>{{form.checkbox}}    By checking this checkbox, you agree to our <a target="_blank" href="/static/terms_and_conditions.txt" title="Terms and Conditions">terms and conditions.</a></p>
             <button type="submit" title="Create account">Create account</button>
         </form>
         <a class="backtologin-link" title="Back to Login" href="/">Back to Login.</a>
