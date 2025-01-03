@@ -38,7 +38,7 @@ $('#create-account-form').on("submit", function (e){
             }
         },
         error: function() {
-            showError("Something went wrong. Try again later.")
+            showError("Something went wrong. Try again later or try refreshing.")
         },
         cache: false,
         contentType: false,
@@ -46,7 +46,7 @@ $('#create-account-form').on("submit", function (e){
     });
 })
 
-// Validate username on keydown of username input
+// Validate username on keyup of username input
 document.getElementById("id_username").addEventListener("keyup", function() {
     // Changes opacity of validator
     $(".username-validator-container").children().css({"opacity" : "1"})

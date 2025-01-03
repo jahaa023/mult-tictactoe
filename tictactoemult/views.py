@@ -116,6 +116,10 @@ def create_account_form_handler(request):
             now = datetime.now()
             joindate = now.strftime("%d/%m/%Y %H:%M")
 
+            # If description wasnt filled out, make the description be "no description"
+            if not description:
+                description = "No description"
+
             # Register user to database
             user = users(
                 username=username,
