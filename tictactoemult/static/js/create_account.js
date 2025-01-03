@@ -30,6 +30,9 @@ $('#create-account-form').on("submit", function (e){
                 case "email_taken":
                     showError("This email is already registered to an account.")
                     break
+                case "numeric":
+                    showError("The username only contains numbers.")
+                    break
                 case "ok":
                     window.location.href = "/main";
             }

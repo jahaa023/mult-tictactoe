@@ -104,6 +104,10 @@ def create_account_form_handler(request):
             # Check if email is already registered
             if users.objects.filter(email=email).exists():
                 return HttpResponse("email_taken")
+            
+            # Check if username is only numbers
+            if username.isdigit():
+                return HttpResponse("numeric")
 
             # Hash password
             password_hash = make_password(password)
