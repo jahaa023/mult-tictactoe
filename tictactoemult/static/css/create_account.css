@@ -120,7 +120,7 @@ form a:hover {
     margin-bottom: 10px;
 }
 
-@media screen and (max-width: 840px) {
+@media screen and (max-width: 1055px) {
     .create-account-text-input {
         width: 90%;
         height: 30px;
