@@ -32,12 +32,13 @@
                     {{form.password}}
                     <button id="password-visibility-button" type="button" title="Show password"></button>
                 </div>
-                <br>
-                <a class="account-recovery-link" href="/account_recovery">I forgot my username or password</a>
+                <p class="keep-logged-in">{{form.checkbox}}  Keep me logged in</p>
                 <br>
                 <button type="submit" name="login" title="Log in">Log in</button>
             </form>
+            <br>
             <p class="register-link">Dont have a user? <a href="/create_account">Create an account.</a></p>
+            <a class="account-recovery-link" href="/account_recovery">I forgot my username or password</a>
         </div>
     </div>
 </body>

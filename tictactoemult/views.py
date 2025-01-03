@@ -1,10 +1,10 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from .forms import LoginForm, CreateAccountForm
 from django.contrib.auth.hashers import make_password, check_password
 from .models import users
 import os
-from datetime import datetime
+import datetime
 from django.views.decorators.csrf import csrf_exempt
 import json
 
@@ -21,6 +21,7 @@ with open(static_dir + '\\js\\universal.js', 'r') as data:
 def index(request):
     # The default index.html page, with a form for logging in
     context = {}
+
     context['form'] = LoginForm()
 
     context['universal_css'] = universal_css
@@ -31,7 +32,22 @@ def index(request):
         context['index_css'] = data.read()
     with open(static_dir + '\\js\\index.js', 'r') as data:
         context['index_js'] = data.read()
-    return render(request, 'index.html', context)
+
+    response = render(request, 'index.html', context)
+
+    # Before showing the login page, check if user has stayloggedin cookie
+    if "stay_loggedin" in request.COOKIES.keys():
+        uid = request.COOKIES.get("stay_loggedin", None)
+        try:
+            if users.objects.filter(user_id=uid).exists():
+                request.session['user_id'] = uid
+                return HttpResponseRedirect("/main")
+            else:
+                response.delete_cookie('stay_loggedin')
+        except:
+            response.delete_cookie('stay_loggedin')
+
+    return response
 
 # Function for handling login form
 def login(request):
@@ -42,6 +58,7 @@ def login(request):
         if form.is_valid():
             username = form.cleaned_data["username"]
             password = form.cleaned_data["password"]
+            checkbox = form.cleaned_data["checkbox"]
 
             # Check if user exists in database
             if not users.objects.filter(username=username).exists():
@@ -56,7 +73,17 @@ def login(request):
             uuid_str = str(user.user_id)
             request.session['user_id'] = uuid_str
 
-            return HttpResponse("ok")
+            # If user wanted to stay logged in
+            response = HttpResponse("ok")
+            if checkbox:
+                max_age = 365 * 24 * 60 * 60  # one year
+                expires = datetime.datetime.strftime(
+                    datetime.datetime.utcnow() + datetime.timedelta(seconds=max_age),
+                    "%a, %d-%b-%Y %H:%M:%S GMT",
+                )
+                response.set_cookie(key='stay_loggedin', value=uuid_str, max_age=max_age ,expires=expires)
+
+            return response
         else:
             return HttpResponse("error")
     else:

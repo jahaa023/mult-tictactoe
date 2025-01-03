@@ -35,8 +35,6 @@
 .register-link {
     font-family: "Roboto", serif;
     margin: 0;
-    position: absolute;
-    bottom: 0;
     color: var(--primary-black);
     font-weight: 600;
 }
@@ -65,7 +63,7 @@ form * {
     font-size: 2.5rem;
 }
 
-form input {
+.login-text-input {
     width: 60%;
     height: 30px;
     border: solid var(--primary-black) 1px;
@@ -86,7 +84,6 @@ form button {
     font-weight: 500;
     font-size: 1.5rem;
     color: var(--primary-red);
-    margin-top: 20px;
 }
 
 form button:hover {
@@ -111,8 +108,10 @@ form button:hover {
 .account-recovery-link {
     margin: 0;
     padding: 0;
-    margin-top: 5px;
+    margin-top: 15px;
     margin-bottom: 5px;
+    font-family: "Roboto", serif;
+    font-size: 13px;
 }
 
 .password-wrapper {
@@ -158,16 +157,26 @@ form button:hover {
     background-color: transparent;
 }
 
+.keep-logged-in {
+    margin: 0;
+    padding: 0;
+    margin-top: 10px;
+}
+
 @media screen and (max-width: 1170px) {
     .login-center-rectangle {
-        height: 80vh;
+        height: fit-content;
+        max-height: 80vh;
+        overflow-x: hidden;
+        overflow-y: scroll;
         width: 80%;
         flex-direction: column;
     }
 
     .login-center-rectangle-logo {
         width: 100%;
-        height: calc(35% - 30px);
+        height: 170px;
+        min-height: 170px;
         margin-top: 15px;
         margin-bottom: 15px;
         background-size: contain;
@@ -184,13 +193,18 @@ form button:hover {
     .login-center-rectangle-divider {
         width: calc(100% - 50px);
         height: 2px;
+        min-height: 2px;
     }
 
-    form input {
+    .login-text-input {
         width: 85%;
     }
 
     .password-wrapper {
         width: calc(85% + 3px);
+    }
+
+    .register-link {
+        margin-bottom: 15px;
     }
 }
