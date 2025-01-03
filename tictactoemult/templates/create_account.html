@@ -35,7 +35,10 @@
                 </ul>
             </div>
             {{form.email}}
-            {{form.password}}
+            <div class="password-wrapper">
+                {{form.password}}
+                <button id="password-visibility-button" type="button" title="Show password"></button>
+            </div>
             {{form.description}}
             <p>{{form.checkbox}}    By checking this checkbox, you agree to our <a target="_blank" href="/static/terms_and_conditions.txt" title="Terms and Conditions">terms and conditions.</a></p>
             <button type="submit" title="Create account">Create account</button>

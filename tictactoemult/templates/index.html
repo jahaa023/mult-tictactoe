@@ -27,7 +27,12 @@
                 {% csrf_token %}
                 <h1 class="login-form-headline">Log in.</h1>
                 <p id="login-form-error-notif"></p>
-                {{form}}
+                {{form.username}}
+                <div class="password-wrapper">
+                    {{form.password}}
+                    <button id="password-visibility-button" type="button" title="Show password"></button>
+                </div>
+                <br>
                 <a class="account-recovery-link" href="/account_recovery">I forgot my username or password</a>
                 <br>
                 <button type="submit" name="login" title="Log in">Log in</button>

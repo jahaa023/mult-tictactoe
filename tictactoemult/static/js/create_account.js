@@ -90,3 +90,7 @@ document.getElementById("id_username").addEventListener("keyup", function() {
         dataType: 'json'
     });
 })
+
+document.getElementById("password-visibility-button").addEventListener("click", function() {
+    changeVisibility('id_password', 'password-visibility-button')
+})

@@ -34,3 +34,7 @@ $('#login-form').on("submit", function (e){
         processData: false,
     });
 })
+
+document.getElementById("password-visibility-button").addEventListener("click", function() {
+    changeVisibility('id_password', 'password-visibility-button')
+})
