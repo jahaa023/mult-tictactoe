@@ -1,11 +1,10 @@
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from .forms import LoginForm, CreateAccountForm
 from django.contrib.auth.hashers import make_password, check_password
 from .models import users
 import os
 from datetime import datetime
-from django.utils.html import escape
 from django.views.decorators.csrf import csrf_exempt
 import json
 
