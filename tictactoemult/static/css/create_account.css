@@ -2,7 +2,7 @@
 
 .create-account-container {
     width: calc(80% - 40px);
-    height: calc(80vh - 40px);
+    height: fit-content;
     padding: 20px;
     border-radius: 12px;
     background-color: rgb(230, 230, 230);
@@ -78,6 +78,7 @@ form button {
     font-size: 1.5rem;
     color: var(--primary-red);
     margin-top: 20px;
+    margin-bottom: 40px;
 }
 
 form button:hover {

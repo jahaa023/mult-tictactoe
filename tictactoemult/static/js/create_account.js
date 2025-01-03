@@ -21,8 +21,14 @@ $('#create-account-form').on("submit", function (e){
                 case "error":
                     showError("Something went wrong. Make sure inputs are filled.")
                     break
-                case "wrong":
-                    showError("Username or password incorrect!")
+                case "ascii":
+                    showError("Only English characters can be used in username.")
+                    break
+                case "taken":
+                    showError("This username is taken.")
+                    break
+                case "email_taken":
+                    showError("This email is already registered to an account.")
                     break
                 case "ok":
                     window.location.href = "/main";

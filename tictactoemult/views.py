@@ -1,7 +1,10 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .forms import LoginForm, CreateAccountForm
+from django.contrib.auth.hashers import make_password, check_password
+from .models import users
 import os
+from datetime import datetime
 
 # Create your views here.
 
@@ -39,6 +42,17 @@ def login(request):
             password = form.cleaned_data["password"]
 
             # Check if user exists in database
+            if not users.objects.filter(username=username).exists():
+                return HttpResponse("wrong")
+            
+            # Check that password is correct
+            user = users.objects.get(username=username)
+            if not check_password(password, user.password):
+                return HttpResponse("wrong")
+            
+            # set session variable
+            uuid_str = str(user.user_id)
+            request.session['user_id'] = uuid_str
 
             return HttpResponse("ok")
         else:
@@ -48,7 +62,7 @@ def login(request):
 
 # Function to render main page
 def main(request):
-    return HttpResponse("test")
+    return render(request, 'main.html')
 
 # Function to render account creation page
 def create_account(request):
@@ -61,3 +75,58 @@ def create_account(request):
     with open(static_dir + '\\js\\create_account.js', 'r') as data:
         context['create_account_js'] = data.read()
     return render(request, 'create_account.html', context)
+
+# function that handles creating of an account
+def create_account_form_handler(request):
+    if request.method == "POST":
+        # Only POST requests are allowed
+        form = CreateAccountForm(request.POST)
+
+        if form.is_valid():
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password"]
+            email = form.cleaned_data["email"]
+            description = form.cleaned_data["description"]
+
+            # Check if username has non english characters
+            whitelist = "abcdefghijklmnopqrstuvwxyz1234567890"
+            username_lower = username.lower()
+            for c in username_lower:
+                if c not in whitelist:
+                    return HttpResponse("ascii")
+
+            # Check if username is taken
+            if users.objects.filter(username=username).exists():
+                return HttpResponse("taken")
+            
+            # Check if email is already registered
+            if users.objects.filter(email=email).exists():
+                return HttpResponse("email_taken")
+
+            # Hash password
+            password_hash = make_password(password)
+
+            # Get join date
+            now = datetime.now()
+            joindate = now.strftime("%d/%m/%Y %H:%M")
+
+            # Register user to database
+            user = users(
+                username=username,
+                password=password_hash,
+                email=email,
+                joindate=joindate,
+                description=description,
+            )
+            user.save()
+
+            # Set session variables
+            user = users.objects.get(username=username)
+            uuid_str = str(user.user_id)
+            request.session['user_id'] = uuid_str
+
+            return HttpResponse("ok")
+        else:
+            return HttpResponse("error")
+    else:
+        return render(request, 'error_pages/405.html')
