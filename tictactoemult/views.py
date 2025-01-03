@@ -155,6 +155,10 @@ def username_validate(request):
         # Check if username is taken
         if users.objects.filter(username=username).exists():
             validate_list["taken"] = "true"
+        
+        # Check if username is only numbers
+        if username.isdigit():
+            validate_list["numeric"] = "true"
 
         return HttpResponse(json.dumps(validate_list), content_type = "application/json")
     else:

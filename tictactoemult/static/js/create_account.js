@@ -73,6 +73,12 @@ document.getElementById("id_username").addEventListener("keyup", function() {
             } else {
                 $('#not_taken').css('color', 'green');
             }
+
+            if ("numeric" in response) {
+                $('#numeric').css('color', 'red');
+            } else {
+                $('#numeric').css('color', 'green');
+            }
         },
         error: function() {
             $(".username-validator-container").html("Something went wrong while checking username.")
