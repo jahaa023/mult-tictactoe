@@ -108,8 +108,6 @@ form button:hover {
 .account-recovery-link {
     margin: 0;
     padding: 0;
-    margin-top: 15px;
-    margin-bottom: 5px;
     font-family: "Roboto", serif;
     font-size: 13px;
 }
@@ -163,7 +161,21 @@ form button:hover {
     margin-top: 10px;
 }
 
-@media screen and (max-width: 1170px) {
+.login-links-container {
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: absolute;
+    bottom: 0;
+}
+
+.login-links-container i {
+    opacity: 0.5;
+}
+
+@media screen and (max-width: 1355px) {
     .login-center-rectangle {
         height: fit-content;
         max-height: 80vh;
@@ -204,7 +216,13 @@ form button:hover {
         width: calc(85% + 3px);
     }
 
-    .register-link {
-        margin-bottom: 15px;
+    .login-links-container {
+        flex-direction: column;
+        align-items: normal;
+        position: relative;
+    }
+
+    .login-links-container i {
+        display: none;
     }
 }

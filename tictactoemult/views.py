@@ -5,6 +5,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from .models import users
 import os
 import datetime
+from datetime import datetime, timedelta
 from django.views.decorators.csrf import csrf_exempt
 import json
 
@@ -37,10 +38,12 @@ def index(request):
 
     # Before showing the login page, check if user has stayloggedin cookie
     if "stay_loggedin" in request.COOKIES.keys():
-        uid = request.COOKIES.get("stay_loggedin", None)
+        token = request.COOKIES.get("stay_loggedin", None)
         try:
-            if users.objects.filter(user_id=uid).exists():
-                request.session['user_id'] = uid
+            if users.objects.filter(stayloggedin_token=token).exists():
+                user = users.objects.get(stayloggedin_token=token)
+                uuid_str = str(user.user_id)
+                request.session['user_id'] = uuid_str
                 return HttpResponseRedirect("/main")
             else:
                 response.delete_cookie('stay_loggedin')
@@ -76,12 +79,13 @@ def login(request):
             # If user wanted to stay logged in
             response = HttpResponse("ok")
             if checkbox:
+                token = str(user.stayloggedin_token)
                 max_age = 365 * 24 * 60 * 60  # one year
-                expires = datetime.datetime.strftime(
-                    datetime.datetime.utcnow() + datetime.timedelta(seconds=max_age),
+                expires = datetime.strftime(
+                    datetime.now() + timedelta(seconds=max_age),
                     "%a, %d-%b-%Y %H:%M:%S GMT",
                 )
-                response.set_cookie(key='stay_loggedin', value=uuid_str, max_age=max_age ,expires=expires)
+                response.set_cookie(key='stay_loggedin', value=token, max_age=max_age ,expires=expires)
 
             return response
         else:
