@@ -1,3 +1,4 @@
 tictactoe/settings.py
 /tictactoe
 /tictactoemult/__pycache__
+tictactoemult/custom_settings.py

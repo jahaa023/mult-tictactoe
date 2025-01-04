@@ -7,5 +7,6 @@ urlpatterns = [
     path('main', views.main),
     path('create_account' , views.create_account),
     path('create_account_form_handler', views.create_account_form_handler),
-    path('username_validate', views.username_validate)
+    path('username_validate', views.username_validate),
+    path('account_recovery', views.account_recovery)
 ]

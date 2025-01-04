@@ -8,6 +8,7 @@ import datetime
 from datetime import datetime, timedelta
 from django.views.decorators.csrf import csrf_exempt
 import json
+from .mail import send_mail
 
 # Create your views here.
 
@@ -209,3 +210,16 @@ def username_validate(request):
         return HttpResponse(json.dumps(validate_list), content_type = "application/json")
     else:
         return render(request, 'error_pages/405.html')
+
+# Function that renders account recovery page
+def account_recovery(request):
+    context = {}
+    context['universal_css'] = universal_css
+    context['universal_js'] = universal_js
+    with open(static_dir + '\\css\\account-recovery.css', 'r') as data:
+        context['account_recovery_css'] = data.read()
+    with open(static_dir + '\\js\\account_recovery.js', 'r') as data:
+        context['account_recovery_js'] = data.read()
+    mail = send_mail('jakob.johannes.hansgaard@outlook.com', 'Test', '<b>Hello</b>')
+    context['mail'] = mail
+    return render(request, 'account_recovery.html', context)
