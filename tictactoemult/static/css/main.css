@@ -183,6 +183,7 @@ header {
     .header-play-buttons-container button img {
         width: 35px;
         height: 35px;
+        margin-right: 10px;
     }
 
     .header-play-buttons-container {
@@ -199,7 +200,7 @@ header {
     }
 
     header {
-        height: 70vh;
+        height: 80vh;
     }
 
     .header-content-container {
