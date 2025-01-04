@@ -91,7 +91,14 @@ def login(request):
 
 # Function to render main page
 def main(request):
-    return render(request, 'main.html')
+    context = {}
+    context['universal_css'] = universal_css
+    context['universal_js'] = universal_js
+    with open(static_dir + '\\css\\main.css', 'r') as data:
+        context['main_css'] = data.read()
+    with open(static_dir + '\\js\\main.js', 'r') as data:
+        context['main_js'] = data.read()
+    return render(request, 'main.html', context)
 
 # Function to render account creation page
 def create_account(request):

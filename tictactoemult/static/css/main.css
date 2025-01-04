@@ -1,0 +1,208 @@
+/* Stylesheet for main page */
+
+header {
+    width: 100%;
+    height: 500px;
+    display: flex;
+    align-items: center;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px -50px 36px -28px inset;
+}
+
+.header-button-container {
+    width: fit-content;
+    height: 200px;
+    display: flex;
+}
+
+.header-content-container {
+    margin-left: 100px;
+}
+
+.header-content-container h1 {
+    font-size: 2.5rem;
+    font-family: "Roboto", serif;
+    color: var(--primary-black);
+    font-weight: 800;
+    margin: 0;
+    margin-bottom: 5px;
+    margin-left: 15px;
+}
+
+.header-logo-container {
+    height: 100%;
+    width: 200px;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    border: solid #21212160 2px;
+    border-right: none;
+    background-image: url(/static/img/logo.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 70%;
+}
+
+.header-play-buttons-container {
+    width: 600px;
+    height: calc(100% + 2px);
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 2px;
+    z-index: 900;
+}
+
+.triangle-container {
+    position: absolute;
+    width: 202px;
+    height: 204px;
+    top: 0;
+    right: 0;
+    overflow: hidden;
+    z-index: 900;
+}
+
+.triangle {
+    position: relative;
+    width: 400%;
+    height: 400%;
+    background-color: var(--background-white);
+    border-top: solid #21212160 2px;
+    transform: rotate(-45deg);
+    bottom: 16%;
+    z-index: 999;
+}
+
+.header-play-buttons-container button {
+    width: 100%;
+    height: calc(50% + 2px);
+    border: solid #21212160 2px;
+    border-left: none;
+    cursor: pointer;
+    background-color: var(--background-white);
+    z-index: 998;
+    text-align: left;
+    font-size: 2rem;
+    font-family: "Roboto", serif;
+    color: var(--primary-black);
+    font-weight: 400;
+    text-indent: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.header-play-buttons-container button:hover {
+    background-color: var(--primary-red);
+    color: var(--background-white);
+    box-shadow: rgba(0, 0, 0, 0.35) 0px -50px 36px -28px inset;
+    font-weight: 600;
+}
+
+.header-play-buttons-container button:hover > img {
+    filter: invert(100%);
+}
+
+.header-play-buttons-container button img {
+    width: 40px;
+    height: 40px;
+    margin: 0;
+    margin-left: 5px;
+}
+
+#dual-button {
+    border-top: none;
+    border-bottom: solid #21212160 4px;
+}
+
+@media screen and (max-width: 980px) {
+    .header-content-container {
+        margin-left: 0;
+    }
+
+    header {
+        justify-content: center;
+    }
+
+    .header-content-container h1 {
+        font-size: 2rem;
+    }
+
+    .header-button-container {
+        height: 120px;
+    }
+
+    .header-logo-container {
+        width: 150px;
+        background-size: 60%;
+    }
+
+    .header-play-buttons-container {
+        width: 300px;
+    }
+
+    .header-play-buttons-container button {
+        font-size: 1.3rem;
+    }
+
+    .header-play-buttons-container button img {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+@media screen and (max-width: 525px) {
+    .triangle {
+        display: none;
+    }
+
+    .triangle-container {
+        display: none;
+    }
+
+
+    .header-logo-container {
+        width: 100%;
+        height: 200px;
+        border: none;
+        background-size: 50%;
+    }
+
+    .header-button-container {
+        width: 300px;
+        padding: 15px;
+        height: fit-content;
+        flex-direction: column;
+        border: solid #21212160 4px;
+        border-radius: 15px;
+    }
+
+    .header-play-buttons-container button {
+        border: solid #21212160 1px;
+        font-size: 1.4rem;
+        border-radius: 10px;
+    }
+
+    .header-play-buttons-container button img {
+        width: 35px;
+        height: 35px;
+    }
+
+    .header-play-buttons-container {
+        border: none;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        height: 204px;
+    }
+
+    #dual-button {
+        border: solid #21212160 1px;
+        height: calc(50% - 2px);
+    }
+
+    header {
+        height: 70vh;
+    }
+
+    .header-content-container {
+        text-align: center;
+    }
+}

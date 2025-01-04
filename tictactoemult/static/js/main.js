@@ -1,0 +1,1 @@
+// JavaScript file for the main page
