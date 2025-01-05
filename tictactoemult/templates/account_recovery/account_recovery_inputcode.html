@@ -22,8 +22,8 @@
     <div class="account-recovery-container">
         <h1>Recover Account</h1>
         <p id="error-warning"></p>
-        <p>Please type in the e-mail adress the account is registered to.</p>
-        <form id="email-form" action="/account_recovery_email" method="post">
+        <p>An e-mail with a code has been sent to <b>{{request.session.temp_recovery_email}}</b>. Check your spam folder if you cannot find it. The code expires in 15 minutes.</p>
+        <form id="code-form" action="/account_recovery_code" method="post">
             {% csrf_token %}
             {{form}}
             <div class="account-recovery-form-button-container">

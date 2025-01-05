@@ -1,14 +1,16 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
-from .forms import LoginForm, CreateAccountForm
+from .forms import LoginForm, CreateAccountForm, AccountRecoveryForm1, AccountRecoveryForm2
 from django.contrib.auth.hashers import make_password, check_password
-from .models import users
+from .models import users, recovery_codes
 import os
 import datetime
+import time
 from datetime import datetime, timedelta
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .mail import send_mail
+import random
 
 # Create your views here.
 
@@ -214,12 +216,113 @@ def username_validate(request):
 # Function that renders account recovery page
 def account_recovery(request):
     context = {}
+    context['form'] = AccountRecoveryForm1()
     context['universal_css'] = universal_css
     context['universal_js'] = universal_js
     with open(static_dir + '\\css\\account-recovery.css', 'r') as data:
         context['account_recovery_css'] = data.read()
     with open(static_dir + '\\js\\account_recovery.js', 'r') as data:
         context['account_recovery_js'] = data.read()
-    mail = send_mail('jakob.johannes.hansgaard@outlook.com', 'Test', '<b>Hello</b>')
-    context['mail'] = mail
     return render(request, 'account_recovery.html', context)
+
+# Function that handles form for inputting email when recovering account
+def account_recovery_email(request):
+    if request.method == "POST":
+        # Only POST requests are allowed
+        form = AccountRecoveryForm1(request.POST)
+
+        if form.is_valid():
+            email = form.cleaned_data["email"]
+
+            # Check if email is registered
+            if not users.objects.filter(email=email).exists():
+                return HttpResponse("not_registered")
+
+            # Generate recovery code
+            recovery_code = random.randint(111111, 999999)
+
+            # Set a expiration in unix time
+            unix_now = int(time.time())
+            expire = unix_now + (60 * 15) # 15 minutes
+
+            # Send email
+            mail_status = send_mail(email, "Tic Tac Toe - Recovery code", "Hi " + email + ". Your recovery code is: " + str(recovery_code))
+            if mail_status == "error":
+                return HttpResponse("error")
+
+            # Insert temporary recovery code inside database
+            code = recovery_codes(
+                email = email,
+                recovery_code=recovery_code,
+                expire=expire
+            )
+
+            code.save()
+
+            # Save email in session variable
+            request.session['temp_recovery_email'] = email
+
+            return HttpResponse("ok")
+        else:
+            return HttpResponse("error")
+    else:
+        return render(request, 'error_pages/405.html')
+
+def account_recovery_inputcode(request):
+    # Check if temp_recovery_email session variable is set
+    if 'temp_recovery_email' not in request.session:
+        return HttpResponseRedirect("/")
+    context = {}
+    context['form'] = AccountRecoveryForm2()
+    context['universal_css'] = universal_css
+    context['universal_js'] = universal_js
+    with open(static_dir + '\\css\\account-recovery.css', 'r') as data:
+        context['account_recovery_css'] = data.read()
+    with open(static_dir + '\\js\\account_recovery.js', 'r') as data:
+        context['account_recovery_js'] = data.read()
+    return render(request, 'account_recovery/account_recovery_inputcode.html', context)
+
+# Function that handles form for inputting code when recovering account
+def account_recovery_code(request):
+    if request.method == "POST":
+        # Only POST requests are allowed
+        form = AccountRecoveryForm2(request.POST)
+
+        if form.is_valid():
+            code = form.cleaned_data["code"]
+
+            # Check if code is integer
+            try:
+                code = int(code)
+            except:
+                return("error")
+
+            # Delete expired codes
+            unix_now = int(time.time())
+            recovery_codes.objects.filter(expire__lt=unix_now).delete()
+
+            # Check that recovery email session variable exists
+            if 'temp_recovery_email' not in request.session:
+                return HttpResponse("error")
+
+            # Check if code exists in database
+            email = request.session.get('temp_recovery_email')
+            if not recovery_codes.objects.filter(recovery_code=code, email=email).exists():
+                return HttpResponse("expired_notfound")
+
+            # Get user id of user with that email
+            user = users.objects.get(email=email)
+            uuid_str = str(user.user_id)
+            request.session['temp_recovery_uid'] = uuid_str
+
+            return HttpResponse("ok")
+        else:
+            return HttpResponse("error")
+    else:
+        return render(request, 'error_pages/405.html')
+
+# Function to render page for the final step of account recovery
+def account_recovery_final(request):
+    email = request.session.get('temp_recovery_email')
+    uid = request.session.get('temp_recovery_uid')
+    return HttpResponse(email + "<br>" + uid)

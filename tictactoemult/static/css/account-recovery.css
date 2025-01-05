@@ -1,1 +1,97 @@
 /* Stylesheet for account recovery page */
+
+.account-recovery-container {
+    width: 40%;
+    height: fit-content;
+    border-radius: 12px;
+    background-color: rgb(230, 230, 230);
+    border: solid #21212160 2px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    padding: 40px;
+    font-family: "Roboto", serif;
+}
+
+.account-recovery-container * {
+    margin: 0;
+    padding: 0;
+}
+
+form input {
+    width: 60%;
+    height: 30px;
+    border: solid var(--primary-black) 1px;
+    border-radius: 5px;
+    text-indent: 5px;
+    font-weight: 400;
+    font-size: 1.2rem;
+}
+
+.account-recovery-container h1 {
+    margin-bottom: 10px;
+}
+
+.account-recovery-container p {
+    margin-bottom: 10px;
+}
+
+.account-recovery-form-button-container {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.account-recovery-form-button-container button {
+    padding-left: 20px;
+    padding-right: 20px;
+    width: fit-content;
+    height: 50px;
+    font-family: "Roboto", serif;
+    border-radius: 5px;
+    border: solid 2px var(--primary-red);
+    font-size: 1.3rem;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--primary-red);
+    background-color: var(--background-white);
+}
+
+.account-recovery-form-button-container button:hover {
+    color: var(--background-white);
+    background-color: var(--primary-red);
+    font-weight: 600;
+}
+
+#cancel-button {
+    border: solid 2px var(--cancel-grey);
+    color: var(--cancel-grey);
+}
+
+#cancel-button:hover {
+    color: var(--background-white);
+    background-color: var(--cancel-grey);
+}
+
+#error-warning {
+    color: var(--primary-red);
+    display: none;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+@media screen and (max-width: 1065px){
+    .account-recovery-container {
+        width: 80%;
+        padding: 15px;
+    }
+
+    form input {
+        width: 100%;
+    }
+}

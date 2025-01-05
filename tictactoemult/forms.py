@@ -1,4 +1,5 @@
 from django import forms
+from django.core.validators import RegexValidator
 
 # Form for logging in from the index page
 class LoginForm(forms.Form):
@@ -13,3 +14,11 @@ class CreateAccountForm(forms.Form):
     password = forms.CharField(label='', max_length=32, widget=forms.PasswordInput(attrs={'placeholder': 'Password', 'class': 'create-account-text-input'}))
     description = forms.CharField(label='', required=False, max_length=300, widget=forms.Textarea(attrs={'placeholder': 'Description'}))
     checkbox = forms.BooleanField()
+
+# Form for typing in email when recovering account
+class AccountRecoveryForm1(forms.Form):
+    email = forms.CharField(label='', max_length=40, widget=forms.EmailInput(attrs={'placeholder': 'E-mail'}))
+
+# Form for typing in code when recovering account
+class AccountRecoveryForm2(forms.Form):
+    code = forms.CharField(label='', max_length=6, min_length=6, validators=[RegexValidator(r'^\d{1,10}$')], widget=forms.TextInput(attrs={'placeholder': '000000'}))

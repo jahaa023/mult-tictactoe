@@ -13,3 +13,9 @@ class users(models.Model):
     description = models.CharField(max_length=300, default='No description')
     profile_picture = models.CharField(max_length=128, default='defaultprofile.jpg')
     stayloggedin_token = models.UUIDField(default=uuid.uuid4,editable=False)
+
+# Model for recovery codes table for account recovery
+class recovery_codes(models.Model):
+    email = models.CharField(max_length=40)
+    recovery_code = models.IntegerField()
+    expire = models.IntegerField()
