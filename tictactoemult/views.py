@@ -39,6 +39,13 @@ def index(request):
 
     response = render(request, 'index.html', context)
 
+    # Check if temp sessipn variables are set and delete them
+    if 'temp_recovery_email' in request.session:
+        del request.session["temp_recovery_email"]
+    
+    if 'temp_recovery_uid' in request.session:
+        del request.session["temp_recovery_uid"]
+
     # Before showing the login page, check if user has stayloggedin cookie
     if "stay_loggedin" in request.COOKIES.keys():
         token = request.COOKIES.get("stay_loggedin", None)
@@ -332,8 +339,6 @@ def account_recovery_final(request):
     with open(static_dir + '\\js\\account_recovery.js', 'r') as data:
         context['account_recovery_js'] = data.read()
 
-    # Delete recovery code from database
-
     # Get temporary user id
     if 'temp_recovery_uid' not in request.session:
         return HttpResponseRedirect("/")
@@ -344,3 +349,41 @@ def account_recovery_final(request):
     context["username"] = user.username
 
     return render(request, 'account_recovery/account_recovery_final.html', context)
+
+# Function that handles form for resetting password
+def reset_password(request):
+    if request.method == "POST":
+        # Only POST requests are allowed
+        form = AccountRecoveryFormNewPassword(request.POST)
+
+        if form.is_valid():
+            new_password = form.cleaned_data["new_password"]
+            new_password_confirm = form.cleaned_data["new_password_confirm"]
+
+            # Check if passwords match
+            if not new_password == new_password_confirm:
+                return HttpResponse("no_match")
+
+            # Get temporary user id
+            if 'temp_recovery_uid' not in request.session:
+                return HttpResponse("error")
+            uid = request.session.get('temp_recovery_uid')
+
+            # Check if new password is the same as old password
+            user = users.objects.get(user_id=uid)
+            old_password_hash = user.password
+
+            if check_password(new_password, old_password_hash):
+                return HttpResponse("same")
+
+            # Hash new password and save it
+            password_hash = make_password(new_password)
+
+            user.password = password_hash
+            user.save()
+
+            return HttpResponse("ok")
+        else:
+            return HttpResponse("error")
+    else:
+        return render(request, 'error_pages/405.html')

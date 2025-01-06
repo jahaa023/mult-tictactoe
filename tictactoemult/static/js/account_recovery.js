@@ -92,3 +92,40 @@ document.getElementById("reset-password-button").addEventListener("click", funct
         passwordButtonIcon.style.transform = "rotate(0deg)"
     }
 })
+
+// When reset password form is submitted, do ajax request
+$('#reset-password-form').on("submit", function (e){
+    e.preventDefault();
+    $("#save-password-button").prop("disabled", true);
+    var formData = new FormData(this);
+
+    $.ajax({
+        url: '/reset_password',
+        type: 'POST',
+        data: formData,
+        success: function (response) {
+            switch(response) {
+                case "error":
+                    showError("Something went wrong. Make sure inputs are filled out.")
+                    break
+                case "same":
+                    showError("New password cannot be the same as the old password.")
+                    break
+                case "no_match":
+                    showError("New password and confirm new password does not match.")
+                    break
+                case "ok":
+                    document.getElementById("reset-password-form").innerHTML = "Password successfully saved!"
+            }
+        },
+        error: function() {
+            showError("Something went wrong. Try again later.")
+        },
+        complete: function() {
+            $("#save-password-button").prop("disabled", false);
+        },
+        cache: false,
+        contentType: false,
+        processData: false,
+    });
+})
