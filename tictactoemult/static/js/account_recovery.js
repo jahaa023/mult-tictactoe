@@ -78,3 +78,17 @@ $('#code-form').on("submit", function (e){
         processData: false,
     });
 })
+
+// When reset password button is pressed, show form for resetting password
+document.getElementById("reset-password-button").addEventListener("click", function() {
+    passwordForm = document.getElementById("reset-password-form")
+    passwordButtonIcon = document.getElementById("reset-password-button-icon")
+
+    if (window.getComputedStyle(passwordForm).display === 'none'){
+        passwordForm.style.display = 'block';
+        passwordButtonIcon.style.transform = "rotate(180deg)"
+    } else {
+        passwordForm.style.display = "none";
+        passwordButtonIcon.style.transform = "rotate(0deg)"
+    }
+})

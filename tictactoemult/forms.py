@@ -22,3 +22,8 @@ class AccountRecoveryForm1(forms.Form):
 # Form for typing in code when recovering account
 class AccountRecoveryForm2(forms.Form):
     code = forms.CharField(label='', max_length=6, min_length=6, validators=[RegexValidator(r'^\d{1,10}$')], widget=forms.TextInput(attrs={'placeholder': '000000'}))
+
+# Form for typing in new password when recovering account
+class AccountRecoveryFormNewPassword(forms.Form):
+    new_password = forms.CharField(label='', max_length=32, widget=forms.PasswordInput(attrs={'placeholder': 'New password'}))
+    new_password_confirm = forms.CharField(label='', max_length=32, widget=forms.PasswordInput(attrs={'placeholder': 'Confirm new password'}))

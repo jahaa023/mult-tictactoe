@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
-from .forms import LoginForm, CreateAccountForm, AccountRecoveryForm1, AccountRecoveryForm2
+from .forms import LoginForm, CreateAccountForm, AccountRecoveryForm1, AccountRecoveryForm2, AccountRecoveryFormNewPassword
 from django.contrib.auth.hashers import make_password, check_password
 from .models import users, recovery_codes
 import os
@@ -323,6 +323,24 @@ def account_recovery_code(request):
 
 # Function to render page for the final step of account recovery
 def account_recovery_final(request):
-    email = request.session.get('temp_recovery_email')
+    context = {}
+    context["form"] = AccountRecoveryFormNewPassword()
+    context['universal_css'] = universal_css
+    context['universal_js'] = universal_js
+    with open(static_dir + '\\css\\account-recovery.css', 'r') as data:
+        context['account_recovery_css'] = data.read()
+    with open(static_dir + '\\js\\account_recovery.js', 'r') as data:
+        context['account_recovery_js'] = data.read()
+
+    # Delete recovery code from database
+
+    # Get temporary user id
+    if 'temp_recovery_uid' not in request.session:
+        return HttpResponseRedirect("/")
     uid = request.session.get('temp_recovery_uid')
-    return HttpResponse(email + "<br>" + uid)
+
+    # Get username attached to user id
+    user = users.objects.get(user_id=uid)
+    context["username"] = user.username
+
+    return render(request, 'account_recovery/account_recovery_final.html', context)
