@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe - Recover Account</title>
+    <link href="/static/img/favicon.ico" rel="icon" media="(prefers-color-scheme: light)">
+    <link href="/static/img/favicon-darkmode.ico" rel="icon" media="(prefers-color-scheme: dark)">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        {{account_recovery_css | safe}}
+    </style>
+    <style>
+        {{universal_css | safe}}
+    </style>
+</head>
+<body>
+    <div class="account-recovery-container">
+        <h1>Recover Account</h1>
+        <p id="error-warning"></p>
+        <p>The username for this account is <b>{{username}}</b></p>
+        <div class="reset-password-button" id="reset-password-button" title="Reset password">
+            Reset password
+            <img id="reset-password-button-icon" src="/static/img/icons/arrow-down.svg" alt="Reset password">
+        </div>
+        <form id="reset-password-form" action="/reset_password" method="post">
+            {% csrf_token %}
+            {{form}}
+            <button type="submit" id="save-password-button" title="Save password">Save password</button>
+        </form>
+        <button id="cancel-button" class="cancel-button-final" title="Done">Done</button>
+    </div>
+</body>
+<script>
+    {{universal_js | safe}}
+</script>
+<script>
+    {{account_recovery_js | safe}}
+</script>
+</html>
