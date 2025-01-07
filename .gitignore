@@ -1,2 +1,7 @@
-# Created by venv; see https://docs.python.org/3/library/venv.html
-*
+tictactoe/settings.py
+/tictactoe
+/tictactoemult/__pycache__
+tictactoemult/custom_settings.py
+/Lib
+/Scripts
+pyvenv.cfg
