@@ -29,10 +29,17 @@
         </div>
         <form id="reset-password-form" action="/reset_password" method="post">
             {% csrf_token %}
-            {{form}}
-            <button type="submit" id="save-password-button" title="Save password">Save password</button>
+            <div class="password-wrapper">
+                {{form.new_password}}
+                <button id="password-visibility-button-new" type="button" title="Show password"></button>
+            </div>
+            <div class="password-wrapper">
+                {{form.new_password_confirm}}
+                <button id="password-visibility-button-confirm" type="button" title="Show password"></button>
+            </div>
+            <button type="submit" id="save-password-button" class="reset-password-form-button" title="Save password">Save password</button>
         </form>
-        <button id="cancel-button" class="cancel-button-final" title="Done">Done</button>
+        <button id="cancel-button" class="reset-password-form-button" title="Done">Done</button>
     </div>
 </body>
 <script>

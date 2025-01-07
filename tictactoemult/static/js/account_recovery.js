@@ -129,3 +129,11 @@ $('#reset-password-form').on("submit", function (e){
         processData: false,
     });
 })
+
+document.getElementById("password-visibility-button-new").addEventListener("click", function() {
+    changeVisibility('id_new_password', 'password-visibility-button-new')
+})
+
+document.getElementById("password-visibility-button-confirm").addEventListener("click", function() {
+    changeVisibility('id_new_password_confirm', 'password-visibility-button-confirm')
+})
