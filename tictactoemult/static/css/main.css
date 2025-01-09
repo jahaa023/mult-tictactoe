@@ -1,209 +1,251 @@
-/* Stylesheet for main page */
+/* Stylesheet for the main page */
+
+#mainbody {
+    background-color: var(--primary-black);
+}
 
 header {
+    height: 300px;
     width: 100%;
-    height: 500px;
+    padding-top: 100px;
+    padding-bottom: 100px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px -40px 30px -18px inset;
     display: flex;
     align-items: center;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px -50px 36px -28px inset;
+    background-color: var(--background-white);
 }
 
-.header-button-container {
-    width: fit-content;
-    height: 200px;
-    display: flex;
-}
-
-.header-content-container {
-    margin-left: 100px;
-}
-
-.header-content-container h1 {
-    font-size: 2.5rem;
-    font-family: "Roboto", serif;
-    color: var(--primary-black);
-    font-weight: 800;
-    margin: 0;
-    margin-bottom: 5px;
-    margin-left: 15px;
-}
-
-.header-logo-container {
-    height: 100%;
-    width: 200px;
-    border-top-left-radius: 15px;
-    border-bottom-left-radius: 15px;
-    border: solid #21212160 2px;
-    border-right: none;
-    background-image: url(/static/img/logo.svg);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: 70%;
-}
-
-.header-play-buttons-container {
-    width: 600px;
-    height: calc(100% + 2px);
+.header-play-container {
+    height: 300px;
+    width: 90%;
+    margin-left: 10%;
     position: relative;
-    overflow: hidden;
-    padding-bottom: 2px;
-    z-index: 900;
+    display: flex;
+    align-items: center;
 }
 
-.triangle-container {
+.header-play-logo-container {
+    height: calc(300px - 40px);
+    width: calc(300px - 40px);
+    border-radius: 20px;
+    border: solid #21212160 2px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    padding: 20px;
+    background-color: var(--background-white);
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: absolute;
-    width: 202px;
-    height: 204px;
-    top: 0;
-    right: 0;
-    overflow: hidden;
-    z-index: 900;
+    left: 0;
+    z-index: 2;
 }
 
-.triangle {
-    position: relative;
-    width: 400%;
-    height: 400%;
-    background-color: var(--background-white);
-    border-top: solid #21212160 2px;
-    transform: rotate(-45deg);
-    bottom: 16%;
-    z-index: 999;
+.header-play-container img {
+    height: 80%;
+    width: 80%;
 }
 
-.header-play-buttons-container button {
-    width: 100%;
-    height: calc(50% + 2px);
-    border: solid #21212160 2px;
-    border-left: none;
+.header-play-button-container {
+    margin-left: 290px;
+    width: calc(100% - 300px);
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.header-play-button {
+    height: 90px;
+    width: 400px;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    border: solid #21212160 2px;
     background-color: var(--background-white);
-    z-index: 998;
-    text-align: left;
-    font-size: 2rem;
-    font-family: "Roboto", serif;
-    color: var(--primary-black);
-    font-weight: 400;
-    text-indent: 10px;
     display: flex;
     align-items: center;
+    color: var(--primary-black);
 }
 
-.header-play-buttons-container button:hover {
+.header-play-button:hover {
     background-color: var(--primary-red);
-    color: var(--background-white);
-    box-shadow: rgba(0, 0, 0, 0.35) 0px -50px 36px -28px inset;
-    font-weight: 600;
+    color: white;
 }
 
-.header-play-buttons-container button:hover > img {
+.header-play-button:hover > img {
     filter: invert(100%);
 }
 
-.header-play-buttons-container button img {
-    width: 40px;
-    height: 40px;
+.header-play-button img {
+    height: 60px;
+    width: 60px;
+    margin-left: 15px;
+    margin-right: 10px;
+}
+
+.header-play-button p {
+    font-family: "Roboto", serif;
     margin: 0;
-    margin-left: 5px;
+    font-weight: 600;
+    font-size: 2rem;
 }
 
-#dual-button {
-    border-top: none;
-    border-bottom: solid #21212160 4px;
+.content {
+    width: calc(100% - 60px);
+    padding-left: 30px;
+    padding-right: 30px;
+    height: fit-content;
+    background-color: var(--primary-black);
+    display: flex;
+    align-items: center;
+    font-family: "Roboto", serif;
+    padding-top: 25px;
+    padding-bottom: 25px;
 }
 
-@media screen and (max-width: 980px) {
-    .header-content-container {
-        margin-left: 0;
-    }
+.content-divider {
+    width: 2px;
+    height: 400px;
+    background-color: rgba(255, 255, 255, 0.445);
+    border-radius: 2px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
 
+.user-section {
+    height: 80%;
+    width: 30%;
+}
+
+.user-section-profile {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-section-profile h1 {
+    color: var(--background-white);
+    margin: 0;
+    font-weight: 600;
+    font-size: 2rem;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-wrap: nowrap;
+}
+
+.user-section a:hover {
+    filter: brightness(0.5);
+}
+
+.user-section-profilepic {
+    width: 50px;
+    height: 50px;
+    background-image: url(/static/img/profile_pictures/defaultprofile.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 50px;
+}
+
+.user-section-stats-container {
+    width: 100%;
+    margin-top: 10px;
+    height: calc(100% - 60px);
+}
+
+.user-section-stats-headline {
+    color: rgba(255, 255, 255, 0.500);
+    letter-spacing: 3px;
+    font-weight: 500;
+}
+
+.user-section-stats-container p {
+    color: var(--background-white);
+}
+
+.user-section-stats-divider {
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    height: 2px;
+    background-color: rgba(255, 255, 255, 0.500);
+}
+
+.log-out-link {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--warning-red);
+    font-family: "Roboto", serif;
+    text-decoration: none;
+}
+
+.log-out-link:hover {
+    text-decoration: underline;
+}
+
+.navigate-section {
+    height: 80%;
+    width: 40%;
+}
+
+.online-section {
+    height: 80%;
+    width: 30%;
+}
+
+@media screen and (max-width: 1290px) {
     header {
+        display: flex;
         justify-content: center;
     }
 
-    .header-content-container h1 {
-        font-size: 2rem;
-    }
-
-    .header-button-container {
-        height: 120px;
-    }
-
-    .header-logo-container {
-        width: 150px;
-        background-size: 60%;
-    }
-
-    .header-play-buttons-container {
-        width: 300px;
-    }
-
-    .header-play-buttons-container button {
-        font-size: 1.3rem;
-    }
-
-    .header-play-buttons-container button img {
-        width: 30px;
-        height: 30px;
+    .header-play-container {
+        width: fit-content;
+        justify-content: center;
+        display: flex;
+        margin-left: 0;
     }
 }
 
-@media screen and (max-width: 525px) {
-    .triangle {
-        display: none;
+@media screen and (max-width: 900px) {
+    header {
+        height: 500px;
+        justify-content: center;
+        align-items: center;
     }
 
-    .triangle-container {
-        display: none;
-    }
-
-
-    .header-logo-container {
-        width: 100%;
-        height: 200px;
-        border: none;
-        background-size: 50%;
-    }
-
-    .header-button-container {
-        width: 300px;
-        padding: 15px;
-        height: fit-content;
+    .header-play-container {
         flex-direction: column;
-        border: solid #21212160 4px;
+        height: 100%;
+    }
+
+    .header-play-logo-container {
+        position: relative;
+    }
+
+    .header-play-button-container {
+        margin-left: 0;
+        width: 100%;
+        margin-top: 15px;
+    }
+
+    .header-play-button {
+        max-width: 305px;
         border-radius: 15px;
     }
 
-    .header-play-buttons-container button {
-        border: solid #21212160 1px;
-        font-size: 1.4rem;
-        border-radius: 10px;
+    .header-play-button p {
+        font-size: 1.5rem;
     }
 
-    .header-play-buttons-container button img {
-        width: 35px;
-        height: 35px;
-        margin-right: 10px;
-    }
-
-    .header-play-buttons-container {
-        border: none;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        height: 204px;
-    }
-
-    #dual-button {
-        border: solid #21212160 1px;
-        height: calc(50% - 2px);
-    }
-
-    header {
-        height: 80vh;
-    }
-
-    .header-content-container {
-        text-align: center;
+    .header-play-button img {
+        width: 40px;
+        height: 40px;
     }
 }

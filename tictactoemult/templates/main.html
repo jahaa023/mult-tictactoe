@@ -17,22 +17,56 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
-<body>
+<body id="mainbody">
     <header>
-        <div class="header-content-container">
-            <h1>Play Tic Tac Toe</h1>
-            <div class="header-button-container">
-                <div class="header-logo-container"></div>
-                <div class="header-play-buttons-container">
-                    <button id="random-button" title="Play against random opponent"><img src="/static/img/icons/globe.svg">Random Opponent</button>
-                    <button id="dual-button" title="Play with a friend"><img src="/static/img/icons/player-icon.svg">Dual Friend</button>
-                    <div class="triangle-container">
-                        <div class="triangle"></div>
-                    </div>
-                </div>
+        <div class="header-play-container">
+            <div class="header-play-logo-container">
+                <img src="/static/img/logo.svg" alt="Tic Tac Toe Multiplayer Logo">
+            </div>
+            <div class="header-play-button-container">
+                <button title="Random opponent" class="header-play-button" id="header-play-button-1">
+                    <img src="/static/img/icons/globe.svg" alt="Random opponent">
+                    <p>Random opponent</p>
+                </button>
+                <button title="Invite friend" class="header-play-button" id="header-play-button-2">
+                    <img src="/static/img/icons/player-icon.svg" alt="Invite friend">
+                    <p>Invite friend</p>
+                </button>
             </div>
         </div>
     </header>
+    <div class="content">
+        <div class="user-section">
+            <div class="user-section-profile">
+                <a href="">
+                    <div class="user-section-profilepic"></div>
+                </a>
+                <h1>Username</h1>
+            </div>
+            <div class="user-section-stats-container">
+                <p class="user-section-stats-headline">STATS</p>
+                <div class="user-section-stats-divider"></div>
+                <p><b>Wins: </b>10</p>
+                <div class="user-section-stats-divider"></div>
+                <p><b>Losses: </b>10</p>
+                <div class="user-section-stats-divider"></div>
+                <p><b>Games played: </b>10</p>
+                <div class="user-section-stats-divider"></div>
+                <p><b>Win/Loss ratio: </b>3.2</p>
+                <div class="user-section-stats-divider"></div>
+                <br>
+                <a href="/logout" class="log-out-link">Log out</a>
+            </div>
+        </div>
+        <div class="content-divider"></div>
+        <div class="navigate-section">
+
+        </div>
+        <div class="content-divider"></div>
+        <div class="online-section">
+
+        </div>
+    </div>
 </body>
 <script>
     {{universal_js | safe}}

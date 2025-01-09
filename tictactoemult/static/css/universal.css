@@ -6,6 +6,7 @@
     --primary-red: #810D0D;
     --background-white: rgb(230, 230, 230);
     --cancel-grey: rgb(100, 100, 100);
+    --warning-red: #d44848;
 }
 
 body {
