@@ -146,7 +146,6 @@ header {
 .user-section-profilepic {
     width: 50px;
     height: 50px;
-    background-image: url(/static/img/profile_pictures/defaultprofile.jpg);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;

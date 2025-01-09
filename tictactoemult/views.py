@@ -105,6 +105,10 @@ def login(request):
 
 # Function to render main page
 def main(request):
+    # If user is not logged in, redirect them
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
+
     context = {}
     context['universal_css'] = universal_css
     context['universal_js'] = universal_js
@@ -112,6 +116,22 @@ def main(request):
         context['main_css'] = data.read()
     with open(static_dir + '\\js\\main.js', 'r') as data:
         context['main_js'] = data.read()
+
+    # Get information about user for things like profilepic, username etc
+    user_id = request.session.get("user_id")
+    if users.objects.filter(user_id=user_id).exists():
+        user = users.objects.get(user_id=user_id)
+        context["user"] = user
+    else:
+        # If user_id is not valid, force user to log in again
+        request.session.flush()
+        response = HttpResponseRedirect("/")
+        # Delete stayloggedin cookie if it is set
+        if "stay_loggedin" in request.COOKIES.keys():
+            response.delete_cookie('stay_loggedin')
+        # Redirect to login page
+        return response
+
     return render(request, 'main.html', context)
 
 # Function to render account creation page
@@ -387,3 +407,17 @@ def reset_password(request):
             return HttpResponse("error")
     else:
         return render(request, 'error_pages/405.html')
+
+# Logs the user out
+def logout(request):
+    # Remove all session variables
+    request.session.flush()
+
+    response = HttpResponseRedirect("/")
+
+    # Delete stayloggedin cookie if it is set
+    if "stay_loggedin" in request.COOKIES.keys():
+        response.delete_cookie('stay_loggedin')
+
+    # Redirect to login page
+    return response
