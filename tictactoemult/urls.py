@@ -14,5 +14,7 @@ urlpatterns = [
     path('account_recovery_code', views.account_recovery_code),
     path('account_recovery_final', views.account_recovery_final),
     path('reset_password', views.reset_password),
-    path('logout', views.logout)
+    path('logout', views.logout),
+    path('settings', views.settings),
+    path('edit_profile', views.edit_profile)
 ]

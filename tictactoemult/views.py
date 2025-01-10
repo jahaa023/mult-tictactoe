@@ -421,3 +421,29 @@ def logout(request):
 
     # Redirect to login page
     return response
+
+# Renders settings page
+def settings(request):
+    # If user is not logged in, redirect
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
+    
+    context = {}
+
+    # Get user info to display
+    user_id = request.session.get("user_id")
+    user = users.objects.get(user_id=user_id)
+    context["user"] = user
+
+    context['universal_css'] = universal_css
+    context['universal_js'] = universal_js
+    with open(static_dir + '\\css\\settings.css', 'r') as data:
+        context['settings_css'] = data.read()
+    with open(static_dir + '\\js\\settings.js', 'r') as data:
+        context['settings_js'] = data.read()
+
+    return render(request, 'settings.html', context)
+
+# renders page for editing profile in user settings
+def edit_profile(request):
+    return render(request, "settings/edit_profile.html")

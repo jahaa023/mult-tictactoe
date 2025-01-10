@@ -29,3 +29,20 @@ $('#header-play-button-2').mouseleave(function() {
         width:'400px'
     });
 })
+
+// Event listeners
+document.getElementById("leaderboard-button").addEventListener("click", function(){
+    window.location = "/leaderboard"
+})
+
+document.getElementById("settings-button").addEventListener("click", function(){
+    window.location = "/settings"
+})
+
+document.getElementById("friends-button").addEventListener("click", function(){
+    window.location = "/friends"
+})
+
+document.getElementById("about-button").addEventListener("click", function(){
+    window.location = "/about"
+})

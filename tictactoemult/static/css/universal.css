@@ -13,3 +13,25 @@ body {
     background-color: var(--background-white);
     margin: 0;
 }
+
+#confirmContainer {
+    position: fixed;
+    top: 0;
+    text-align: center;
+    font-family: "Roboto", serif;
+    font-weight: 500;
+    color: white;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 25px;
+    padding-right: 25px;
+    margin-top: 15px;
+    font-size: 1rem;
+    border-radius: 20px;
+    background-color: rgba(0, 0, 0, 0.700);
+    width: 80%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    display: none;
+}

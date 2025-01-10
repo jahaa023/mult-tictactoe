@@ -16,3 +16,29 @@ function changeVisibility(inputID, buttonID){
         visibilityButton.setAttribute('title', 'Show password')
     }
 }
+
+// Shows a black bar at top of screen with a message and fades it out
+function showConfirm(message, duration = 1000) {
+    $("#confirmContainer").stop( true, true ).fadeOut();
+    var confirmContainer = document.getElementById("confirmContainer")
+    confirmContainer.style.display = "inline"
+    confirmContainer.innerHTML = message
+    $('#confirmContainer').delay(duration).fadeOut(1000)
+}
+
+// Does a GET request, and loads contents into element
+function ajaxGet(staticpath, location, onload) {
+    $.get(staticpath, function(data){
+        var insertContainer = document.getElementById(location)
+        insertContainer.innerHTML = data
+    })
+    .done(function() {
+        switch (onload) {
+            case "something":
+                alert("bruh")
+        }
+    })
+    .fail(function() {
+        showConfirm("Something went wrong")
+    });
+}
