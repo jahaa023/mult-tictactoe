@@ -244,8 +244,108 @@ header {
 }
 
 .online-section {
-    height: 80%;
-    width: 30%;
+    height: 100%;
+    width: calc(30% - 10px);
+    padding-left: 10px;
+}
+
+.online-section h1{
+    margin: 0;
+    height: 20%;
+    display: flex;
+    align-items: center;
+    color: var(--background-white);
+    font-size: 2rem;
+}
+
+.online-friends-container {
+    width: calc(100% - 4px);
+    height: calc(73% - 4px);
+    background-color: var(--background-white);
+    border-radius: 15px;
+    border: solid #21212160 2px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.friends-list-link {
+    position: relative;
+    top: 10px;
+    color: var(--background-white);
+}
+
+.online-friends-row {
+    width: 100%;
+    height: 50px;
+    border-bottom: solid #21212160 2px;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.online-friends-row-profilepic {
+    width: 30px;
+    height: 30px;
+    background-color: teal;
+    border-radius: 32px;
+    margin-right: 5px;
+    margin-left: 10px;
+}
+
+.online-friends-row-nickname {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--primary-black);
+    max-width: calc(100% - 150px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-wrap: nowrap;
+}
+
+.online-friends-row-profile {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    width: 100%;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.online-friends-row-profile:hover {
+    text-decoration: underline;
+}
+
+.online-friends-row-profile:hover > .online-friends-row-profilepic {
+    filter: brightness(50%);
+}
+
+.online-friends-row-button {
+    width: 75px;
+    height: 30px;
+    position: absolute;
+    right: 0;
+    margin-right: 15px;
+    cursor: pointer;
+    font-family: "Roboto", serif;
+    color: var(--primary-black);
+    border: none;
+    border-radius: 5px;
+    border: solid 1px var(--primary-black);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.online-friends-row-button:hover {
+    background-color: var(--primary-black);
+    color: var(--background-white);
+}
+
+.mobile-dropdown-button-container {
+    display: none;
+}
+
+.mobile-dropdown-background {
+    display: none;
 }
 
 @media screen and (max-width: 1290px) {
@@ -259,6 +359,167 @@ header {
         justify-content: center;
         display: flex;
         margin-left: 0;
+    }
+
+    .navigate-section {
+        display: none;
+    }
+
+    .content-divider {
+        display: none;
+    }
+
+    .content {
+        flex-direction: column-reverse;
+        justify-content: center;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        height: fit-content;
+        gap: 15px;
+    }
+
+    .content-divider-mobile {
+        display: block;
+        width: 100%;
+        height: 2px;
+        background-color: rgba(255, 255, 255, 0.5);
+        border-radius: 2px;
+    }
+
+    .online-friends-container {
+        height: 78%;
+    }
+
+    .friends-list-link {
+        display: none;
+    }
+
+    .user-section {
+        width: 100%;
+        height: 400px;
+    }
+
+    .online-section {
+        width: 100%;
+        height: 400px;
+        padding-left: 0;
+    }
+
+    .mobile-dropdown-button-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        margin: 15px;
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        background-color: var(--background-white);
+        border: solid #21212160 2px;
+        z-index: 999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .mobile-dropdown-button-container button {
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        background-color: transparent;
+        border: none;
+        background-image: url(static/img/icons/dropdown.svg);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
+    .mobile-dropdown-background {
+        width: 100%;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 999;
+        background-color: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(10px);
+    }
+
+    .mobile-dropdown-container {
+        width: 0px;
+        padding: 10px;
+        height: calc(100vh - 20px);
+        position: absolute;
+        top: 0;
+        left: 0;
+        overflow: hidden;
+        background-color: var(--primary-black);
+    }
+
+    .mobile-dropdown-container h1 {
+        margin: 0;
+        padding: 0;
+        font-family: "Roboto", serif;
+        color: var(--background-white);
+    }
+
+    .mobile-dropdown-exit {
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 10px;
+        margin: 10px;
+        background-color: var(--primary-black);
+        border: none;
+        background-image: url(static/img/icons/x.svg);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 80%;
+        cursor: pointer;
+    }
+
+    .mobile-dropdown-divider {
+        width: 100%;
+        height: 2px;
+        border-radius: 2px;
+        background-color: rgba(255, 255, 255, 0.5);
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+
+    .mobile-dropdown-links-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .mobile-dropdown-links-container a{
+        font-size: 1.7rem;
+        color: var(--background-white);
+        text-decoration: none;
+        font-family: "Roboto", serif;
+        text-wrap: nowrap;
+    }
+
+    .mobile-dropdown-links-container a:hover {
+        text-decoration: underline;
+    }
+
+    .mobile-dropdown-logout {
+        font-size: 1.7rem;
+        color: var(--warning-red);
+        text-decoration: none;
+        font-family: "Roboto", serif;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        margin: 15px;
+        text-wrap: nowrap;
+    }
+
+    .mobile-dropdown-logout:hover {
+        text-decoration: underline;
     }
 }
 

@@ -19,6 +19,23 @@
 </head>
 <body id="mainbody">
     <div id="confirmContainer"></div>
+    <div class="mobile-dropdown-button-container">
+        <button id="dropdown-button"></button>
+    </div>
+    <div class="mobile-dropdown-background" id="mobile-dropdown-background">
+        <div class="mobile-dropdown-container" id="mobile-dropdown-container">
+            <button class="mobile-dropdown-exit" id="dropdown-button-exit"></button>
+            <h1>Navigate</h1>
+            <div class="mobile-dropdown-divider"></div>
+            <div class="mobile-dropdown-links-container">
+                <a href="">Leaderboard</a>
+                <a href="/settings">Settings</a>
+                <a href="">Friends</a>
+                <a href="">About</a>
+            </div>
+            <a href="/logout" class="mobile-dropdown-logout">Log out</a>
+        </div>
+    </div>
     <header>
         <div class="header-play-container">
             <div class="header-play-logo-container">
@@ -74,8 +91,19 @@
             </div>
         </div>
         <div class="content-divider"></div>
+        <div class="content-divider-mobile"></div>
         <div class="online-section">
-
+            <h1>Online friends</h1>
+            <div class="online-friends-container">
+                <div class="online-friends-row">
+                    <div class="online-friends-row-profile" title="View profile">
+                        <div class="online-friends-row-profilepic"></div>
+                        <p class="online-friends-row-nickname">BIMBOMSLIMSAT</p>
+                    </div>
+                    <button class="online-friends-row-button" title="Invite friend to match">Invite</button>
+                </div>
+            </div>
+            <a href="" class="friends-list-link">Friends List</a>
         </div>
     </div>
 </body>

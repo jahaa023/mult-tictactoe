@@ -46,3 +46,17 @@ document.getElementById("friends-button").addEventListener("click", function(){
 document.getElementById("about-button").addEventListener("click", function(){
     window.location = "/about"
 })
+
+document.getElementById("dropdown-button").addEventListener("click", function() {
+    document.getElementById("mobile-dropdown-background").style.display = "inline"
+    $('#mobile-dropdown-container').animate({
+        width:'300px'
+    });
+})
+
+document.getElementById("dropdown-button-exit").addEventListener("click", function() {
+    $('#mobile-dropdown-container').animate({
+        width:'0px'
+    }, 200);
+    $('#mobile-dropdown-background').delay(200).fadeOut(200)
+})

@@ -27,16 +27,13 @@ function showConfirm(message, duration = 1000) {
 }
 
 // Does a GET request, and loads contents into element
-function ajaxGet(staticpath, location, onload) {
+function ajaxGet(staticpath, location, onload = function(){}) {
     $.get(staticpath, function(data){
         var insertContainer = document.getElementById(location)
         insertContainer.innerHTML = data
     })
     .done(function() {
-        switch (onload) {
-            case "something":
-                alert("bruh")
-        }
+        onload();
     })
     .fail(function() {
         showConfirm("Something went wrong")
