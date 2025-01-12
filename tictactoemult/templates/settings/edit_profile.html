@@ -5,4 +5,30 @@
         font-weight: 600;
     }
 </style>
-<h1>ddjkldj</h1>
+<style>
+    {{edit_profile_css}}
+</style>
+<h1 class="settings-headline">Edit your profile</h1>
+<i>Click the elements to change them</i>
+<form action="/editprofile_savechanges" method="post">
+    <div class="edit-profile-container">
+        {% csrf_token %}
+        <div class="edit-profile-banner">
+            <div class="edit-profile-profilepic-container">
+                <div class="edit-profile-profilepic" title="Change profile picture" style="background-image: url(static/img/profile_pictures/{{user.profile_picture}});"></div>
+            </div>
+        </div>
+        <div class="edit-profile-name-container">
+            {{form.nickname}}
+            <i id="edit-profile-username">{{user.username}}</i>
+        </div>
+        {{form.description}}
+        <div class="description-charcount-container">
+            <i id="description-charcount">4/500</i>
+        </div>
+    </div>
+    <button type="submit">Save changes</button>
+</form>
+<script>
+    
+</script>

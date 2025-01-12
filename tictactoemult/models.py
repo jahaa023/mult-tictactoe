@@ -7,6 +7,7 @@ import uuid
 class users(models.Model):
     user_id = models.UUIDField(primary_key=True, default=uuid.uuid4,editable=False)
     username = models.CharField(max_length=30)
+    nickname = models.CharField(max_length=30, null=True)
     password = models.CharField(max_length=255)
     email = models.CharField(max_length=40)
     joindate = models.CharField(max_length=64, default='0')

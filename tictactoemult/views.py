@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
-from .forms import LoginForm, CreateAccountForm, AccountRecoveryForm1, AccountRecoveryForm2, AccountRecoveryFormNewPassword
+from .forms import LoginForm, CreateAccountForm, AccountRecoveryForm1, AccountRecoveryForm2, AccountRecoveryFormNewPassword, EditProfileForm
 from django.contrib.auth.hashers import make_password, check_password
 from .models import users, recovery_codes
 import os
@@ -154,6 +154,7 @@ def create_account_form_handler(request):
 
         if form.is_valid():
             username = form.cleaned_data["username"]
+            nickname = form.cleaned_data["nickname"]
             password = form.cleaned_data["password"]
             email = form.cleaned_data["email"]
             description = form.cleaned_data["description"]
@@ -191,6 +192,7 @@ def create_account_form_handler(request):
             # Register user to database
             user = users(
                 username=username,
+                nickname=nickname,
                 password=password_hash,
                 email=email,
                 joindate=joindate,
@@ -446,4 +448,18 @@ def settings(request):
 
 # renders page for editing profile in user settings
 def edit_profile(request):
-    return render(request, "settings/edit_profile.html")
+    context = {}
+
+    # Get user info to display
+    user_id = request.session.get("user_id")
+    if users.objects.filter(user_id=user_id).exists():
+        user = users.objects.get(user_id=user_id)
+        context["user"] = user
+        nickname = user.nickname
+        description = user.description
+    context['form'] = EditProfileForm(nickname, description)
+
+    with open(static_dir + '\\css\\settings\\edit-profile.css', 'r') as data:
+        context['edit_profile_css'] = data.read()
+
+    return render(request, "settings/edit_profile.html", context)
