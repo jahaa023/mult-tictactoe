@@ -14,7 +14,6 @@
 .edit-profile-banner {
     width: 100%;
     height: 216px;
-    background-color: rgb(78, 65, 40);
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
 }
@@ -35,11 +34,13 @@
     background-size: cover;
     background-repeat: no-repeat;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 25%);
+    position: relative;
+    overflow: hidden;
 }
 
-.edit-profile-profilepic:hover {
+.profilepic-hover:hover {
+    opacity: 1;
     cursor: pointer;
-    filter: brightness(0.5);
 }
 
 .edit-profile-name-container {
@@ -104,4 +105,134 @@ textarea {
 
 input {
     font-family: inherit;
+}
+
+button {
+    font-family: inherit;
+}
+
+.save-changes-button {
+    margin-top: 15px;
+    padding: 12px;
+    font-family: "Roboto", serif;
+    color: var(--primary-red);
+    border: 2px solid var(--primary-red);
+    border-radius: 10px;
+    font-size: 1.3rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 15px;
+    background-color: var(--background-white);
+}
+
+.save-changes-button:hover {
+    color: var(--background-white);
+    background-color: var(--primary-red);
+}
+
+.profilepic-hover {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-image: url(static/img/icons/pencil.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 40%;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+}
+
+@media screen and (max-height: 857px) {
+    .edit-profile-banner {
+        height: 180px;
+    }
+
+    .edit-profile-profilepic-container {
+        height: 180px;
+        width: 180px;
+        top: 90px;
+    }
+
+    .edit-profile-profilepic {
+        height: 180px;
+        width: 180px;
+    }
+
+    .edit-profile-name-container {
+        margin-left: 235px;
+    }
+
+    .edit-profile-description {
+        height: 150px;
+    }
+}
+
+@media screen and (max-width: 1120px) {
+    .edit-profile-banner {
+        height: 180px;
+    }
+
+    .edit-profile-profilepic-container {
+        height: 180px;
+        width: 180px;
+    }
+
+    .edit-profile-profilepic {
+        height: 180px;
+        width: 180px;
+    }
+
+    .edit-profile-name-container {
+        margin-left: 235px;
+    }
+
+    .edit-profile-description {
+        height: 150px;
+    }
+}
+
+@media screen and (max-width: 775px) {
+    .edit-profile-profilepic-container {
+        left: 10px;
+    }
+
+    .edit-profile-name-container {
+        width: calc(100% - 10px);
+        margin-top: 60px;
+        margin-left: 10px;
+        height: fit-content;
+    }
+
+    .edit-profile-banner {
+        height: 150px;
+    }
+
+    .edit-profile-profilepic-container {
+        height: 100px;
+        width: 100px;
+        top: 100px;
+    }
+
+    .edit-profile-profilepic {
+        height: 100px;
+        width: 100px;
+    }
+
+    .edit-profile-nickname {
+        font-size: 1.7rem;
+    }
+    
+    #edit-profile-username {
+        font-size: 1.1rem;
+    }
+
+    .settings-headline {
+        font-size: 2rem;
+    }
+
+    .edit-profile-description {
+        font-size: 1rem;
+    }
 }

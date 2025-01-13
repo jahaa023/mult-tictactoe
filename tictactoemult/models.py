@@ -13,6 +13,7 @@ class users(models.Model):
     joindate = models.CharField(max_length=64, default='0')
     description = models.CharField(max_length=300, default='No description')
     profile_picture = models.CharField(max_length=128, default='defaultprofile.jpg')
+    banner_color = models.CharField(max_length=32, default="#969696")
     stayloggedin_token = models.UUIDField(default=uuid.uuid4,editable=False)
 
 # Model for recovery codes table for account recovery

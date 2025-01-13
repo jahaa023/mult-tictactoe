@@ -1,5 +1,6 @@
 from django import forms
 from django.core.validators import RegexValidator
+from .models import users
 
 # Form for logging in from the index page
 class LoginForm(forms.Form):
@@ -28,10 +29,3 @@ class AccountRecoveryForm2(forms.Form):
 class AccountRecoveryFormNewPassword(forms.Form):
     new_password = forms.CharField(label='', max_length=32, widget=forms.PasswordInput(attrs={'placeholder': 'New password'}))
     new_password_confirm = forms.CharField(label='', max_length=32, widget=forms.PasswordInput(attrs={'placeholder': 'Confirm new password'}))
-
-# Form for editing profile in settings
-class EditProfileForm(forms.Form):
-    def __init__(self, nickname, description):
-        super().__init__()
-        self.fields['nickname'] = forms.CharField(label='', required=False, max_length=30, min_length=5, widget=forms.TextInput(attrs={'value': nickname, 'class': 'edit-profile-nickname'}))
-        self.fields['description'] = forms.CharField(label='', required=False, max_length=300, widget=forms.Textarea(attrs={'value': 'Description', 'class' : 'edit-profile-description'}), initial=description)

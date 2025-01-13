@@ -24,8 +24,37 @@ function loadEditProfile() {
                 charcount.style.color = "red"
             }
         })
+
+        // Event listener for edit profile form
+        $('#edit-profile-savechanges').on("submit", function (e){
+            e.preventDefault();
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: '/editprofile_savechanges',
+                type: 'POST',
+                data: formData,
+                success: function (response) {
+                    switch(response) {
+                        case "error":
+                            showConfirm("Something went wrong. Make sure inputs are filled.")
+                            break
+                        case "ok":
+                            showConfirm("Changes saved!");
+                    }
+                },
+                error: function() {
+                    showConfirm("Something went wrong. Try again later.")
+                },
+                cache: false,
+                contentType: false,
+                processData: false,
+            });
+        })
     });
 }
+
+loadEditProfile();
 
 // Event listeners for navbar
 
@@ -33,4 +62,21 @@ document.getElementById("edit-profile").addEventListener("click", function() {
     loadEditProfile();
 })
 
-loadEditProfile();
+document.getElementById("dropdown-button").addEventListener("click", function() {
+    document.getElementById("navbar-background").style.display = "inline"
+    document.getElementById("settings-navbar").style.display = "inline"
+    $('#settings-navbar').animate({
+        width:'290px'
+    });
+})
+
+document.getElementById("dropdown-button-exit").addEventListener("click", function() {
+    $('#settings-navbar').animate({
+        width:'0px'
+    }, 200);
+    setTimeout(function() {
+        document.getElementById("settings-navbar").style.display = "none"
+    }, 200)
+    $('#navbar-background').delay(200).fadeOut(200)
+})
+

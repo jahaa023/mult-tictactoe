@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
-from .forms import LoginForm, CreateAccountForm, AccountRecoveryForm1, AccountRecoveryForm2, AccountRecoveryFormNewPassword, EditProfileForm
+from django.http import HttpResponse, HttpResponseRedirect, QueryDict
+from .forms import LoginForm, CreateAccountForm, AccountRecoveryForm1, AccountRecoveryForm2, AccountRecoveryFormNewPassword
 from django.contrib.auth.hashers import make_password, check_password
 from .models import users, recovery_codes
 import os
@@ -455,11 +455,43 @@ def edit_profile(request):
     if users.objects.filter(user_id=user_id).exists():
         user = users.objects.get(user_id=user_id)
         context["user"] = user
-        nickname = user.nickname
-        description = user.description
-    context['form'] = EditProfileForm(nickname, description)
+    else:
+        return HttpResponse("error")
 
     with open(static_dir + '\\css\\settings\\edit-profile.css', 'r') as data:
         context['edit_profile_css'] = data.read()
 
     return render(request, "settings/edit_profile.html", context)
+
+# Saves the changes done in settings to your profile
+def editprofile_savechanges(request):
+    if request.method == "POST":
+        # Only POST requests are allowed
+        form = QueryDict.dict(request.POST)
+
+        # Get inputs
+        nickname = form["nickname"]
+        description = form["description"]
+
+        # Check if nickname is empty, under 5 chars or over 30 chars
+        if len(nickname) > 30 or len(nickname) < 5:
+            return HttpResponse("error")
+
+        # If description is empty, change it to "No description"
+        if not description:
+            description = "No description"
+
+        # Save changes to database
+        user_id = request.session.get("user_id")
+        if users.objects.filter(user_id=user_id).exists():
+            user = users.objects.get(user_id=user_id)
+            user.nickname = nickname
+            user.description = description
+
+            user.save()
+        else:
+            return HttpResponse("error")
+
+        return HttpResponse("ok")
+    else:
+        return render(request, 'error_pages/405.html')

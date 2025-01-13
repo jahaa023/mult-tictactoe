@@ -10,24 +10,26 @@
 </style>
 <h1 class="settings-headline">Edit your profile</h1>
 <i>Click the elements to change them</i>
-<form action="/editprofile_savechanges" method="post">
+<form action="/editprofile_savechanges" id="edit-profile-savechanges" method="post">
     <div class="edit-profile-container">
         {% csrf_token %}
-        <div class="edit-profile-banner">
+        <div class="edit-profile-banner" style="background-color: {{user.banner_color}};">
             <div class="edit-profile-profilepic-container">
-                <div class="edit-profile-profilepic" title="Change profile picture" style="background-image: url(static/img/profile_pictures/{{user.profile_picture}});"></div>
+                <div class="edit-profile-profilepic" title="Change profile picture" style="background-image: url(static/img/profile_pictures/{{user.profile_picture}});">
+                    <div class="profilepic-hover"></div>
+                </div>
             </div>
         </div>
         <div class="edit-profile-name-container">
-            {{form.nickname}}
+            <input required type="text" name="nickname" maxlength="30" minlength="5" class="edit-profile-nickname" id="id_nickname" value="{{user.nickname}}">
             <i id="edit-profile-username">{{user.username}}</i>
         </div>
-        {{form.description}}
+        <textarea name="description" id="id_description" class="edit-profile-description">{{user.description}}</textarea>
         <div class="description-charcount-container">
             <i id="description-charcount">4/500</i>
         </div>
     </div>
-    <button type="submit">Save changes</button>
+    <button type="submit" class="save-changes-button" title="Save changes">Save changes</button>
 </form>
 <script>
     
