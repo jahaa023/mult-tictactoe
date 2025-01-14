@@ -568,7 +568,7 @@ def profilepic_cropped_upload(request):
 
         # Delete old profile pic from server
         old_profilepic_path = (profile_pictures_path + "\\" + user.profile_picture)
-        if os.path.exists(old_profilepic_path):
+        if os.path.exists(old_profilepic_path) and not user.profile_picture == "defaultprofile.jpg" :
             os.remove(old_profilepic_path)
 
 
