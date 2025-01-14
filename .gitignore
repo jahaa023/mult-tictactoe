@@ -5,3 +5,4 @@ tictactoemult/custom_settings.py
 /Lib
 /Scripts
 pyvenv.cfg
+/tictactoemult/static/img/profile_pictures
