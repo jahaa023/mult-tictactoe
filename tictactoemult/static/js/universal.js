@@ -49,3 +49,8 @@ function hideDarkContainer() {
     darkContainer.innerHTML = "";
     $('#dark-container').fadeOut(300)
 }
+
+// Shows a modal with a profile based on user id
+function displayProfile(user_id) {
+    ajaxGet("/display_profile/" + user_id + "/", "dark-container")
+}

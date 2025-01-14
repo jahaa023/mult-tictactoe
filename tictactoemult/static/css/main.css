@@ -415,7 +415,7 @@ header {
         border-radius: 10px;
         background-color: var(--background-white);
         border: solid #21212160 2px;
-        z-index: 999;
+        z-index: 997;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -439,7 +439,7 @@ header {
         position: fixed;
         top: 0;
         left: 0;
-        z-index: 999;
+        z-index: 998;
         background-color: rgba(0, 0, 0, 0.7);
         backdrop-filter: blur(10px);
     }

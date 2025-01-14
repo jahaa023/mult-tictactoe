@@ -1,0 +1,20 @@
+<style>
+    {{display_profile_css | safe}}
+</style>
+<div class="display-profile-container">
+    <div class="display-profile-banner" style="background-color: {{banner_color}};">
+        <div class="display-profile-profilepic-container">
+            <div class="display-profile-profilepic" style="background-image: url(static/img/profile_pictures/{{profile_picture}});"></div>
+        </div>
+    </div>
+    <div class="display-profile-name-container">
+        <h1>{{nickname}}</h1>
+        <i>{{username}}</i>
+    </div>
+    <div class="display-profile-description">
+        {{description}}
+    </div>
+    <i class="display-profile-joindate">Join date: {{joindate}}</i>
+    <br>
+    <button title="Close" onclick="hideDarkContainer()" class="display-profile-close">Close</button>
+</div>

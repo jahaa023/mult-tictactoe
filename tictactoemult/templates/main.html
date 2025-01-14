@@ -18,6 +18,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body id="mainbody">
+    <div id="dark-container"></div>
     <div id="confirmContainer"></div>
     <div class="mobile-dropdown-button-container">
         <button id="dropdown-button"></button>
@@ -56,7 +57,7 @@
     <div class="content">
         <div class="user-section">
             <div class="user-section-profile">
-                <a href="">
+                <a href="#" onclick="displayProfile('{{user.user_id}}')">
                     <div class="user-section-profilepic" style="background-image: url(/static/img/profile_pictures/{{user.profile_picture}});"></div>
                 </a>
                 <h1>{{user.nickname}}</h1>

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.http import HttpResponse, HttpResponseRedirect, QueryDict
@@ -580,3 +580,20 @@ def profilepic_cropped_upload(request):
         return HttpResponse("ok")
     else :
         return render(request, 'error_pages/405.html')
+
+def display_profile(request, uid):
+    # Get user details
+    user = get_object_or_404(users, user_id=uid)
+    context = {}
+    context["nickname"] = user.nickname
+    context["username"] = user.username
+    context["banner_color"] = user.banner_color
+    context["profile_picture"] = user.profile_picture
+    context["description"] = user.description
+    context["joindate"] = user.joindate
+
+    # Get static files
+    with open(static_dir + '\\css\\modals\\display-profile.css', 'r') as data:
+        context['display_profile_css'] = data.read()
+
+    return render(request, "modals/display_profile.html", context)

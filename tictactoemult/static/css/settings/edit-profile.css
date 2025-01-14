@@ -27,15 +27,15 @@
 }
 
 .edit-profile-profilepic {
-    height: 216px;
-    width: 216px;
+    height: 196px;
+    width: 196px;
     border-radius: 216px;
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
-    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 25%);
     position: relative;
     overflow: hidden;
+    border: 10px solid #D9D9D9;
 }
 
 .profilepic-hover:hover {
@@ -156,8 +156,8 @@ button {
     }
 
     .edit-profile-profilepic {
-        height: 180px;
-        width: 180px;
+        height: 160px;
+        width: 160px;
     }
 
     .edit-profile-name-container {
@@ -181,8 +181,8 @@ button {
     }
 
     .edit-profile-profilepic {
-        height: 180px;
-        width: 180px;
+        height: 160px;
+        width: 160px;
     }
 
     .edit-profile-name-container {
@@ -201,7 +201,7 @@ button {
 
     .edit-profile-name-container {
         width: calc(100% - 10px);
-        margin-top: 60px;
+        margin-top: 70px;
         margin-left: 10px;
         height: fit-content;
     }

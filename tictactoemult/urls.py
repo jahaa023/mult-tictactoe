@@ -20,5 +20,6 @@ urlpatterns = [
     path('editprofile_savechanges', views.editprofile_savechanges),
     path('profilepic_upload', views.profilepic_upload),
     path('profilepic_crop', views.profilepic_crop),
-    path('profilepic_cropped_upload', views.profilepic_cropped_upload)
+    path('profilepic_cropped_upload', views.profilepic_cropped_upload),
+    path('display_profile/<str:uid>/', views.display_profile, name='uid')
 ]
