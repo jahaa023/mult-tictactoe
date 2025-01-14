@@ -34,8 +34,18 @@ function ajaxGet(staticpath, location, onload = function(){}) {
     })
     .done(function() {
         onload();
+        if (location == "dark-container") {
+            $('#dark-container').fadeIn(300)
+        }
     })
     .fail(function() {
         showConfirm("Something went wrong")
     });
+}
+
+// Hides dark container div
+function hideDarkContainer() {
+    var darkContainer = document.getElementById("dark-container");
+    darkContainer.innerHTML = "";
+    $('#dark-container').fadeOut(300)
 }

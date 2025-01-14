@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 from django.http import HttpResponse, HttpResponseRedirect, QueryDict
 from .forms import LoginForm, CreateAccountForm, AccountRecoveryForm1, AccountRecoveryForm2, AccountRecoveryFormNewPassword
 from django.contrib.auth.hashers import make_password, check_password
@@ -11,6 +13,8 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from .mail import send_mail
 import random
+import base64
+from colorthief import ColorThief
 
 # Create your views here.
 
@@ -494,4 +498,85 @@ def editprofile_savechanges(request):
 
         return HttpResponse("ok")
     else:
+        return render(request, 'error_pages/405.html')
+
+# Renders a modal for uploading profilepic
+def profilepic_upload(request):
+    context = {}
+    with open(static_dir + '\\css\\modals\\profilepic-upload.css', 'r') as data:
+        context['profilepic_upload_css'] = data.read()
+    return render(request, "modals/profilepic_upload.html", context)
+
+# Renders page for cropping profile picture
+def profilepic_crop(request):
+    # if blob isnt in url, redirect back to settings
+    blob = request.GET.get("blob", False)
+    if not blob:
+        return HttpResponseRedirect("/settings")
+    
+    # Get static files
+    context = {}
+    context['universal_css'] = universal_css
+    context['universal_js'] = universal_js
+    with open(static_dir + '\\css\\settings\\profilepic-crop.css', 'r') as data:
+        context['profilepic_crop_css'] = data.read()
+    with open(static_dir + '\\js\\profilepic_crop.js', 'r') as data:
+        context['profilepic_crop_js'] = data.read()
+
+    return render(request, "settings/profilepic_crop.html", context)
+
+# Handles upload of cropped profile picture
+def profilepic_cropped_upload(request):
+    if request.method == "POST":
+        # Convert post request to dict
+        form = QueryDict.dict(request.POST)
+        image_data = form["image_data"]
+
+        # Remove header from blob and get file extension
+        format, imgstr = image_data.split(';base64,')
+        ext = format.split("/")[-1]
+
+        # Create image from blob, convert from base64 to an image
+        image_data = base64.b64decode(imgstr)
+
+        # Get unix timestamp for file name
+        unix_now = int(time.time())
+        unix_now = str(unix_now)
+        image_name = unix_now + "." + ext
+
+        # Define path to where the image will be saved
+        profile_pictures_path = os.getcwd() + "\\tictactoemult\\static\\img\\profile_pictures"
+        image_path = os.path.join(profile_pictures_path, image_name)
+
+        # Save image
+        with open(image_path, 'wb') as f:
+            f.write(image_data)
+        
+        # Get most used color for banner color with color thief
+        color_thief = ColorThief(image_path)
+        dominant_color = color_thief.get_color(quality=1)
+
+        # Convert rgb value to one that can be used by CSS
+        css_rgb = "rgb" + str(dominant_color)
+
+        # Get user info
+        user_id = request.session.get("user_id")
+        if users.objects.filter(user_id=user_id).exists():
+            user = users.objects.get(user_id=user_id)
+        else:
+            return HttpResponse("error")
+
+        # Delete old profile pic from server
+        old_profilepic_path = (profile_pictures_path + "\\" + user.profile_picture)
+        if os.path.exists(old_profilepic_path):
+            os.remove(old_profilepic_path)
+
+
+        # Save new image name and banner color in database
+        user.profile_picture = image_name
+        user.banner_color = css_rgb
+        user.save()
+        
+        return HttpResponse("ok")
+    else :
         return render(request, 'error_pages/405.html')

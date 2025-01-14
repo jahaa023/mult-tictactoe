@@ -1,0 +1,128 @@
+/* Stylesheet for page for cropping profile picture */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+}
+
+.profilepic-crop-container {
+    width: 90%;
+    height: 85vh;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 25%);
+    background-color: var(--background-white);
+    border: 2px solid #ABABAB;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    padding: 20px;
+}
+
+.profilepic-cropperjs-container {
+    height: 100%;
+    width: 65%;
+}
+
+.profilepic-cropperjs-container img {
+    display: block;
+    max-width: 100%;
+}
+
+.profilepic-crop-preview-container {
+    height: 100%;
+    width: 35%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.profilepic-crop-preview-container h1 {
+    font-family: "Roboto", serif;
+    color: var(--primary-black);
+    margin-bottom: 20%;
+}
+
+.profilepic-crop-preview {
+    width: 60%;
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    border-radius: 100%;
+    border: solid 1px black;
+}
+
+.profilepic-crop-button-container {
+    width: 100%;
+    height: 60px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.profilepic-crop-button-container button {
+    width: 30%;
+    padding: 10px;
+    height: 60px;
+    margin-top: 20px;
+    border-radius: 10px;
+    border: solid var(--primary-red) 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-family: "Roboto", serif;
+    background-color: var(--background-white);
+    color: var(--primary-red);
+    font-weight: 500;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.profilepic-crop-button-container button:hover {
+    background-color: var(--primary-red);
+    color: var(--background-white);
+}
+
+#cancel-button {
+    background-color: var(--background-white);
+    color: var(--cancel-grey);
+    border: solid var(--cancel-grey) 4px;
+}
+
+#cancel-button:hover {
+    background-color: var(--cancel-grey);
+    color: var(--background-white);
+}
+
+@media screen and (max-width: 1180px) {
+    .profilepic-crop-container {
+        flex-direction: column;
+        height: 70vh;
+    }
+
+    .profilepic-cropperjs-container {
+        width: 100%;
+        height: 40%;
+    }
+
+    .profilepic-crop-button-container button {
+        width: 45%;
+    }
+
+    .profilepic-crop-preview-container {
+        width: 100%;
+    }
+
+    .profilepic-crop-preview {
+        width: 200px;
+    }
+
+    .profilepic-crop-preview-container h1 {
+        margin-bottom: 10px;
+    }
+}

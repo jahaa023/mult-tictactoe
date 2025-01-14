@@ -162,10 +162,11 @@ button {
 
     .edit-profile-name-container {
         margin-left: 235px;
+        margin-top: 5px;
     }
 
     .edit-profile-description {
-        height: 150px;
+        height: 130px;
     }
 }
 

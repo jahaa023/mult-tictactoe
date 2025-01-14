@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        {{profilepic_crop_css | safe}}
+    </style>
+    <style>
+        {{universal_css | safe}}
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe - Crop profile picture</title>
+    <link href="/static/img/favicon.ico" rel="icon" media="(prefers-color-scheme: light)">
+    <link href="/static/img/favicon-darkmode.ico" rel="icon" media="(prefers-color-scheme: dark)">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <!--Using Cropper js plugin, made by Fengyuan Chen (https://chenfengyuan.com)-->
+    <link  href="/static/lib/cropper_js/node_modules/cropperjs/dist/cropper.css" rel="stylesheet">
+    <script src="/static/lib/cropper_js/node_modules/cropperjs/dist/cropper.js"></script>
+</head>
+<body>
+    <div id="confirmContainer"></div>
+    <div class="profilepic-crop-container">
+        <div class="profilepic-cropperjs-container">
+            <img id="cropper-js-image">
+        </div>
+        <div class="profilepic-crop-preview-container">
+            <h1>Preview</h1>
+            <div class="profilepic-crop-preview"></div>
+            <div class="profilepic-crop-button-container">
+                <button title="Save profile picture" id="save-button">Save</button>
+                <button title="Cancel" id="cancel-button">Cancel</button>
+            </div>
+        </div>
+    </div>
+    {% csrf_token %}
+</body>
+<script>
+    {{universal_js | safe}}
+</script>
+<script>
+    {{profilepic_crop_js | safe}}
+</script>
+</html>

@@ -1,0 +1,23 @@
+<!--modal for uploading profilepic-->
+<style>
+    {{profilepic_upload_css | safe}}
+</style>
+<div id="profilepic-upload-body">
+    <div class="profilepic-upload-container">
+        <h1>Upload a profile picture</h1>
+        <i>Only these file types are supported</i>
+        <ul>
+            <li>JPG/JPEG</li>
+            <li>PNG</li>
+            <li>WebP</li>
+        </ul>
+
+        <label for="profilepic-upload" class="profilepic-upload-button" title="Upload profile picture">
+            <p>Upload profile picture</p>
+        </label>
+
+        <button class="profilepic-upload-cancel" id="profilepic-cancel" title="Cancel">Cancel</button>
+
+        <input type="file" accept="image/jpeg, image/png, image/webp" id="profilepic-upload" style="display: none;" >
+    </div>
+</div>

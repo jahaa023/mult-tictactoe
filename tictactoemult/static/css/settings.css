@@ -15,7 +15,7 @@
     height: 100%;
     background-color: var(--primary-black);
     color: white;
-    z-index: 999;
+    z-index: 998;
 }
 
 .settings-navbar-divider {
@@ -98,7 +98,7 @@
     left: 0;
     background-color: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(10px);
-    z-index: 998;
+    z-index: 997;
     display: none;
 }
 
@@ -110,7 +110,7 @@
     height: 60px;
     background-color: var(--background-white);
     border-bottom: solid #21212160 2px;
-    z-index: 997;
+    z-index: 996;
     display: none;
     align-items: center;
 }

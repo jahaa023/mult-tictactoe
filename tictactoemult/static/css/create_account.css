@@ -21,9 +21,8 @@
     font-family: "Roboto", serif;
     color: var(--primary-black);
     font-weight: 600;
-    position: fixed;
-    bottom: 0;
-    margin-bottom: 20px;
+    margin-top: 15px;
+    margin-bottom: 15px;
 }
 
 .backtologin-link:hover {

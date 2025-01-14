@@ -17,5 +17,8 @@ urlpatterns = [
     path('logout', views.logout),
     path('settings', views.settings),
     path('edit_profile', views.edit_profile),
-    path('editprofile_savechanges', views.editprofile_savechanges)
+    path('editprofile_savechanges', views.editprofile_savechanges),
+    path('profilepic_upload', views.profilepic_upload),
+    path('profilepic_crop', views.profilepic_crop),
+    path('profilepic_cropped_upload', views.profilepic_cropped_upload)
 ]

@@ -1,0 +1,92 @@
+/* Stylesheet for profilepic upload */
+#profilepic-upload-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+}
+
+.profilepic-upload-container {
+    padding: 40px;
+    width: fit-content;
+    height: fit-content;
+    background-color: var(--background-white);
+    border-radius: 15px;
+    border: 2px solid #ABABAB;
+}
+
+.profilepic-upload-container h1 {
+    font-family: "Roboto", serif;
+    color: var(--primary-black);
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+.profilepic-upload-container i {
+    font-family: "Roboto", serif;
+    color: var(--primary-black);
+    margin: 0;
+}
+
+.profilepic-upload-container ul {
+    margin: 0;
+    margin-top: 10px;
+}
+
+.profilepic-upload-container li {
+    font-family: "Roboto", serif;
+    color: var(--primary-black);
+    margin: 0;
+}
+
+.profilepic-upload-button {
+    max-width: 170px;
+    padding: 10px;
+    height: 25px;
+    margin-top: 20px;
+    border-radius: 10px;
+    border: solid var(--primary-red) 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-family: "Roboto", serif;
+    background-color: var(--background-white);
+    color: var(--primary-red);
+    font-weight: 500;
+}
+
+.profilepic-upload-cancel {
+    padding: 10px;
+    max-width: 150px;
+    margin-top: 20px;
+    border-radius: 10px;
+    border: solid var(--cancel-grey) 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-family: "Roboto", serif;
+    background-color: var(--background-white);
+    color: var(--cancel-grey);
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.profilepic-upload-button:hover {
+    background-color: var(--primary-red);
+    color: var(--background-white);
+}
+
+.profilepic-upload-cancel:hover {
+    background-color: var(--cancel-grey);
+    color: var(--background-white);
+}
+
+@media screen and (max-width: 450px) {
+    .profilepic-upload-container {
+        padding: 10px;
+        width: 310px;
+    }
+}

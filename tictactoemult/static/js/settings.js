@@ -51,6 +51,26 @@ function loadEditProfile() {
                 processData: false,
             });
         })
+
+        // Event listener for profile picture change
+        document.getElementById("profilepic").addEventListener("click", function(){
+            ajaxGet("/profilepic_upload", "dark-container", function() {
+                // shows a modal for uploading profile picture in dark container
+
+                // Add event listener for file input
+                document.getElementById("profilepic-upload").onchange = function(e) {
+                    // Convert file to blob
+                    blob_url = URL.createObjectURL(this.files[0]);
+                    // Redirect to cropping page
+                    window.location.href = "/profilepic_crop?blob=" + blob_url
+                };
+
+                // Add event listener for cancel button
+                document.getElementById("profilepic-cancel").addEventListener("click", function(){
+                    hideDarkContainer()
+                })
+            })
+        })
     });
 }
 
