@@ -9,6 +9,17 @@
     --warning-red: #d44848;
 }
 
+/* Text highlight on selection */
+::-moz-selection { 
+    color: var(--background-white);
+    background: var(--primary-red);
+}
+
+::selection {
+    color: var(--background-white);
+    background: var(--primary-red);
+}
+
 body {
     background-color: var(--background-white);
     margin: 0;

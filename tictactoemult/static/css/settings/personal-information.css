@@ -1,0 +1,129 @@
+/* Stylesheet for page for editing personal information */
+
+.personal-info-change-p {
+    font-weight: 600;
+    font-size: 1.3rem;
+    color: var(--primary-black);
+    margin: 0;
+}
+
+.personal-info-change-container {
+    width: 60%;
+    height: fit-content;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: white;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.personal-info-change-container * {
+    margin: 0;
+}
+
+.personal-info-change-email {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.change-email-button {
+    width: 100%;
+    height: fit-content;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: rgba(0, 0, 0, 0.350);
+    cursor: pointer;
+    text-indent: 10px;
+    position: relative;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.change-email-button:hover {
+    text-decoration: underline;
+}
+
+.change-email-button img {
+    position: absolute;
+    right: 0;
+    height: 100%;
+    aspect-ratio: 1/1;
+}
+
+#change-email-form {
+    display: none;
+}
+
+#change-email-form input {
+    margin-bottom: 10px;
+    width: 60%;
+    height: 30px;
+    border: solid var(--primary-black) 1px;
+    border-radius: 5px;
+    text-indent: 5px;
+    font-weight: 400;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.change-email-save-button {
+    padding: 12px;
+    font-family: "Roboto", serif;
+    color: var(--primary-red);
+    border: 2px solid var(--primary-red);
+    border-radius: 10px;
+    font-size: 1.3rem;
+    font-weight: 600;
+    cursor: pointer;
+    background-color: white;
+}
+
+.change-email-save-button:hover {
+    color: var(--background-white);
+    background-color: var(--primary-red);
+}
+
+.password-wrapper button {
+    width: 30px;
+    height: 30px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    background-image: url(/static/img/icons/eye-password-hide.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 70%;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    border-radius: 0;
+    border-left: 1px solid var(--primary-black);
+}
+
+.password-wrapper button:hover {
+    background-color: transparent;
+}
+
+@media screen and (max-width: 850px) {
+    .personal-info-change-container {
+        width: calc(100% - 60px);
+    }
+
+    .personal-info-change-email {
+        font-size: 1rem;
+    }
+
+    .settings-headline {
+        font-size: 2rem;
+    }
+}
+
+@media screen and (max-width: 625px) {
+    #change-email-form input {
+        width: 90%;
+    }
+}

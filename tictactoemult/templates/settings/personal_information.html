@@ -1,0 +1,42 @@
+<style>
+    #personal_information {
+        background-color: var(--background-white);
+        color: var(--primary-black);
+        font-weight: 600;
+    }
+</style>
+<style>
+    {{personal_information_css | safe}}
+</style>
+<h1 class="settings-headline">Your personal information</h1>
+
+<p class="personal-info-change-p">Change e-mail</p>
+<div class="personal-info-change-container">
+    <p>Current e-mail:</p>
+    <h1 class="personal-info-change-email">{{user.email}}</h1>
+    <div class="change-email-button" id="change-email-button" title="Change e-mail">
+        Change e-mail
+        <img id="change-email-button-icon" src="/static/img/icons/arrow-down.svg" alt="Change e-mail">
+    </div>
+    <form action="/change_email" method="post" id="change-email-form">
+        {% csrf_token %}
+        {{email_form}}
+        <button class="change-email-save-button" type="submit">Change email</button>
+    </form>
+</div>
+
+<p class="personal-info-change-p">Change password</p>
+<div class="personal-info-change-container">
+    <form action="/change_password">
+        {% csrf_token %}
+        <div class="password-wrapper">
+            {{passwordform.new_password}}
+            <button id="password-visibility-button" type="button" title="Show password"></button>
+        </div>
+        <div class="password-wrapper">
+            {{passwordform.new_password_confirm}}
+            <button id="password-visibility-button" type="button" title="Show password"></button>
+        </div>
+        <button class="change-email-save-button" type="submit">Change password</button>
+    </form>
+</div>

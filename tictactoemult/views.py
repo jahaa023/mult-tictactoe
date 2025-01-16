@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.http import HttpResponse, HttpResponseRedirect, QueryDict
-from .forms import LoginForm, CreateAccountForm, AccountRecoveryForm1, AccountRecoveryForm2, AccountRecoveryFormNewPassword
+from .forms import LoginForm, CreateAccountForm, AccountRecoveryForm1, AccountRecoveryForm2, AccountRecoveryFormNewPassword, PersonalInformationEmail
 from django.contrib.auth.hashers import make_password, check_password
 from .models import users, recovery_codes
 import os
@@ -581,6 +581,7 @@ def profilepic_cropped_upload(request):
     else :
         return render(request, 'error_pages/405.html')
 
+# Renders a modal of a users profile
 def display_profile(request, uid):
     # Get user details
     user = get_object_or_404(users, user_id=uid)
@@ -597,3 +598,24 @@ def display_profile(request, uid):
         context['display_profile_css'] = data.read()
 
     return render(request, "modals/display_profile.html", context)
+
+# Page in settings for changing personal information
+def personal_information(request):
+    context = {}
+    # Get user info to display
+    user_id = request.session.get("user_id")
+    if users.objects.filter(user_id=user_id).exists():
+        user = users.objects.get(user_id=user_id)
+        context["user"] = user
+    else:
+        return HttpResponse("error")
+    
+    # Get static files
+    with open(static_dir + '\\css\\settings\\personal-information.css', 'r') as data:
+        context['personal_information_css'] = data.read()
+
+    # Get forms
+    context["email_form"] = PersonalInformationEmail()
+    context["passwordform"] = AccountRecoveryFormNewPassword()
+
+    return render(request, "settings/personal_information.html", context)

@@ -76,10 +76,45 @@ function loadEditProfile() {
 
 loadEditProfile();
 
+// Funciton that hides mobile dropdown
+function hideDropdown() {
+    dropdown = document.getElementById("navbar-background")
+    if (window.getComputedStyle(dropdown).display !== 'none'){
+        $('#settings-navbar').animate({
+            width:'0px'
+        }, 200);
+        setTimeout(function() {
+            document.getElementById("settings-navbar").style.display = "none"
+        }, 200)
+        $('#navbar-background').delay(200).fadeOut(200)
+    }
+}
+
 // Event listeners for navbar
 
 document.getElementById("edit-profile").addEventListener("click", function() {
     loadEditProfile();
+    hideDropdown()
+})
+
+document.getElementById("personal_information").addEventListener("click", function() {
+    ajaxGet("/personal_information", "settings-page-container", function() {
+        hideDropdown()
+
+        // when change email button is pressed, show form for changing email
+        document.getElementById("change-email-button").addEventListener("click", function() {
+            emailForm = document.getElementById("change-email-form")
+            emailButtonIcon = document.getElementById("change-email-button-icon")
+
+            if (window.getComputedStyle(emailForm).display === 'none'){
+                emailForm.style.display = 'block';
+                emailButtonIcon.style.transform = "rotate(180deg)"
+            } else {
+                emailForm.style.display = "none";
+                emailButtonIcon.style.transform = "rotate(0deg)"
+            }
+        })
+    })
 })
 
 document.getElementById("dropdown-button").addEventListener("click", function() {
