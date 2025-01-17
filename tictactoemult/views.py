@@ -1,10 +1,8 @@
 from django.shortcuts import render, get_object_or_404
-from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
 from django.http import HttpResponse, HttpResponseRedirect, QueryDict
 from .forms import LoginForm, CreateAccountForm, AccountRecoveryForm1, AccountRecoveryForm2, AccountRecoveryFormNewPassword, PersonalInformationEmail
 from django.contrib.auth.hashers import make_password, check_password
-from .models import users, recovery_codes
+from .models import users, recovery_codes, friend_list, pending_friends
 import os
 import datetime
 import time
@@ -859,3 +857,7 @@ def change_password_modal_confirm(request):
             return HttpResponse("error")
     else :
         return render(request, 'error_pages/405.html')
+
+# Renders template for friends page
+def friends(request):
+    return render(request, "friends.html")

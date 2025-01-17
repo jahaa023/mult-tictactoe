@@ -21,3 +21,15 @@ class recovery_codes(models.Model):
     email = models.CharField(max_length=40)
     recovery_code = models.IntegerField()
     expire = models.IntegerField()
+
+# Model for friend list
+class friend_list(models.Model):
+    user_id_1 = models.UUIDField() #User id 1 is friends with user id 2
+    user_id_2 = models.UUIDField() #User id 2 is friends with user id 1
+    became_friends = models.CharField(max_length=64) # Timestamp for when the invite was accepted
+
+# Model for pending friends
+class pending_friends(models.Model):
+    outgoing = models.UUIDField() # User id who sent the invite
+    incoming = models.UUIDField() # User id who received the invite
+    sent = models.CharField(max_length=64) # Timestamp for when the invite was sent
