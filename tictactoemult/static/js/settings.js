@@ -1,77 +1,82 @@
 // JavaScript file for settings page
 
+// Varible for keeping track of which tab the user is on. This is to prevent unnessesary get requests for the tab youre already on
+var currentTab = "";
 // onload, default page is profile editing
 function loadEditProfile() {
-    ajaxGet("/edit_profile", "settings-page-container", function() {
-        // If user tries to change username
-        document.getElementById("edit-profile-username").addEventListener("click", function() {
-            showConfirm('You cannot change your username.')
-        })
+    if (currentTab != "edit_profile") {
+        ajaxGet("/edit_profile", "settings-page-container", function() {
+            currentTab = "edit_profile"
+            // If user tries to change username
+            document.getElementById("edit-profile-username").addEventListener("click", function() {
+                showConfirm('You cannot change your username.')
+            })
 
-        // Charachter count for editing description
-        var charcount = document.getElementById("description-charcount");
-        charcount.innerHTML = ($("#id_description").val().length + "/300")
-
-        document.getElementById("id_description").addEventListener("keyup", function() {
+            // Charachter count for editing description
             var charcount = document.getElementById("description-charcount");
-            var length = $("#id_description").val().length;
-            charcount.innerHTML = (length + "/300")
-            if (length < 270) {
-                charcount.style.color = "var(--primary-black)"
-            } else if (length > 270 && length < 290) {
-                charcount.style.color = "#ff7b00"
-            } else if (length >= 290) {
-                charcount.style.color = "red"
-            }
-        })
+            charcount.innerHTML = ($("#id_description").val().length + "/300")
 
-        // Event listener for edit profile form
-        $('#edit-profile-savechanges').on("submit", function (e){
-            e.preventDefault();
-            var formData = new FormData(this);
+            document.getElementById("id_description").addEventListener("keyup", function() {
+                var charcount = document.getElementById("description-charcount");
+                var length = $("#id_description").val().length;
+                charcount.innerHTML = (length + "/300")
+                if (length < 270) {
+                    charcount.style.color = "var(--primary-black)"
+                } else if (length > 270 && length < 290) {
+                    charcount.style.color = "#ff7b00"
+                } else if (length >= 290) {
+                    charcount.style.color = "red"
+                }
+            })
 
-            $.ajax({
-                url: '/editprofile_savechanges',
-                type: 'POST',
-                data: formData,
-                success: function (response) {
-                    switch(response) {
-                        case "error":
-                            showConfirm("Something went wrong. Make sure inputs are filled.")
-                            break
-                        case "ok":
-                            showConfirm("Changes saved!");
-                    }
-                },
-                error: function() {
-                    showConfirm("Something went wrong. Try again later.")
-                },
-                cache: false,
-                contentType: false,
-                processData: false,
-            });
-        })
+            // Event listener for edit profile form
+            $('#edit-profile-savechanges').on("submit", function (e){
+                e.preventDefault();
+                var formData = new FormData(this);
 
-        // Event listener for profile picture change
-        document.getElementById("profilepic").addEventListener("click", function(){
-            ajaxGet("/profilepic_upload", "dark-container", function() {
-                // shows a modal for uploading profile picture in dark container
+                $.ajax({
+                    url: '/editprofile_savechanges',
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        switch(response) {
+                            case "error":
+                                showConfirm("Something went wrong. Make sure inputs are filled.")
+                                break
+                            case "ok":
+                                showConfirm("Changes saved!");
+                        }
+                    },
+                    error: function() {
+                        showConfirm("Something went wrong. Try again later.")
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                });
+            })
 
-                // Add event listener for file input
-                document.getElementById("profilepic-upload").onchange = function(e) {
-                    // Convert file to blob
-                    blob_url = URL.createObjectURL(this.files[0]);
-                    // Redirect to cropping page
-                    window.location.href = "/profilepic_crop?blob=" + blob_url
-                };
+            // Event listener for profile picture change
+            document.getElementById("profilepic").addEventListener("click", function(){
+                ajaxGet("/profilepic_upload", "dark-container", function() {
+                    // shows a modal for uploading profile picture in dark container
 
-                // Add event listener for cancel button
-                document.getElementById("profilepic-cancel").addEventListener("click", function(){
-                    hideDarkContainer()
+                    // Add event listener for file input
+                    document.getElementById("profilepic-upload").onchange = function(e) {
+                        // Convert file to blob
+                        blob_url = URL.createObjectURL(this.files[0]);
+                        // Redirect to cropping page
+                        window.location.href = "/profilepic_crop?blob=" + blob_url
+                    };
+
+                    // Add event listener for cancel button
+                    document.getElementById("profilepic-cancel").addEventListener("click", function(){
+                        hideDarkContainer()
+                    })
                 })
             })
-        })
-    });
+        });
+    }
 }
 
 loadEditProfile();
@@ -99,7 +104,9 @@ document.getElementById("edit-profile").addEventListener("click", function() {
 
 // Config for personal information page
 function loadPersonalInformation() {
+    if (currentTab != "personalinfo") {
         ajaxGet("/personal_information", "settings-page-container", function() {
+            currentTab = "personalinfo"
             hideDropdown()
 
             document.getElementById("password-visibility-button-one").addEventListener("click", function() {
@@ -289,6 +296,7 @@ function loadPersonalInformation() {
                 });
             })
         })
+    }
 }
 
 document.getElementById("personal_information").addEventListener("click", function() {
