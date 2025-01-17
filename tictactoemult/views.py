@@ -328,7 +328,7 @@ def account_recovery_code(request):
             try:
                 code = int(code)
             except:
-                return("error")
+                return HttpResponse("error")
 
             # Delete expired codes
             unix_now = int(time.time())
@@ -619,3 +619,243 @@ def personal_information(request):
     context["passwordform"] = AccountRecoveryFormNewPassword()
 
     return render(request, "settings/personal_information.html", context)
+
+# Renders modal for confirming email change in settings
+def change_email_modal(request):
+    if request.method == "POST":
+        form = PersonalInformationEmail(request.POST)
+
+        if form.is_valid():
+            # Get posted email
+            new_email = form.cleaned_data["new_email"]
+            confirm_new_email = form.cleaned_data["confirm_new_email"]
+
+            # Check if emails match
+            if new_email != confirm_new_email:
+                return HttpResponse("match")
+            
+            # Check if email is already registered
+            if users.objects.filter(email=new_email).exists():
+                return HttpResponse("email_taken")
+
+            # Save email in session variable
+            request.session['temp_new_email'] = new_email
+
+            # Set contexts
+            context = {}
+            context["password_or_email"] = "e-mail"
+            context["form"] = AccountRecoveryForm2()
+            context["form_action"] = "/change_email_modal_confirm"
+            context["form_id"] = "change-email-form-confirm"
+
+            # Send e-mail with code to verify that user wants to change mail
+
+            # Generate recovery code
+            recovery_code = random.randint(111111, 999999)
+
+            # Set a expiration in unix time
+            unix_now = int(time.time())
+            expire = unix_now + (60 * 15) # 15 minutes
+
+            # Get users current email
+            user_id = request.session.get("user_id")
+            if users.objects.filter(user_id=user_id).exists():
+                user = users.objects.get(user_id=user_id)
+                context["user"] = user
+            else:
+                return HttpResponse("error")
+
+            # Send email
+            email = user.email
+            mail_status = send_mail(email, "Tic Tac Toe - Change e-mail", "Hi " + email + ". We see that you are trying to change your e-mail. The code to change it is: <b>" + str(recovery_code) + "</b>. If this is a mistake, please contact user support at: support@jakobjohannes.com")
+            if mail_status == "error":
+                return HttpResponse("error")
+
+            # Insert temporary code inside database
+            code = recovery_codes(
+                email = email,
+                recovery_code=recovery_code,
+                expire=expire
+            )
+
+            code.save()
+
+            # Set static files
+            with open(static_dir + '\\css\\modals\\change-email-password.css', 'r') as data:
+                context['change_email_password_css'] = data.read()
+            
+            return render(request, "modals/change_email_password.html", context)
+        else:
+            return HttpResponse("error")
+    else :
+        return render(request, 'error_pages/405.html')
+
+# Form handler for inputting code when code has been sent to change emails
+def change_email_modal_confirm(request):
+    if request.method == "POST":
+        form = AccountRecoveryForm2(request.POST)
+
+        if form.is_valid():
+            # Get posted code
+            code = form.cleaned_data["code"]
+
+            # Check if code is integer
+            try:
+                code = int(code)
+            except:
+                return HttpResponse("error")
+
+            # Delete expired codes
+            unix_now = int(time.time())
+            recovery_codes.objects.filter(expire__lt=unix_now).delete()
+
+            # Check that new email session variable exists
+            if 'temp_new_email' not in request.session:
+                return HttpResponse("error")
+
+            # Get users current email
+            user_id = request.session.get("user_id")
+            if users.objects.filter(user_id=user_id).exists():
+                user = users.objects.get(user_id=user_id)
+                email = user.email
+            else:
+                return HttpResponse("error")
+
+            # Check if code exists in database
+            if not recovery_codes.objects.filter(recovery_code=code, email=email).exists():
+                return HttpResponse("expired_notfound")
+
+            # Change email
+            user.email = request.session.get("temp_new_email")
+            user.save()
+
+            # Unset session variable
+            del request.session["temp_new_email"]
+
+            return HttpResponse("ok")
+        else:
+            return HttpResponse("error")
+    else :
+        return render(request, 'error_pages/405.html')
+
+# Renders modal for confirming password change in settings
+def change_password_modal(request):
+    if request.method == "POST":
+        form = AccountRecoveryFormNewPassword(request.POST)
+
+        if form.is_valid():
+            # Get posted passwords
+            new_password = form.cleaned_data["new_password"]
+            confirm_new_password = form.cleaned_data["new_password_confirm"]
+
+            # Check if passwords match
+            if new_password != confirm_new_password:
+                return HttpResponse("match")
+
+            context = {}
+
+            # Get users current email and password
+            user_id = request.session.get("user_id")
+            if users.objects.filter(user_id=user_id).exists():
+                user = users.objects.get(user_id=user_id)
+                context["user"] = user
+            else:
+                return HttpResponse("error")
+
+            # Check if old password is the same as new password
+            old_password_hash = user.password
+            if check_password(new_password, old_password_hash):
+                return HttpResponse("same")
+
+            new_password_hash = make_password(new_password)
+
+            # Save password hash in session variable
+            request.session['temp_new_password'] = new_password_hash
+
+            # Set contexts
+            context["password_or_email"] = "password"
+            context["form"] = AccountRecoveryForm2()
+            context["form_action"] = "/change_password_modal_confirm"
+            context["form_id"] = "change-password-form-confirm"
+
+            # Send e-mail with code to verify that user wants to change password
+
+            # Generate recovery code
+            recovery_code = random.randint(111111, 999999)
+
+            # Set a expiration in unix time
+            unix_now = int(time.time())
+            expire = unix_now + (60 * 15) # 15 minutes
+
+            # Send email
+            email = user.email
+            mail_status = send_mail(email, "Tic Tac Toe - Change password", "Hi " + email + ". We see that you are trying to change your password. The code to change it is: <b>" + str(recovery_code) + "</b>. If this is a mistake, please contact user support at: support@jakobjohannes.com")
+            if mail_status == "error":
+                return HttpResponse("error")
+
+            # Insert temporary code inside database
+            code = recovery_codes(
+                email = email,
+                recovery_code=recovery_code,
+                expire=expire
+            )
+
+            code.save()
+
+            # Set static files
+            with open(static_dir + '\\css\\modals\\change-email-password.css', 'r') as data:
+                context['change_email_password_css'] = data.read()
+            
+            return render(request, "modals/change_email_password.html", context)
+        else:
+            return HttpResponse("error")
+    else :
+        return render(request, 'error_pages/405.html')
+
+# Form handler for inputting code when code has been sent to change password
+def change_password_modal_confirm(request):
+    if request.method == "POST":
+        form = AccountRecoveryForm2(request.POST)
+
+        if form.is_valid():
+            # Get posted code
+            code = form.cleaned_data["code"]
+
+            # Check if code is integer
+            try:
+                code = int(code)
+            except:
+                return HttpResponse("error")
+
+            # Delete expired codes
+            unix_now = int(time.time())
+            recovery_codes.objects.filter(expire__lt=unix_now).delete()
+
+            # Check that new email session variable exists
+            if 'temp_new_password' not in request.session:
+                return HttpResponse("error")
+
+            # Get users current email
+            user_id = request.session.get("user_id")
+            if users.objects.filter(user_id=user_id).exists():
+                user = users.objects.get(user_id=user_id)
+                email = user.email
+            else:
+                return HttpResponse("error")
+
+            # Check if code exists in database
+            if not recovery_codes.objects.filter(recovery_code=code, email=email).exists():
+                return HttpResponse("expired_notfound")
+
+            # Change password
+            user.password = request.session.get("temp_new_password")
+            user.save()
+
+            # Unset session variable
+            del request.session["temp_new_password"]
+
+            return HttpResponse("ok")
+        else:
+            return HttpResponse("error")
+    else :
+        return render(request, 'error_pages/405.html')

@@ -22,5 +22,9 @@ urlpatterns = [
     path('profilepic_crop', views.profilepic_crop),
     path('profilepic_cropped_upload', views.profilepic_cropped_upload),
     path('display_profile/<str:uid>/', views.display_profile, name='uid'),
-    path('personal_information', views.personal_information)
+    path('personal_information', views.personal_information),
+    path('change_email_modal', views.change_email_modal),
+    path('change_email_modal_confirm', views.change_email_modal_confirm),
+    path('change_password_modal', views.change_password_modal),
+    path('change_password_modal_confirm', views.change_password_modal_confirm)
 ]

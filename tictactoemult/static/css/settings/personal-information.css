@@ -87,6 +87,18 @@
     background-color: var(--primary-red);
 }
 
+.password-wrapper {
+    width: calc(60% + 3px);
+    height: 30px;
+    border: solid var(--primary-black) 1px;
+    border-radius: 5px;
+    text-indent: 5px;
+    font-weight: 400;
+    font-size: 1.2rem;
+    position: relative;
+    margin-bottom: 15px;
+}
+
 .password-wrapper button {
     width: 30px;
     height: 30px;
@@ -108,6 +120,22 @@
     background-color: transparent;
 }
 
+.password-wrapper input {
+    width: calc(100% - 35px);
+    height: 100%;
+    border: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 0;
+    margin: 0;
+    padding-right: 35px;
+    border-radius: 5px;
+    text-indent: 5px;
+    font-weight: 400;
+    font-size: 1.2rem;
+}
+
 @media screen and (max-width: 850px) {
     .personal-info-change-container {
         width: calc(100% - 60px);
@@ -125,5 +153,9 @@
 @media screen and (max-width: 625px) {
     #change-email-form input {
         width: 90%;
+    }
+
+    .password-wrapper {
+        width: 100%;
     }
 }

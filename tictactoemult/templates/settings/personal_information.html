@@ -18,24 +18,24 @@
         Change e-mail
         <img id="change-email-button-icon" src="/static/img/icons/arrow-down.svg" alt="Change e-mail">
     </div>
-    <form action="/change_email" method="post" id="change-email-form">
+    <form action="/change_email_modal" method="post" id="change-email-form">
         {% csrf_token %}
         {{email_form}}
-        <button class="change-email-save-button" type="submit">Change email</button>
+        <button class="change-email-save-button" id="email-submit" type="submit">Change email</button>
     </form>
 </div>
 
 <p class="personal-info-change-p">Change password</p>
 <div class="personal-info-change-container">
-    <form action="/change_password">
+    <form action="/change_password_modal" method="post" id="change-password-form">
         {% csrf_token %}
         <div class="password-wrapper">
             {{passwordform.new_password}}
-            <button id="password-visibility-button" type="button" title="Show password"></button>
+            <button id="password-visibility-button-one" type="button" title="Show password"></button>
         </div>
         <div class="password-wrapper">
             {{passwordform.new_password_confirm}}
-            <button id="password-visibility-button" type="button" title="Show password"></button>
+            <button id="password-visibility-button-two" type="button" title="Show password"></button>
         </div>
         <button class="change-email-save-button" type="submit">Change password</button>
     </form>
