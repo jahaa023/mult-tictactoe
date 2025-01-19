@@ -4,48 +4,7 @@
     width: 100%;
     height: 100vh;
     position: relative;
-    display: flex;
     font-family: "Roboto", serif;
-}
-
-.settings-navbar {
-    width: 310px;
-    padding-left: 20px;
-    padding-right: 20px;
-    height: 100%;
-    background-color: var(--primary-black);
-    color: white;
-    z-index: 998;
-}
-
-.settings-navbar-divider {
-    width: 100%;
-    height: 2px;
-    border-radius: 2px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    background-color: #ABABAB;
-}
-
-.settings-navbar-button {
-    width: 100%;
-    height: 40px;
-    text-align: left;
-    cursor: pointer;
-    padding-left: 10px;
-    font-family: "Roboto", serif;
-    font-weight: 400;
-    color: var(--background-white);
-    border: none;
-    background-color: transparent;
-    font-size: 1.3rem;
-    border-radius: 10px;
-}
-
-.settings-navbar-button:hover {
-    background-color: rgba(230, 230, 230, 0.80);
-    color: var(--primary-black);
-    font-weight: 600;
 }
 
 #delete-account {
@@ -57,24 +16,11 @@
     color: var(--primary-black);
 }
 
-.settings-navbar-backtomain {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    margin: 20px;
-    color: var(--background-white);
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.settings-navbar-backtomain:hover {
-    text-decoration: underline;
-}
-
 .settings-page-container {
     width: calc(100% - 370px);
     height: calc(100% - 20px);
     padding-left: 20px;
+    margin-left: 350px;
     padding-top: 20px;
     background-color: var(--background-white);
     overflow-y: scroll;
@@ -90,84 +36,12 @@
     margin-bottom: 10px;
 }
 
-.navbar-background {
-    width: 100%;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(10px);
-    z-index: 997;
-    display: none;
-}
-
-.mobile-dropdown-button-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 60px;
-    background-color: var(--background-white);
-    border-bottom: solid #21212160 2px;
-    z-index: 996;
-    display: none;
-    align-items: center;
-}
-
-.mobile-dropdown-button-container button {
-    width: 40px;
-    height: 40px;
-    cursor: pointer;
-    background-color: transparent;
-    border: none;
-    background-image: url(static/img/icons/dropdown.svg);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    margin-left: 15px;
-}
-
-.mobile-dropdown-exit {
-    display: none;
-}
-
-@media screen and (max-width: 1290px) {
-    .settings-navbar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 0px;
-        display: none;
-        overflow: hidden;
-    }
-
+@media screen and (max-width: 1300px) {
     .settings-page-container {
         width: calc(100% - 20px);
+        margin-left: 0;
         margin-top: 50px;
         overflow: auto;
         height: fit-content;
-    }
-
-    .mobile-dropdown-button-container {
-        display: flex;
-    }
-
-    .mobile-dropdown-exit {
-        width: 40px;
-        height: 40px;
-        position: absolute;
-        top: 0;
-        right: 0;
-        padding: 10px;
-        margin: 20px;
-        background-color: var(--primary-black);
-        border: none;
-        background-image: url(static/img/icons/x.svg);
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: 80%;
-        cursor: pointer;
-        display: inline;
     }
 }

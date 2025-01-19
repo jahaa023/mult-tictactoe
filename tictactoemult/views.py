@@ -860,4 +860,14 @@ def change_password_modal_confirm(request):
 
 # Renders template for friends page
 def friends(request):
-    return render(request, "friends.html")
+    context = {}
+
+    # Set static files
+    context['universal_css'] = universal_css
+    context['universal_js'] = universal_js
+    with open(static_dir + '\\css\\friends.css', 'r') as data:
+        context['friends_css'] = data.read()
+    with open(static_dir + '\\js\\friends.js', 'r') as data:
+        context['friends_js'] = data.read()
+
+    return render(request, "friends.html", context)

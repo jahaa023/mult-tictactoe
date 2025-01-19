@@ -1,1 +1,64 @@
-<!--TODO: online friends and offline friends, pending requests, user search-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        {{friends_css | safe}}
+    </style>
+    <style>
+        {{universal_css | safe}}
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe - Friends</title>
+    <link href="/static/img/favicon.ico" rel="icon" media="(prefers-color-scheme: light)">
+    <link href="/static/img/favicon-darkmode.ico" rel="icon" media="(prefers-color-scheme: dark)">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+    <!--UNIVERSAL DROPDOWN-->
+    <div class="universal-dropdown-mobile-header">
+        <button class="universal-dropdown-mobile-header-button" title="Dropdown" id="universal-dropdown-mobile-header-button"></button>
+    </div>
+    <div class="universal-dropdown-mobile-background" id="universal-dropdown-background"></div>
+    <div class="universal-dropdown-mobile" id="universal-dropdown">
+        <button class="universal-dropdown-mobile-exit" id="universal-dropdown-mobile-exit" title="Close"></button>
+        <h1 class="universal-dropdown-headline">Friends</h1>
+        <div class="universal-dropdown-divider"></div>
+        <div class="universal-dropdown-scroll-container">
+            <button class="universal-dropdown-button" title="Your friends" id="your_friends">Your friends</button>
+            <div class="universal-dropdown-divider"></div>
+            <button class="universal-dropdown-button" title="Add friends" id="add_friends">Add friends</button>
+            <div class="universal-dropdown-divider"></div>
+            <button class="universal-dropdown-button" title="Pending invites" id="pending_invites">Pending invites</button>
+        </div>
+        <a href="/main" class="universal-dropdown-backtomain" title="Back to main page">Back to main page</a>
+    </div>
+
+    <div class="universal-dropdown-desktop">
+        <h1 class="universal-dropdown-headline">Friends</h1>
+        <div class="universal-dropdown-divider"></div>
+        <div class="universal-dropdown-scroll-container">
+            <button class="universal-dropdown-button" title="Your friends" id="your_friends">Your friends</button>
+            <div class="universal-dropdown-divider"></div>
+            <button class="universal-dropdown-button" title="Add friends" id="add_friends">Add friends</button>
+            <div class="universal-dropdown-divider"></div>
+            <button class="universal-dropdown-button" title="Pending invites" id="pending_invites">Pending invites</button>
+        </div>
+        <a href="/main" class="universal-dropdown-backtomain" title="Back to main page">Back to main page</a>
+    </div>
+    <!--END UNIVERSAL DROPDOWN-->
+
+    <div class="friends-page-container" id="friends-page-container">
+
+    </div>
+</body>
+<script>
+    {{friends_js | safe}}
+</script>
+<script>
+    {{universal_js | safe}}
+</script>
+</html>

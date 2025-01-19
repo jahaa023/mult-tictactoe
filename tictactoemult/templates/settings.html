@@ -21,22 +21,39 @@
 <body>
     <div id="dark-container"></div>
     <div id="confirmContainer"></div>
-    <div class="mobile-dropdown-button-container">
-        <button id="dropdown-button"></button>
-    </div>
-    <div class="navbar-background" id="navbar-background"></div>
     <div class="settings-container">
-        <div class="settings-navbar" id="settings-navbar">
-            <button class="mobile-dropdown-exit" id="dropdown-button-exit"></button>
-            <h1>User settings</h1>
-            <div class="settings-navbar-divider"></div>
-            <button class="settings-navbar-button" id="edit-profile" title="Profile editing">Profile editing</button>
-            <div class="settings-navbar-divider"></div>
-            <button class="settings-navbar-button" id="personal_information" title="Personal information">Personal information</button>
-            <div class="settings-navbar-divider"></div>
-            <button class="settings-navbar-button" id="delete-account">Delete account</button>
-            <a class="settings-navbar-backtomain" href="/main">Back to main page</a>
+        <!--UNIVERSAL DROPDOWN-->
+        <div class="universal-dropdown-mobile-header">
+            <button class="universal-dropdown-mobile-header-button" title="Dropdown" id="universal-dropdown-mobile-header-button"></button>
         </div>
+        <div class="universal-dropdown-mobile-background" id="universal-dropdown-background"></div>
+        <div class="universal-dropdown-mobile" id="universal-dropdown">
+            <button class="universal-dropdown-mobile-exit" id="universal-dropdown-mobile-exit" title="Close"></button>
+            <h1 class="universal-dropdown-headline">Settings</h1>
+            <div class="universal-dropdown-divider"></div>
+            <div class="universal-dropdown-scroll-container">
+                <button class="universal-dropdown-button" title="Edit your profile" id="edit-profile-mobile">Edit your profile</button>
+                <div class="universal-dropdown-divider"></div>
+                <button class="universal-dropdown-button" title="Personal information" id="personal-information-mobile">Personal information</button>
+                <div class="universal-dropdown-divider"></div>
+                <button class="universal-dropdown-button" title="Delete account" id="delete-account">Delete account</button>
+            </div>
+            <a href="/main" class="universal-dropdown-backtomain" title="Back to main page">Back to main page</a>
+        </div>
+
+        <div class="universal-dropdown-desktop">
+            <h1 class="universal-dropdown-headline">Settings</h1>
+            <div class="universal-dropdown-divider"></div>
+            <div class="universal-dropdown-scroll-container">
+                <button class="universal-dropdown-button" title="Edit your profile" id="edit-profile">Edit your profile</button>
+                <div class="universal-dropdown-divider"></div>
+                <button class="universal-dropdown-button" title="Personal information" id="personal-information">Personal information</button>
+                <div class="universal-dropdown-divider"></div>
+                <button class="universal-dropdown-button" title="Delete account" id="delete-account">Delete account</button>
+            </div>
+            <a href="/main" class="universal-dropdown-backtomain" title="Back to main page">Back to main page</a>
+        </div>
+        <!--END UNIVERSAL DROPDOWN-->
         <div class="settings-page-container" id="settings-page-container">
 
         </div>

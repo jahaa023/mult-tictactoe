@@ -54,3 +54,29 @@ function hideDarkContainer() {
 function displayProfile(user_id) {
     ajaxGet("/display_profile/" + user_id + "/", "dark-container")
 }
+
+// Event listeners for dropdowns if they exist on page
+if ($('#universal-dropdown').length > 0) {
+    document.getElementById("universal-dropdown-mobile-header-button").addEventListener("click", function() {
+        $('#universal-dropdown-background').fadeIn(300)
+        document.getElementById("universal-dropdown").style.display = "inline";
+        $('#universal-dropdown').animate({
+            width:'290px',
+        }, 300);
+    })
+
+    // Hides dropdown
+    function hideUniversalDropdown() {
+        $('#universal-dropdown-background').fadeOut(300)
+        $('#universal-dropdown').animate({
+            width:'0px',
+        }, 300);
+        setTimeout(function(){
+            document.getElementById("universal-dropdown").style.display = "none";
+        }, 300)
+    }
+
+    document.getElementById("universal-dropdown-mobile-exit").addEventListener("click", function() {
+        hideUniversalDropdown();
+    })
+}

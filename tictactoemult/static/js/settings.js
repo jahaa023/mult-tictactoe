@@ -81,25 +81,15 @@ function loadEditProfile() {
 
 loadEditProfile();
 
-// Funciton that hides mobile dropdown
-function hideDropdown() {
-    dropdown = document.getElementById("navbar-background")
-    if (window.getComputedStyle(dropdown).display !== 'none'){
-        $('#settings-navbar').animate({
-            width:'0px'
-        }, 200);
-        setTimeout(function() {
-            document.getElementById("settings-navbar").style.display = "none"
-        }, 200)
-        $('#navbar-background').delay(200).fadeOut(200)
-    }
-}
-
 // Event listeners for navbar
 
 document.getElementById("edit-profile").addEventListener("click", function() {
     loadEditProfile();
-    hideDropdown()
+})
+
+document.getElementById("edit-profile-mobile").addEventListener("click", function() {
+    loadEditProfile();
+    hideUniversalDropdown()
 })
 
 // Config for personal information page
@@ -107,7 +97,6 @@ function loadPersonalInformation() {
     if (currentTab != "personalinfo") {
         ajaxGet("/personal_information", "settings-page-container", function() {
             currentTab = "personalinfo"
-            hideDropdown()
 
             document.getElementById("password-visibility-button-one").addEventListener("click", function() {
                 changeVisibility('id_new_password', 'password-visibility-button-one')
@@ -299,26 +288,11 @@ function loadPersonalInformation() {
     }
 }
 
-document.getElementById("personal_information").addEventListener("click", function() {
+document.getElementById("personal-information").addEventListener("click", function() {
     loadPersonalInformation();
-    hideDropdown();
 })
 
-document.getElementById("dropdown-button").addEventListener("click", function() {
-    document.getElementById("navbar-background").style.display = "inline"
-    document.getElementById("settings-navbar").style.display = "inline"
-    $('#settings-navbar').animate({
-        width:'290px'
-    });
+document.getElementById("personal-information-mobile").addEventListener("click", function() {
+    loadPersonalInformation();
+    hideUniversalDropdown();
 })
-
-document.getElementById("dropdown-button-exit").addEventListener("click", function() {
-    $('#settings-navbar').animate({
-        width:'0px'
-    }, 200);
-    setTimeout(function() {
-        document.getElementById("settings-navbar").style.display = "none"
-    }, 200)
-    $('#navbar-background').delay(200).fadeOut(200)
-})
-
