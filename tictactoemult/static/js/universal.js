@@ -1,5 +1,21 @@
 // JavaScript file for function for every page
 
+// Get color preference and change favicon
+function changeFavicon() {
+    var link = document.querySelector("link[rel~='icon']");
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // dark mode
+        link.href = '/static/img/favicon-darkmode.ico';
+    } else {
+        // Light mode
+        link.href = '/static/img/favicon.ico';
+    }
+}
+
+$( document ).ready(function() {
+    changeFavicon();
+});
+
 //password visibility button
 function changeVisibility(inputID, buttonID){
     var passwordInput = document.getElementById(inputID)
