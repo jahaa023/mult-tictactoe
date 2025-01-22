@@ -890,3 +890,25 @@ def your_friends(request):
         context['your_friends_css'] = data.read()
     
     return render(request, "friends/your_friends.html", context)
+
+# Updates the ping column in users table every 5 seconds to verify that user is online
+def ping(request):
+    # If user is not logged in, redirect
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
+    else:
+        user_id = request.session.get("user_id")
+
+    # Get current unix timestamp
+    unix_now = int(time.time())
+
+    # Make unix timestamp 10 seconds from now
+    ping = unix_now + 10
+
+    # Get user and update column
+    user = users.objects.get(user_id=user_id)
+    user.ping = ping
+    user.save()
+
+    return HttpResponse("pinged")
+

@@ -18,10 +18,16 @@
         <p>No online friends</p>
     {% else %}
         {% for friend in online_friends %}
-            <p>{{friend.username}}</p>
+            <div class="friend-row">
+                <img class="friend-row-profilepic" onclick="displayProfile('{{friend.user_id}}')" src="/static/img/profile_pictures/{{friend.profile_picture}}" alt="{{friend.nickname}}">
+                <p class="friend-row-nickname" onclick="displayProfile('{{friend.user_id}}')">
+                    {{friend.nickname}}
+                </p>
+            </div>
+            <div class="friend-row-divider"></div>
         {% endfor %}
     {% endif %}
-
+    <br>
     <p class="your-friends-section-headline">OFFLINE</p>
     <div class="your-friends-divider"></div>
     {% if not offline_friends %}
