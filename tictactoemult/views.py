@@ -16,28 +16,32 @@ from colorthief import ColorThief
 
 # Create your views here.
 
-# Defines universal files (css, javascript)
+# Sets global varible for static directory
 static_dir = os.getcwd() + '\\tictactoemult\\static'
-with open(static_dir + '\\css\\universal.css', 'r') as data:
-    universal_css = data.read()
-with open(static_dir + '\\js\\universal.js', 'r') as data:
-    universal_js = data.read()
+
+# Function for loading in static js and css files
+def importStaticFiles(name):
+    context = {}
+    # universal files
+    with open(static_dir + '\\css\\universal.css', 'r') as file:
+        context["universal_css"] = file.read()
+    with open(static_dir + '\\js\\universal.js', 'r') as file:
+        context["universal_js"] = file.read()
+
+    # Specific files
+    with open(static_dir + '\\css\\' + name + '.css', 'r') as file:
+        context[f"{name}_css"] = file.read()
+    with open(static_dir + '\\js\\' + name + '.js', 'r') as file:
+        context[f"{name}_js"] = file.read()
+
+    return context
 
 # Function for rendering index/login page
 def index(request):
     # The default index.html page, with a form for logging in
-    context = {}
+    context = importStaticFiles("index")
 
     context['form'] = LoginForm()
-
-    context['universal_css'] = universal_css
-    context['universal_js'] = universal_js
-
-    # Forces css and js file to load its contents into a style and script tag instead of a src. Kinda like php include or require.
-    with open(static_dir + '\\css\\index.css', 'r') as data:
-        context['index_css'] = data.read()
-    with open(static_dir + '\\js\\index.js', 'r') as data:
-        context['index_js'] = data.read()
 
     response = render(request, 'index.html', context)
 
@@ -111,13 +115,7 @@ def main(request):
     if "user_id" not in request.session:
         return HttpResponseRedirect("/")
 
-    context = {}
-    context['universal_css'] = universal_css
-    context['universal_js'] = universal_js
-    with open(static_dir + '\\css\\main.css', 'r') as data:
-        context['main_css'] = data.read()
-    with open(static_dir + '\\js\\main.js', 'r') as data:
-        context['main_js'] = data.read()
+    context = importStaticFiles("main")
 
     # Get information about user for things like profilepic, username etc
     user_id = request.session.get("user_id")
@@ -138,14 +136,8 @@ def main(request):
 
 # Function to render account creation page
 def create_account(request):
-    context = {}
+    context = importStaticFiles("create_account")
     context['form'] = CreateAccountForm()
-    context['universal_css'] = universal_css
-    context['universal_js'] = universal_js
-    with open(static_dir + '\\css\\create_account.css', 'r') as data:
-        context['create_account_css'] = data.read()
-    with open(static_dir + '\\js\\create_account.js', 'r') as data:
-        context['create_account_js'] = data.read()
     return render(request, 'create_account.html', context)
 
 # function that handles creating of an account
@@ -246,14 +238,9 @@ def username_validate(request):
 
 # Function that renders account recovery page
 def account_recovery(request):
-    context = {}
+    context = importStaticFiles("account_recovery")
     context['form'] = AccountRecoveryForm1()
-    context['universal_css'] = universal_css
-    context['universal_js'] = universal_js
-    with open(static_dir + '\\css\\account-recovery.css', 'r') as data:
-        context['account_recovery_css'] = data.read()
-    with open(static_dir + '\\js\\account_recovery.js', 'r') as data:
-        context['account_recovery_js'] = data.read()
+
     return render(request, 'account_recovery.html', context)
 
 # Function that handles form for inputting email when recovering account
@@ -303,14 +290,10 @@ def account_recovery_inputcode(request):
     # Check if temp_recovery_email session variable is set
     if 'temp_recovery_email' not in request.session:
         return HttpResponseRedirect("/")
-    context = {}
+    context = importStaticFiles("account_recovery")
+
     context['form'] = AccountRecoveryForm2()
-    context['universal_css'] = universal_css
-    context['universal_js'] = universal_js
-    with open(static_dir + '\\css\\account-recovery.css', 'r') as data:
-        context['account_recovery_css'] = data.read()
-    with open(static_dir + '\\js\\account_recovery.js', 'r') as data:
-        context['account_recovery_js'] = data.read()
+
     return render(request, 'account_recovery/account_recovery_inputcode.html', context)
 
 # Function that handles form for inputting code when recovering account
@@ -354,14 +337,8 @@ def account_recovery_code(request):
 
 # Function to render page for the final step of account recovery
 def account_recovery_final(request):
-    context = {}
+    context = importStaticFiles("account_recovery")
     context["form"] = AccountRecoveryFormNewPassword()
-    context['universal_css'] = universal_css
-    context['universal_js'] = universal_js
-    with open(static_dir + '\\css\\account-recovery.css', 'r') as data:
-        context['account_recovery_css'] = data.read()
-    with open(static_dir + '\\js\\account_recovery.js', 'r') as data:
-        context['account_recovery_js'] = data.read()
 
     # Get temporary user id
     if 'temp_recovery_uid' not in request.session:
@@ -432,19 +409,12 @@ def settings(request):
     if "user_id" not in request.session:
         return HttpResponseRedirect("/")
     
-    context = {}
+    context = importStaticFiles("settings")
 
     # Get user info to display
     user_id = request.session.get("user_id")
     user = users.objects.get(user_id=user_id)
     context["user"] = user
-
-    context['universal_css'] = universal_css
-    context['universal_js'] = universal_js
-    with open(static_dir + '\\css\\settings.css', 'r') as data:
-        context['settings_css'] = data.read()
-    with open(static_dir + '\\js\\settings.js', 'r') as data:
-        context['settings_js'] = data.read()
 
     return render(request, 'settings.html', context)
 
@@ -460,7 +430,7 @@ def edit_profile(request):
     else:
         return HttpResponse("error")
 
-    with open(static_dir + '\\css\\settings\\edit-profile.css', 'r') as data:
+    with open(static_dir + '\\css\\edit-profile.css', 'r') as data:
         context['edit_profile_css'] = data.read()
 
     return render(request, "settings/edit_profile.html", context)
@@ -501,7 +471,7 @@ def editprofile_savechanges(request):
 # Renders a modal for uploading profilepic
 def profilepic_upload(request):
     context = {}
-    with open(static_dir + '\\css\\modals\\profilepic-upload.css', 'r') as data:
+    with open(static_dir + '\\css\\profilepic-upload.css', 'r') as data:
         context['profilepic_upload_css'] = data.read()
     return render(request, "modals/profilepic_upload.html", context)
 
@@ -513,13 +483,7 @@ def profilepic_crop(request):
         return HttpResponseRedirect("/settings")
     
     # Get static files
-    context = {}
-    context['universal_css'] = universal_css
-    context['universal_js'] = universal_js
-    with open(static_dir + '\\css\\settings\\profilepic-crop.css', 'r') as data:
-        context['profilepic_crop_css'] = data.read()
-    with open(static_dir + '\\js\\profilepic_crop.js', 'r') as data:
-        context['profilepic_crop_js'] = data.read()
+    context = importStaticFiles("profilepic_crop")
 
     return render(request, "settings/profilepic_crop.html", context)
 
@@ -592,7 +556,7 @@ def display_profile(request, uid):
     context["joindate"] = user.joindate
 
     # Get static files
-    with open(static_dir + '\\css\\modals\\display-profile.css', 'r') as data:
+    with open(static_dir + '\\css\\display-profile.css', 'r') as data:
         context['display_profile_css'] = data.read()
 
     return render(request, "modals/display_profile.html", context)
@@ -609,7 +573,7 @@ def personal_information(request):
         return HttpResponse("error")
     
     # Get static files
-    with open(static_dir + '\\css\\settings\\personal-information.css', 'r') as data:
+    with open(static_dir + '\\css\\personal-information.css', 'r') as data:
         context['personal_information_css'] = data.read()
 
     # Get forms
@@ -679,7 +643,7 @@ def change_email_modal(request):
             code.save()
 
             # Set static files
-            with open(static_dir + '\\css\\modals\\change-email-password.css', 'r') as data:
+            with open(static_dir + '\\css\\change-email-password.css', 'r') as data:
                 context['change_email_password_css'] = data.read()
             
             return render(request, "modals/change_email_password.html", context)
@@ -801,7 +765,7 @@ def change_password_modal(request):
             code.save()
 
             # Set static files
-            with open(static_dir + '\\css\\modals\\change-email-password.css', 'r') as data:
+            with open(static_dir + '\\css\\change-email-password.css', 'r') as data:
                 context['change_email_password_css'] = data.read()
             
             return render(request, "modals/change_email_password.html", context)
@@ -863,11 +827,6 @@ def friends(request):
     context = {}
 
     # Set static files
-    context['universal_css'] = universal_css
-    context['universal_js'] = universal_js
-    with open(static_dir + '\\css\\friends.css', 'r') as data:
-        context['friends_css'] = data.read()
-    with open(static_dir + '\\js\\friends.js', 'r') as data:
-        context['friends_js'] = data.read()
+    context = importStaticFiles("friends")
 
     return render(request, "friends.html", context)
