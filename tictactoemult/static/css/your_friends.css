@@ -1,0 +1,64 @@
+/* Stylesheet for your friends tab in friends page */
+
+.your-friends-divider {
+    width: calc(100% - 20px);
+    height: 2px;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.your-friends-section-headline {
+    margin: 0;
+    color: rgba(0, 0, 0, 0.5);
+    letter-spacing: 3px;
+    font-weight: 500;
+}
+
+.friend-row {
+    width: calc(100% - 20px);
+    display: flex;
+    background-color: var(--background-white);
+    align-items: center;
+    height: fit-content;
+    border-radius: 5px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.friend-row-profilepic {
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 30px;
+    border: solid 1px gray;
+}
+
+.friend-row-profilepic:hover {
+    filter: brightness(0.5);
+}
+
+.friend-row-divider {
+    width: calc(100% - 20px);
+    height: 2px;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.3);
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.friend-row-nickname {
+    font-weight: 600;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1.4rem;
+    margin: 0;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.friend-row-nickname:hover {
+    text-decoration: underline;
+}

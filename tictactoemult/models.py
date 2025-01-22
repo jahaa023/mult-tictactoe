@@ -15,6 +15,7 @@ class users(models.Model):
     profile_picture = models.CharField(max_length=128, default='defaultprofile.jpg')
     banner_color = models.CharField(max_length=32, default="#969696")
     stayloggedin_token = models.UUIDField(default=uuid.uuid4,editable=False)
+    ping = models.IntegerField(default=0)
 
 # Model for recovery codes table for account recovery
 class recovery_codes(models.Model):

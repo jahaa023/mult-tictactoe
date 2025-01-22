@@ -17,6 +17,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
+    <div id="dark-container"></div>
     <!--UNIVERSAL DROPDOWN-->
     <div class="universal-dropdown-mobile-header">
         <button class="universal-dropdown-mobile-header-button" title="Dropdown" id="universal-dropdown-mobile-header-button"></button>
@@ -27,7 +28,7 @@
         <h1 class="universal-dropdown-headline">Friends</h1>
         <div class="universal-dropdown-divider"></div>
         <div class="universal-dropdown-scroll-container">
-            <button class="universal-dropdown-button" title="Your friends" id="your_friends">Your friends</button>
+            <button class="universal-dropdown-button" title="Your friends" id="your_friends_mobile">Your friends</button>
             <div class="universal-dropdown-divider"></div>
             <button class="universal-dropdown-button" title="Add friends" id="add_friends">Add friends</button>
             <div class="universal-dropdown-divider"></div>
@@ -55,9 +56,9 @@
     </div>
 </body>
 <script>
-    {{friends_js | safe}}
+    {{universal_js | safe}}
 </script>
 <script>
-    {{universal_js | safe}}
+    {{friends_js | safe}}
 </script>
 </html>

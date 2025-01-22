@@ -27,5 +27,6 @@ urlpatterns = [
     path('change_email_modal_confirm', views.change_email_modal_confirm),
     path('change_password_modal', views.change_password_modal),
     path('change_password_modal_confirm', views.change_password_modal_confirm),
-    path('friends', views.friends)
+    path('friends', views.friends),
+    path('your_friends', views.your_friends)
 ]

@@ -25,6 +25,10 @@ body {
     margin: 0;
 }
 
+* {
+    font-family: "Roboto", serif;
+}
+
 #confirmContainer {
     position: fixed;
     top: 0;

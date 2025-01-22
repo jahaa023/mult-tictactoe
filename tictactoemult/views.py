@@ -422,6 +422,10 @@ def settings(request):
 def edit_profile(request):
     context = {}
 
+    # If user is not logged in, redirect
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
+
     # Get user info to display
     user_id = request.session.get("user_id")
     if users.objects.filter(user_id=user_id).exists():
@@ -470,6 +474,9 @@ def editprofile_savechanges(request):
 
 # Renders a modal for uploading profilepic
 def profilepic_upload(request):
+    # If user is not logged in, redirect
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
     context = {}
     with open(static_dir + '\\css\\profilepic-upload.css', 'r') as data:
         context['profilepic_upload_css'] = data.read()
@@ -477,6 +484,10 @@ def profilepic_upload(request):
 
 # Renders page for cropping profile picture
 def profilepic_crop(request):
+    # If user is not logged in, redirect
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
+
     # if blob isnt in url, redirect back to settings
     blob = request.GET.get("blob", False)
     if not blob:
@@ -545,6 +556,10 @@ def profilepic_cropped_upload(request):
 
 # Renders a modal of a users profile
 def display_profile(request, uid):
+    # If user is not logged in, redirect
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
+
     # Get user details
     user = get_object_or_404(users, user_id=uid)
     context = {}
@@ -563,6 +578,10 @@ def display_profile(request, uid):
 
 # Page in settings for changing personal information
 def personal_information(request):
+    # If user is not logged in, redirect
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
+
     context = {}
     # Get user info to display
     user_id = request.session.get("user_id")
@@ -824,9 +843,50 @@ def change_password_modal_confirm(request):
 
 # Renders template for friends page
 def friends(request):
-    context = {}
+    # If user is not logged in, redirect
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
 
     # Set static files
     context = importStaticFiles("friends")
 
     return render(request, "friends.html", context)
+
+# Renders your friends tab in friends page
+def your_friends(request):
+    # If user is not logged in, redirect
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
+    else:
+        user_id = request.session.get("user_id")
+
+    # Make 2 arrays. One containg online friends and one containing offline friends
+    online_friends = []
+    offline_friends = []
+
+    # Get current unix timestamp
+    unix_now = int(time.time())
+
+    # Get users friend list
+    friends = friend_list.objects.filter(user_id_1=user_id)
+    for friend in friends:
+        # Get info about each friend
+        friend_user_id = friend.user_id_2
+        friend = users.objects.get(user_id=friend_user_id)
+
+        # If friend is online, add to online array. If not, add to offline array
+        if friend.ping > unix_now:
+            online_friends.append(friend)
+        else:
+            offline_friends.append(friend)
+    
+    # Put arrays in context
+    context = {}
+    context["online_friends"] = online_friends
+    context["offline_friends"] = offline_friends
+
+    # Set static files
+    with open(static_dir + '\\css\\your_friends.css', 'r') as data:
+        context['your_friends_css'] = data.read()
+    
+    return render(request, "friends/your_friends.html", context)
