@@ -261,6 +261,7 @@ function loadPersonalInformation() {
                                                 break
                                             case "ok":
                                                 hideDarkContainer();
+                                                currentTab = ""
                                                 loadPersonalInformation();
                                                 showConfirm("E-mail has been changed.");
                                                 break
