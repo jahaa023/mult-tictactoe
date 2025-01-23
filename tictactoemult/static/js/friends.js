@@ -60,6 +60,42 @@ function loadAddFriends() {
 
 loadYourFriends();
 
+// Sends a friend request to user_id in parameter
+function sendFriendRequest(user_id) {
+    // Post to backend
+    $.ajax({
+        url: '/send_friend_request',
+        type: 'POST',
+        headers: {"X-CSRFToken": csrfmiddlewaretoken},
+        data: JSON.stringify({
+            user_id:user_id
+        }),
+        success: function (response) {
+            switch (response.error) {
+                case "already_friends":
+                    showConfirm("You are already friends with this user.")
+                    break
+                case "yourself":
+                    showConfirm("You cannot send a friend request to yourself.")
+                    break;
+                case "error":
+                    showConfirm("Something went wrong.")
+                    break
+            }
+
+            if (response.ok == 1) {
+                showConfirm("Friend request sent to " + response.nickname + ".");
+            }
+        },
+        error: function() {
+            showConfirm("Something went wrong. Try again later.")
+        },
+        cache: false,
+        contentType: "application/json; charset=utf-8",
+        processData: false,
+    });
+}
+
 // Event listeners for dropdown and navbar
 document.getElementById("your_friends").addEventListener("click", function(){
     loadYourFriends();

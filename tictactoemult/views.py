@@ -946,10 +946,12 @@ def add_friends_result(request):
 
         result_users = []
 
-        # Exclude any users in your friend list
+        # Exclude any users in your friend list and yourself
         for user in query_users:
             friend_uid = user.user_id
-            if not friend_list.objects.filter(user_id_1=user_id, user_id_2=friend_uid).exists():
+            if str(friend_uid) == user_id:
+                continue
+            elif not friend_list.objects.filter(user_id_1=user_id, user_id_2=friend_uid).exists():
                 result_users.append(user)
 
         # Pass into context

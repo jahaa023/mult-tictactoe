@@ -3,6 +3,7 @@
         <div class="friend-result-row">
             <img class="friend-result-profilepic" onclick="displayProfile('{{user.user_id}}')" src="/static/img/profile_pictures/{{user.profile_picture}}" alt="{{user.nickname}}">
             <p class="friend-result-nickname" onclick="displayProfile('{{user.user_id}}')">{{user.nickname}}</p>
+            <button onclick="sendFriendRequest('{{user.user_id}}')" class="friend-row-send-button" title="Send a friend request to {{user.nickname}}"></button>
         </div>
     {% endfor %}
 {% else %}
