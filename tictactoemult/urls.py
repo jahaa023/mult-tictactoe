@@ -29,5 +29,7 @@ urlpatterns = [
     path('change_password_modal_confirm', views.change_password_modal_confirm),
     path('friends', views.friends),
     path('your_friends', views.your_friends),
-    path('ping', views.ping)
+    path('ping', views.ping),
+    path('add_friends', views.add_friends),
+    path('add_friends_result', views.add_friends_result)
 ]

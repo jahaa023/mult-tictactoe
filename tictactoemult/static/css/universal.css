@@ -89,7 +89,7 @@ body {
     background-color: #ABABAB;
 }
 
-.universal-dropdown-scroll-container {
+.universal-dropdown-scroll-container::-webkit-scrollbar {
     width: 100%;
     height: fit-content;
     overflow-x: hidden;

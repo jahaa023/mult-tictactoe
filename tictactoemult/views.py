@@ -13,6 +13,7 @@ from .mail import send_mail
 import random
 import base64
 from colorthief import ColorThief
+from django.db.models import Q
 
 # Create your views here.
 
@@ -912,3 +913,50 @@ def ping(request):
 
     return HttpResponse("pinged")
 
+# Renders page for adding friends
+def add_friends(request):
+    # If user is not logged in, redirect
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
+    
+    # Set static files
+    context = {}
+    with open(static_dir + '\\css\\add_friends.css', 'r') as data:
+        context['add_friends_css'] = data.read()
+
+    return render(request, "friends/add_friends.html", context)
+
+# Renders a list of users that match search query for username and nickname
+def add_friends_result(request):
+    if request.method == "POST":
+        # If user is not logged in, redirect
+        if "user_id" not in request.session:
+            return HttpResponseRedirect("/")
+        else:
+            user_id = request.session.get("user_id")
+
+        # Get search query
+        data = json.loads(request.body)
+        query = data.get("query")
+
+        # Get users from database where their nickname or username contains the query, limit to 10 rows
+        query_users = users.objects.filter(
+            Q(username__icontains=query) | Q(nickname__icontains=query)
+        )[:10]
+
+        result_users = []
+
+        # Exclude any users in your friend list
+        for user in query_users:
+            friend_uid = user.user_id
+            if not friend_list.objects.filter(user_id_1=user_id, user_id_2=friend_uid).exists():
+                result_users.append(user)
+
+        # Pass into context
+        context = {}
+        context["users"] = result_users
+        context["query"] = query
+
+        return render(request, "friends/add_friends_result.html", context)
+    else:
+        return render(request, 'error_pages/405.html')

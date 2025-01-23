@@ -1,0 +1,10 @@
+{% if users %}
+    {% for user in users %}
+        <div class="friend-result-row">
+            <img class="friend-result-profilepic" onclick="displayProfile('{{user.user_id}}')" src="/static/img/profile_pictures/{{user.profile_picture}}" alt="{{user.nickname}}">
+            <p class="friend-result-nickname" onclick="displayProfile('{{user.user_id}}')">{{user.nickname}}</p>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No users found with nicknames or usernames containing '{{query}}'</p>
+{% endif %}

@@ -1,0 +1,67 @@
+/* Stylesheet for add friends page */
+
+.add-friends-input {
+    width: calc(60% - 10px);
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 1rem;
+    border: solid 1px black;
+}
+
+.add-friends-result {
+    margin-top: 10px;
+    width: calc(60% - 20px);
+    padding: 10px;
+    height: 300px;
+    max-height: 50vh;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    border: solid 1px black;
+    background-color: white;
+    border-radius: 5px;
+}
+
+.friend-result-row {
+    width: 100%;
+    height: 60px;
+    border-bottom: solid 1px rgba(0, 0, 0, 0.304);
+    display: flex;
+    align-items: center;
+}
+
+.friend-result-profilepic {
+    width: 40px;
+    height: 40px;
+    border-radius: 40px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.friend-result-profilepic:hover {
+    filter: brightness(0.5);
+}
+
+.friend-result-nickname {
+    max-width: calc(100% - 20px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-wrap: nowrap;
+    font-weight: 600;
+    margin-left: 10px;
+    font-size: 1.3rem;
+    cursor: pointer;
+}
+
+.friend-result-nickname:hover {
+    text-decoration: underline;
+}
+
+@media screen and (max-width: 1300px) {
+    .add-friends-input {
+        width: calc(100% - 30px);
+    }
+
+    .add-friends-result {
+        width: calc(100% - 40px);
+    }
+}
