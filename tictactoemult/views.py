@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect, QueryDict
+from django.http import HttpResponse, HttpResponseRedirect, QueryDict, HttpResponseForbidden, JsonResponse
 from .forms import LoginForm, CreateAccountForm, AccountRecoveryForm1, AccountRecoveryForm2, AccountRecoveryFormNewPassword, PersonalInformationEmail
 from django.contrib.auth.hashers import make_password, check_password
 from .models import users, recovery_codes, friend_list, pending_friends
@@ -108,7 +108,7 @@ def login(request):
         else:
             return HttpResponse("error")
     else:
-        return render(request, 'error_pages/405.html')
+        return HttpResponseForbidden("Method not allowed")
 
 # Function to render main page
 def main(request):
@@ -159,19 +159,19 @@ def create_account_form_handler(request):
             username_lower = username.lower()
             for c in username_lower:
                 if c not in whitelist:
-                    return HttpResponse("ascii")
+                    return JsonResponse({"error" : "ascii"})
 
             # Check if username is taken
             if users.objects.filter(username=username).exists():
-                return HttpResponse("taken")
+                return JsonResponse({"error" : "taken"})
             
             # Check if email is already registered
             if users.objects.filter(email=email).exists():
-                return HttpResponse("email_taken")
+                return JsonResponse({"error" : "email_taken"})
             
             # Check if username is only numbers
             if username.isdigit():
-                return HttpResponse("numeric")
+                return JsonResponse({"error" : "numeric"})
 
             # Hash password
             password_hash = make_password(password)
@@ -200,42 +200,50 @@ def create_account_form_handler(request):
             uuid_str = str(user.user_id)
             request.session['user_id'] = uuid_str
 
-            return HttpResponse("ok")
+            return JsonResponse({"redirect" : 1})
         else:
-            return HttpResponse("error")
+            return JsonResponse({"error" : "error"})
     else:
-        return render(request, 'error_pages/405.html')
+        return HttpResponseForbidden("Method not allowed")
 
 # Function to validate username while user is typing it in
-@csrf_exempt
 def username_validate(request):
     if request.method == "POST":
         # Only POST requests are allowed
-        username = request.POST.get("username", "")
-        validate_list = {}
+
+        # Get posted username
+        data = json.loads(request.body)
+        username = data.get("username")
+
+        validate_list = {
+            "ascii" : 0,
+            "between_letters" : 0,
+            "taken" : 0,
+            "numeric" : 0
+        }
 
         # Check if username has non english characters
         whitelist = "abcdefghijklmnopqrstuvwxyz1234567890"
         username_lower = username.lower()
         for c in username_lower:
             if c not in whitelist:
-                validate_list['ascii'] = "true"
+                validate_list['ascii'] = 1
         
         # Check if username is between 5 to 30 letters
         if len(username) > 30 or len(username) < 5:
-            validate_list['between_letters'] = "true"
+            validate_list['between_letters'] = 1
         
         # Check if username is taken
         if users.objects.filter(username=username).exists():
-            validate_list["taken"] = "true"
+            validate_list["taken"] = 1
         
         # Check if username is only numbers
         if username.isdigit():
-            validate_list["numeric"] = "true"
+            validate_list["numeric"] = 1
 
-        return HttpResponse(json.dumps(validate_list), content_type = "application/json")
+        return JsonResponse(validate_list)
     else:
-        return render(request, 'error_pages/405.html')
+        return HttpResponseForbidden("Method not allowed")
 
 # Function that renders account recovery page
 def account_recovery(request):
@@ -285,7 +293,7 @@ def account_recovery_email(request):
         else:
             return HttpResponse("error")
     else:
-        return render(request, 'error_pages/405.html')
+        return HttpResponseForbidden("Method not allowed")
 
 def account_recovery_inputcode(request):
     # Check if temp_recovery_email session variable is set
@@ -334,7 +342,7 @@ def account_recovery_code(request):
         else:
             return HttpResponse("error")
     else:
-        return render(request, 'error_pages/405.html')
+        return HttpResponseForbidden("Method not allowed")
 
 # Function to render page for the final step of account recovery
 def account_recovery_final(request):
@@ -388,7 +396,7 @@ def reset_password(request):
         else:
             return HttpResponse("error")
     else:
-        return render(request, 'error_pages/405.html')
+        return HttpResponseForbidden("Method not allowed")
 
 # Logs the user out
 def logout(request):
@@ -471,7 +479,7 @@ def editprofile_savechanges(request):
 
         return HttpResponse("ok")
     else:
-        return render(request, 'error_pages/405.html')
+        return HttpResponseForbidden("Method not allowed")
 
 # Renders a modal for uploading profilepic
 def profilepic_upload(request):
@@ -553,7 +561,7 @@ def profilepic_cropped_upload(request):
         
         return HttpResponse("ok")
     else :
-        return render(request, 'error_pages/405.html')
+        return HttpResponseForbidden("Method not allowed")
 
 # Renders a modal of a users profile
 def display_profile(request, uid):
@@ -670,7 +678,7 @@ def change_email_modal(request):
         else:
             return HttpResponse("error")
     else :
-        return render(request, 'error_pages/405.html')
+        return HttpResponseForbidden("Method not allowed")
 
 # Form handler for inputting code when code has been sent to change emails
 def change_email_modal_confirm(request):
@@ -718,7 +726,7 @@ def change_email_modal_confirm(request):
         else:
             return HttpResponse("error")
     else :
-        return render(request, 'error_pages/405.html')
+        return HttpResponseForbidden("Method not allowed")
 
 # Renders modal for confirming password change in settings
 def change_password_modal(request):
@@ -792,7 +800,7 @@ def change_password_modal(request):
         else:
             return HttpResponse("error")
     else :
-        return render(request, 'error_pages/405.html')
+        return HttpResponseForbidden("Method not allowed")
 
 # Form handler for inputting code when code has been sent to change password
 def change_password_modal_confirm(request):
@@ -840,7 +848,7 @@ def change_password_modal_confirm(request):
         else:
             return HttpResponse("error")
     else :
-        return render(request, 'error_pages/405.html')
+        return HttpResponseForbidden("Method not allowed")
 
 # Renders template for friends page
 def friends(request):
@@ -961,4 +969,4 @@ def add_friends_result(request):
 
         return render(request, "friends/add_friends_result.html", context)
     else:
-        return render(request, 'error_pages/405.html')
+        return HttpResponseForbidden("Method not allowed")
