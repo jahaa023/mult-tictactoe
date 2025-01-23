@@ -30,30 +30,36 @@ function loadEditProfile() {
             })
 
             // Event listener for edit profile form
-            $('#edit-profile-savechanges').on("submit", function (e){
+            document.getElementById("edit-profile-savechanges").addEventListener("submit", function(e) {
                 e.preventDefault();
                 var formData = new FormData(this);
 
-                $.ajax({
-                    url: '/editprofile_savechanges',
-                    type: 'POST',
-                    data: formData,
-                    success: function (response) {
-                        switch(response) {
-                            case "error":
-                                showConfirm("Something went wrong. Make sure inputs are filled.")
-                                break
-                            case "ok":
-                                showConfirm("Changes saved!");
-                        }
-                    },
-                    error: function() {
-                        showConfirm("Something went wrong. Try again later.")
-                    },
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                });
+                var url = "/editprofile_savechanges"
+
+                fetch(url, {
+                    method : "POST",
+                    body : formData,
+                    credentials : "same-origin"
+                })
+
+                .then(response => response.json())
+
+                .then(response => {
+                    switch(response.error) {
+                        case "error":
+                            showConfirm("Something went wrong. Make sure inputs are filled.")
+                            break
+                    }
+
+                    if (response.ok == 1) {
+                        showConfirm("Changes saved!");
+                    }
+                })
+
+                .catch(error => {
+                    showConfirm("Something went wrong. Try again later.")
+                    console.error(error)
+                })
             })
 
             // Event listener for profile picture change

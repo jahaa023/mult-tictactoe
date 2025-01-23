@@ -56,6 +56,7 @@ document.getElementById("create-account-form").addEventListener("submit", functi
 
     .catch(error => {
         showError("Something went wrong. Please try again later")
+        console.error(error)
     })
 })
 
@@ -118,6 +119,7 @@ document.getElementById("id_username").addEventListener("keyup", function(){
     .catch(error => {
         // If something went wrong
         document.getElementById("username-validator-container").innerHTML = "Something went wrong while validating username."
+        console.error(error)
     })
 })
 

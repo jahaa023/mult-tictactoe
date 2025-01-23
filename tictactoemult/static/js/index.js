@@ -5,36 +5,42 @@ function showError(error) {
     errorElement.style.display = "block";
 }
 
-// When login form is submitted, do a AJAX post request
-$('#login-form').on("submit", function (e){
+// When login form is submitted, do a fetch api post request
+document.getElementById("login-form").addEventListener("submit", function(e) {
     e.preventDefault();
     var formData = new FormData(this);
 
-    $.ajax({
-        url: '/login',
-        type: 'POST',
-        data: formData,
-        success: function (response) {
-            switch(response) {
-                case "error":
-                    showError("Something went wrong. Make sure inputs are filled.")
-                    break
-                case "wrong":
-                    showError("Username or password incorrect!")
-                    break
-                case "ok":
-                    window.location.href = "/main";
-            }
-        },
-        error: function() {
-            showError("Something went wrong. Try again later.")
-        },
-        cache: false,
-        contentType: false,
-        processData: false,
-    });
-})
+    var url = "/login"
+    fetch(url, {
+        method : "POST",
+        body : formData,
+        credentials : "same-origin"
+    })
 
+    .then(response => response.json())
+
+    .then(response => {
+        switch(response.error) {
+            case "error":
+                showError("Something went wrong. Make sure inputs are filled.")
+                break
+            case "wrong":
+                showError("Username or password incorrect!")
+                break
+        }
+
+        if (response.redirect == 1) {
+            window.location.href = "/main"
+        }
+    })
+
+    .catch(error => {
+        showError("Something went wrong. Please try again later.")
+        console.error(error)
+    })
+});
+
+// Changes type of password input when eye icon is pressed
 document.getElementById("password-visibility-button").addEventListener("click", function() {
     changeVisibility('id_password', 'password-visibility-button')
 })
