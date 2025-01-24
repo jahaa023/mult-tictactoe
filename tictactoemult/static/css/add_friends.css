@@ -8,6 +8,10 @@
     border: solid 1px black;
 }
 
+.add-friends-p {
+    width: calc(100% - 50px);
+}
+
 .add-friends-result {
     margin-top: 10px;
     width: calc(60% - 20px);
@@ -75,6 +79,10 @@
 
 .friend-result-nickname:hover {
     text-decoration: underline;
+}
+
+#add-friends-input {
+    margin-top: 15px;
 }
 
 @media screen and (max-width: 1300px) {

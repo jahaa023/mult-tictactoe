@@ -4,6 +4,7 @@ from .forms import LoginForm, CreateAccountForm, AccountRecoveryForm1, AccountRe
 from django.contrib.auth.hashers import make_password, check_password
 from .models import users, recovery_codes, friend_list, pending_friends
 import os
+import uuid
 import datetime
 from pathlib import Path
 import time
@@ -986,9 +987,13 @@ def add_friends(request):
     # If user is not logged in, redirect
     if "user_id" not in request.session:
         return HttpResponseRedirect("/")
+    else:
+        user_id = request.session.get("user_id")
+        user = users.objects.get(user_id=user_id)
+        context = {}
+        context["user"] = user
     
     # Set static files
-    context = {}
     with open(static_dir + '\\css\\add_friends.css', 'r') as data:
         context['add_friends_css'] = data.read()
 
@@ -1014,12 +1019,16 @@ def add_friends_result(request):
 
         result_users = []
 
-        # Exclude any users in your friend list and yourself
+        # Exclude any users in your friend list, users you have sent a request to and yourself
         for user in query_users:
             friend_uid = user.user_id
             if str(friend_uid) == user_id:
                 continue
-            elif not friend_list.objects.filter(user_id_1=user_id, user_id_2=friend_uid).exists():
+            elif friend_list.objects.filter(user_id_1=user_id, user_id_2=friend_uid).exists():
+                continue
+            elif pending_friends.objects.filter(outgoing=user_id, incoming=friend_uid).exists():
+                continue
+            else:
                 result_users.append(user)
 
         # Pass into context
@@ -1028,5 +1037,61 @@ def add_friends_result(request):
         context["query"] = query
 
         return render(request, "friends/add_friends_result.html", context)
+    else:
+        return HttpResponseNotAllowed("Method not allowed")
+
+# Sends a friend request
+def send_friend_request(request):
+    if request.method == "POST":
+        # If user is not logged in, redirect
+        if "user_id" not in request.session:
+            return HttpResponseRedirect("/")
+        else:
+            user_id = request.session.get("user_id")
+
+        # Get post data from json
+        body = json.loads(request.body)
+        friend_user_id = body["user_id"]
+
+        # Check if user exists
+        try:
+            friend_user_id_uuid = uuid.UUID(friend_user_id)
+            if not users.objects.filter(user_id=friend_user_id_uuid).exists():
+                return JsonResponse({"error" : "noexist"})
+        except:
+            return JsonResponse({"error" : "noexist"})
+
+        # Check if user is already in friend list
+        if friend_list.objects.filter(user_id_1=user_id, user_id_2=friend_user_id).exists():
+            return JsonResponse({"error" : "already_friends"})
+        
+        # Check if user has already sent a friend request to this user
+        if pending_friends.objects.filter(outgoing=user_id, incoming=friend_user_id).exists():
+            return JsonResponse({"error" : "alreadysent"})
+        
+        # Check if user is yourself
+        if user_id == friend_user_id:
+            return JsonResponse({"error" : "yourself"})
+        
+        # Get current date and time for sent timestamp
+        now = datetime.now()
+        timestamp = now.strftime("%d/%m/%Y %H:%M")
+
+        # Put friend request in pending_friends table
+        pending = pending_friends(
+            outgoing=user_id,
+            incoming=friend_user_id,
+            sent=timestamp
+        )
+
+        pending.save()
+
+        # Send id of button to disable
+        alreadysentbutton = "friendrow_sendbutton_" + friend_user_id
+
+        return JsonResponse({
+            "ok" : 1,
+            "sentbutton" : alreadysentbutton
+        })
     else:
         return HttpResponseNotAllowed("Method not allowed")
