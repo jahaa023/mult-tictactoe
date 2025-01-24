@@ -36,23 +36,30 @@ function loadAddFriends() {
                 var query = this.value;
 
                 // Do post request to search url and return the response
-                $.ajax({
-                    url: '/add_friends_result',
-                    type: 'POST',
-                    headers: {"X-CSRFToken": csrfmiddlewaretoken},
-                    data: JSON.stringify({
+
+                var url = "/add_friends_result"
+
+                fetch(url, {
+                    method : "POST",
+                    body : JSON.stringify({
                         query:query
                     }),
-                    success: function (response) {
-                        document.getElementById("add-friends-result").innerHTML = response
-                    },
-                    error: function() {
-                        document.getElementById("add-friends-result").innerHTML = "Something went wrong."
-                    },
-                    cache: false,
-                    contentType: "application/json; charset=utf-8",
-                    processData: false,
-                });
+                    credentials : "same-origin",
+                    headers : {
+                        "X-CSRFToken" : csrfmiddlewaretoken
+                    }
+                })
+
+                .then(response => response.text())
+
+                .then(response => {
+                    document.getElementById("add-friends-result").innerHTML = response
+                })
+
+                .catch(error => {
+                    document.getElementById("add-friends-result").innerHTML = "Something went wrong."
+                    console.error(error)
+                })
             })
         })
     }
@@ -62,38 +69,7 @@ loadYourFriends();
 
 // Sends a friend request to user_id in parameter
 function sendFriendRequest(user_id) {
-    // Post to backend
-    $.ajax({
-        url: '/send_friend_request',
-        type: 'POST',
-        headers: {"X-CSRFToken": csrfmiddlewaretoken},
-        data: JSON.stringify({
-            user_id:user_id
-        }),
-        success: function (response) {
-            switch (response.error) {
-                case "already_friends":
-                    showConfirm("You are already friends with this user.")
-                    break
-                case "yourself":
-                    showConfirm("You cannot send a friend request to yourself.")
-                    break;
-                case "error":
-                    showConfirm("Something went wrong.")
-                    break
-            }
-
-            if (response.ok == 1) {
-                showConfirm("Friend request sent to " + response.nickname + ".");
-            }
-        },
-        error: function() {
-            showConfirm("Something went wrong. Try again later.")
-        },
-        cache: false,
-        contentType: "application/json; charset=utf-8",
-        processData: false,
-    });
+    
 }
 
 // Event listeners for dropdown and navbar
