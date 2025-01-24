@@ -42,21 +42,31 @@ function showConfirm(message, duration = 1000) {
     $('#confirmContainer').delay(duration).fadeOut(1000)
 }
 
-// Does a GET request, and loads contents into element
+// Does a GET request, and loads contents into element. Is called "ajax"Get because it used jquery in the past. It now uses fetch api
 function ajaxGet(staticpath, location, onload = function(){}) {
-    $.get(staticpath, function(data){
-        var insertContainer = document.getElementById(location)
-        insertContainer.innerHTML = data
+    fetch(staticpath, {
+        method : "GET",
+        credentials : "same-origin"
     })
-    .done(function() {
+
+    .then(response => response.text())
+
+    .then(response => {
+        var insertContainer = document.getElementById(location)
+        insertContainer.innerHTML = response
+    })
+
+    .then(() => {
         onload();
         if (location == "dark-container") {
             $('#dark-container').fadeIn(300)
         }
     })
-    .fail(function() {
+
+    .catch(error => {
         showConfirm("Something went wrong")
-    });
+        console.error(error)
+    })
 }
 
 // Hides dark container div
