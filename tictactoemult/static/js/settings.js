@@ -141,10 +141,13 @@ document.getElementById("edit-profile-mobile").addEventListener("click", functio
 
 // Config for personal information page
 function loadPersonalInformation() {
+    // If youre not already on personal info
     if (currentTab != "personalinfo") {
+        // Get the personal info tab
         ajaxGet("/personal_information", "settings-page-container", function() {
             currentTab = "personalinfo"
 
+            // Event listeners for password visibility buttons
             document.getElementById("password-visibility-button-one").addEventListener("click", function() {
                 changeVisibility('id_new_password', 'password-visibility-button-one')
             })
@@ -170,32 +173,39 @@ function loadPersonalInformation() {
             // When change password form is submitted
             document.getElementById("change-password-form").addEventListener("submit", function(e) {
                 e.preventDefault();
+                // Disable submit button to prevent spam
                 $('#password-submit').prop("disabled", true)
                 var formData = new FormData(this);
                 var modalLoaded = 0;
 
                 var url = "/change_password_modal";
 
+                // Post to url and load in modal if there are no errors
                 fetch(url, {
                     method : "POST",
                     body : formData,
                     credentials : "same-origin"
                 })
 
+                // Convert response to text/html
                 .then(response => response.text())
 
                 .then(response => {
                     switch(response) {
                         case "error":
+                            // If there was a general error, but not a server error
                             showConfirm("Something went wrong. Make sure inputs are filled.")
                             break
                         case "match":
+                            // If the passwords dont match
                             showConfirm("The passwords you inputted do not match.")
                             break
                         case "same":
+                            // If password is the same as the old one
                             showConfirm("Your new password can't be the same as your old one.")
                             break
                         default:
+                            // Put modal into dark container and change modal loaded to 1
                             var darkcontainer = document.getElementById("dark-container")
                             darkcontainer.innerHTML = response
                             $('#dark-container').fadeIn(300)
@@ -205,17 +215,22 @@ function loadPersonalInformation() {
                 })
 
                 .catch(error => {
+                    // If something went wrong
                     showConfirm("Something went wrong. Try again later.")
                     console.error(error)
                 })
 
                 .finally(() => {
+                    // After post request, if modal is loaded in, add event listeners for modal
                     $('#password-submit').prop("disabled", false)
                     if (modalLoaded == 1) {
+
+                        // If user cancels action, hide modal
                         document.getElementById("change-email-password-cancel-button").addEventListener("click", function() {
                             hideDarkContainer();
                         })
 
+                        // When form to input code to change password is submitted
                         document.getElementById("change-password-form-confirm").addEventListener("submit", function(e) {
                             e.preventDefault();
                             $('#change-email-password-submit').prop("disabled", true)
@@ -223,25 +238,30 @@ function loadPersonalInformation() {
 
                             var url = "/change_password_modal_confirm"
 
+                            // Post formdata to url
                             fetch(url, {
                                 method : "POST",
                                 body : formData,
                                 credentials : "same-origin"
                             })
 
+                            // Convert response to json
                             .then(response => response.json())
 
                             .then(response => {
                                 switch(response.error) {
                                     case "error":
+                                        // If there was something wrong with the input
                                         showConfirm("Something went wrong. Make sure inputs are filled.")
                                         break
                                     case "expired_notfound":
+                                        // If code is expired or doesnt exist
                                         showConfirm("The code you inputted is expired or not found.")
                                         break
                                 }
 
                                 if (response.ok == 1) {
+                                    // If everything went well, hide modal and reload page to show new changes
                                     hideDarkContainer();
                                     loadPersonalInformation();
                                     showConfirm("Password has been changed.");
@@ -249,11 +269,13 @@ function loadPersonalInformation() {
                             })
 
                             .catch(error => {
+                                // If something went wrong
                                 showConfirm("Something went wrong. Try again later.")
                                 console.error(error)
                             })
 
                             .finally(() => {
+                                // After request is done, enable submit button
                                 $('#change-email-password-submit').prop("disabled", false)
                             })
                         })
@@ -261,7 +283,7 @@ function loadPersonalInformation() {
                 })
             })
 
-            // When change email form is submitted
+            // When change email form is submitted, same process as the password form, which is shown above. The diffrence is that password is changed out with email
             document.getElementById("change-email-form").addEventListener("submit", function(e) {
                 e.preventDefault();
                 $('#email-submit').prop("disabled", true)
@@ -359,6 +381,7 @@ function loadPersonalInformation() {
     }
 }
 
+// Event listeners for dropdown
 document.getElementById("personal-information").addEventListener("click", function() {
     loadPersonalInformation();
 })
