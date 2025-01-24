@@ -168,169 +168,192 @@ function loadPersonalInformation() {
             })
 
             // When change password form is submitted
-            $('#change-password-form').on("submit", function (e){
+            document.getElementById("change-password-form").addEventListener("submit", function(e) {
                 e.preventDefault();
                 $('#password-submit').prop("disabled", true)
                 var formData = new FormData(this);
                 var modalLoaded = 0;
 
-                $.ajax({
-                    url: '/change_password_modal',
-                    type: 'POST',
-                    data: formData,
-                    success: function (response) {
-                        switch(response) {
-                            case "error":
-                                showConfirm("Something went wrong. Make sure inputs are filled.")
-                                break
-                            case "match":
-                                showConfirm("The passwords you inputted do not match.")
-                                break
-                            case "same":
-                                showConfirm("Your new password can't be the same as your old one.")
-                            default:
-                                var darkcontainer = document.getElementById("dark-container")
-                                darkcontainer.innerHTML = response
-                                $('#dark-container').fadeIn(300)
-                                modalLoaded = 1
-                                break
-                        }
-                    },
-                    error: function() {
-                        showConfirm("Something went wrong. Try again later.")
-                    },
-                    complete: function() {
-                        $('#password-submit').prop("disabled", false)
-                        if (modalLoaded == 1) {
-                            document.getElementById("change-email-password-cancel-button").addEventListener("click", function() {
-                                hideDarkContainer();
+                var url = "/change_password_modal";
+
+                fetch(url, {
+                    method : "POST",
+                    body : formData,
+                    credentials : "same-origin"
+                })
+
+                .then(response => response.text())
+
+                .then(response => {
+                    switch(response) {
+                        case "error":
+                            showConfirm("Something went wrong. Make sure inputs are filled.")
+                            break
+                        case "match":
+                            showConfirm("The passwords you inputted do not match.")
+                            break
+                        case "same":
+                            showConfirm("Your new password can't be the same as your old one.")
+                            break
+                        default:
+                            var darkcontainer = document.getElementById("dark-container")
+                            darkcontainer.innerHTML = response
+                            $('#dark-container').fadeIn(300)
+                            modalLoaded = 1
+                            break
+                    }
+                })
+
+                .catch(error => {
+                    showConfirm("Something went wrong. Try again later.")
+                    console.error(error)
+                })
+
+                .finally(() => {
+                    $('#password-submit').prop("disabled", false)
+                    if (modalLoaded == 1) {
+                        document.getElementById("change-email-password-cancel-button").addEventListener("click", function() {
+                            hideDarkContainer();
+                        })
+
+                        document.getElementById("change-password-form-confirm").addEventListener("submit", function(e) {
+                            e.preventDefault();
+                            $('#change-email-password-submit').prop("disabled", true)
+                            var formData = new FormData(this);
+
+                            var url = "/change_password_modal_confirm"
+
+                            fetch(url, {
+                                method : "POST",
+                                body : formData,
+                                credentials : "same-origin"
                             })
 
-                            $('#change-password-form-confirm').on("submit", function (e){
-                                e.preventDefault();
-                                $('#change-email-password-submit').prop("disabled", true)
-                                var formData = new FormData(this);
-                    
-                                $.ajax({
-                                    url: '/change_password_modal_confirm',
-                                    type: 'POST',
-                                    data: formData,
-                                    success: function (response) {
-                                        switch(response) {
-                                            case "error":
-                                                showConfirm("Something went wrong. Make sure inputs are filled.")
-                                                break
-                                            case "expired_notfound":
-                                                showConfirm("The code you inputted is expired or not found.")
-                                                break
-                                            case "ok":
-                                                hideDarkContainer();
-                                                loadPersonalInformation();
-                                                showConfirm("Password has been changed.");
-                                                break
-                                        }
-                                    },
-                                    error: function() {
-                                        showConfirm("Something went wrong. Try again later.")
-                                    },
-                                    complete: function() {
-                                        $('#change-email-password-submit').prop("disabled", false)
-                                    },
-                                    cache: false,
-                                    contentType: false,
-                                    processData: false,
-                                });
+                            .then(response => response.json())
+
+                            .then(response => {
+                                switch(response.error) {
+                                    case "error":
+                                        showConfirm("Something went wrong. Make sure inputs are filled.")
+                                        break
+                                    case "expired_notfound":
+                                        showConfirm("The code you inputted is expired or not found.")
+                                        break
+                                }
+
+                                if (response.ok == 1) {
+                                    hideDarkContainer();
+                                    loadPersonalInformation();
+                                    showConfirm("Password has been changed.");
+                                }
                             })
-                        }
-                    },
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                });
+
+                            .catch(error => {
+                                showConfirm("Something went wrong. Try again later.")
+                                console.error(error)
+                            })
+
+                            .finally(() => {
+                                $('#change-email-password-submit').prop("disabled", false)
+                            })
+                        })
+                    }
+                })
             })
 
             // When change email form is submitted
-            $('#change-email-form').on("submit", function (e){
+            document.getElementById("change-email-form").addEventListener("submit", function(e) {
                 e.preventDefault();
                 $('#email-submit').prop("disabled", true)
                 var formData = new FormData(this);
                 var modalLoaded = 0;
 
-                $.ajax({
-                    url: '/change_email_modal',
-                    type: 'POST',
-                    data: formData,
-                    success: function (response) {
-                        switch(response) {
-                            case "error":
-                                showConfirm("Something went wrong. Make sure inputs are filled.")
-                                break
-                            case "match":
-                                showConfirm("The e-mails you inputted do not match.")
-                                break
-                            case "email_taken":
-                                showConfirm("This e-mail is already registered to an account.")
-                                break
-                            default:
-                                var darkcontainer = document.getElementById("dark-container")
-                                darkcontainer.innerHTML = response
-                                $('#dark-container').fadeIn(300)
-                                modalLoaded = 1
-                                break
-                        }
-                    },
-                    error: function() {
-                        showConfirm("Something went wrong. Try again later.")
-                    },
-                    complete: function() {
-                        $('#email-submit').prop("disabled", false)
-                        if (modalLoaded == 1) {
-                            document.getElementById("change-email-password-cancel-button").addEventListener("click", function() {
-                                hideDarkContainer();
+                var url = "/change_email_modal";
+
+                fetch(url, {
+                    method : "POST",
+                    body : formData,
+                    credentials : "same-origin"
+                })
+
+                .then(response => response.text())
+
+                .then(response => {
+                    switch(response) {
+                        case "error":
+                            showConfirm("Something went wrong. Make sure inputs are filled.")
+                            break
+                        case "match":
+                            showConfirm("The e-mails you inputted do not match.")
+                            break
+                        case "email_taken":
+                            showConfirm("This e-mail is already registered to an account.")
+                            break
+                        default:
+                            var darkcontainer = document.getElementById("dark-container")
+                            darkcontainer.innerHTML = response
+                            $('#dark-container').fadeIn(300)
+                            modalLoaded = 1
+                            break
+                    }
+                })
+
+                .catch(error => {
+                    showConfirm("Something went wrong. Try again later.")
+                    console.error(error)
+                })
+
+                .finally(() => {
+                    $('#email-submit').prop("disabled", false)
+                    if (modalLoaded == 1) {
+                        document.getElementById("change-email-password-cancel-button").addEventListener("click", function() {
+                            hideDarkContainer();
+                        })
+
+                        document.getElementById("change-email-form-confirm").addEventListener("submit", function(e) {
+                            e.preventDefault();
+                            $('#change-email-password-submit').prop("disabled", true)
+                            var formData = new FormData(this);
+
+                            var url = "/change_email_modal_confirm"
+
+                            fetch(url, {
+                                method : "POST",
+                                body : formData,
+                                credentials : "same-origin"
                             })
 
-                            $('#change-email-form-confirm').on("submit", function (e){
-                                e.preventDefault();
-                                $('#change-email-password-submit').prop("disabled", true)
-                                var formData = new FormData(this);
-                    
-                                $.ajax({
-                                    url: '/change_email_modal_confirm',
-                                    type: 'POST',
-                                    data: formData,
-                                    success: function (response) {
-                                        switch(response) {
-                                            case "error":
-                                                showConfirm("Something went wrong. Make sure inputs are filled and that code is a number.")
-                                                break
-                                            case "expired_notfound":
-                                                showConfirm("The code you inputted is expired or not found.")
-                                                break
-                                            case "ok":
-                                                hideDarkContainer();
-                                                currentTab = ""
-                                                loadPersonalInformation();
-                                                showConfirm("E-mail has been changed.");
-                                                break
-                                        }
-                                    },
-                                    error: function() {
-                                        showConfirm("Something went wrong. Try again later.")
-                                    },
-                                    complete: function() {
-                                        $('#change-email-password-submit').prop("disabled", false)
-                                    },
-                                    cache: false,
-                                    contentType: false,
-                                    processData: false,
-                                });
+                            .then(response => response.json())
+
+                            .then(response => {
+                                switch(response.error) {
+                                    case "error":
+                                        showConfirm("Something went wrong. Make sure inputs are filled and that code is a number.")
+                                        break
+                                    case "expired_notfound":
+                                        showConfirm("The code you inputted is expired or not found.")
+                                        break
+                                }
+
+                                if (response.ok == 1) {
+                                    hideDarkContainer();
+                                    currentTab = ""
+                                    loadPersonalInformation();
+                                    showConfirm("E-mail has been changed.");
+                                }
                             })
-                        }
-                    },
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                });
+
+                            .catch(error => {
+                                showConfirm("Something went wrong. Try again later.")
+                                console.error(error)
+                            })
+
+                            .finally(() => {
+                                $('#change-email-password-submit').prop("disabled", false)
+                            })
+                        })
+                    }
+                })
             })
         })
     }

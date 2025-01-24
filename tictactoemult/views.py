@@ -753,7 +753,7 @@ def change_email_modal_confirm(request):
             try:
                 code = int(code)
             except:
-                return HttpResponse("error")
+                return JsonResponse({"error" : "error"})
 
             # Delete expired codes
             unix_now = int(time.time())
@@ -761,7 +761,7 @@ def change_email_modal_confirm(request):
 
             # Check that new email session variable exists
             if 'temp_new_email' not in request.session:
-                return HttpResponse("error")
+                return JsonResponse({"error" : "error"})
 
             # Get users current email
             user_id = request.session.get("user_id")
@@ -769,11 +769,11 @@ def change_email_modal_confirm(request):
                 user = users.objects.get(user_id=user_id)
                 email = user.email
             else:
-                return HttpResponse("error")
+                return JsonResponse({"error" : "error"})
 
             # Check if code exists in database
             if not recovery_codes.objects.filter(recovery_code=code, email=email).exists():
-                return HttpResponse("expired_notfound")
+                return JsonResponse({"error" : "expired_notfound"})
 
             # Change email
             user.email = request.session.get("temp_new_email")
@@ -782,9 +782,9 @@ def change_email_modal_confirm(request):
             # Unset session variable
             del request.session["temp_new_email"]
 
-            return HttpResponse("ok")
+            return JsonResponse({"ok" : 1})
         else:
-            return HttpResponse("error")
+            return JsonResponse({"error" : "error"})
     else :
         return HttpResponseNotAllowed("Method not allowed")
 
@@ -875,7 +875,7 @@ def change_password_modal_confirm(request):
             try:
                 code = int(code)
             except:
-                return HttpResponse("error")
+                return JsonResponse({"error" : "error"})
 
             # Delete expired codes
             unix_now = int(time.time())
@@ -883,7 +883,7 @@ def change_password_modal_confirm(request):
 
             # Check that new email session variable exists
             if 'temp_new_password' not in request.session:
-                return HttpResponse("error")
+                return JsonResponse({"error" : "error"})
 
             # Get users current email
             user_id = request.session.get("user_id")
@@ -891,11 +891,11 @@ def change_password_modal_confirm(request):
                 user = users.objects.get(user_id=user_id)
                 email = user.email
             else:
-                return HttpResponse("error")
+                return JsonResponse({"error" : "error"})
 
             # Check if code exists in database
             if not recovery_codes.objects.filter(recovery_code=code, email=email).exists():
-                return HttpResponse("expired_notfound")
+                return JsonResponse({"error" : "expired_notfound"})
 
             # Change password
             user.password = request.session.get("temp_new_password")
@@ -904,9 +904,9 @@ def change_password_modal_confirm(request):
             # Unset session variable
             del request.session["temp_new_password"]
 
-            return HttpResponse("ok")
+            return JsonResponse({"ok" : 1})
         else:
-            return HttpResponse("error")
+            return JsonResponse({"error" : "error"})
     else :
         return HttpResponseNotAllowed("Method not allowed")
 
