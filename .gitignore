@@ -7,3 +7,4 @@ tictactoemult/custom_settings.py
 pyvenv.cfg
 /tictactoemult/static/img/profile_pictures
 /tictactoemult/migrations
+/media

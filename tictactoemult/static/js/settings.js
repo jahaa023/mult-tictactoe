@@ -1,5 +1,11 @@
 // JavaScript file for settings page
 
+// Get csrftoken from cookie
+const csrfToken = document.cookie.split(';')
+    .find(cookie => cookie.trim().startsWith('csrftoken='))
+    ?.split('=')[1];
+
+
 // Varible for keeping track of which tab the user is on. This is to prevent unnessesary get requests for the tab youre already on
 var currentTab = "";
 // onload, default page is profile editing
@@ -68,11 +74,46 @@ function loadEditProfile() {
                     // shows a modal for uploading profile picture in dark container
 
                     // Add event listener for file input
-                    document.getElementById("profilepic-upload").onchange = function(e) {
-                        // Convert file to blob
-                        blob_url = URL.createObjectURL(this.files[0]);
-                        // Redirect to cropping page
-                        window.location.href = "/profilepic_crop?blob=" + blob_url
+                    document.getElementById("profilepic-upload").onchange = function() {
+                        const formData = new FormData();
+                        const fileInput = document.getElementById("profilepic-upload")
+                        formData.append('file', fileInput.files[0]);
+
+                        var url = "/profilepic_temp_upload";
+
+                        fetch(url, {
+                            method : "POST",
+                            body : formData,
+                            credentials : "same-origin",
+                            headers : {
+                                "X-CSRFToken" : csrfToken,
+                            }
+                        })
+
+                        .then(response => response.json())
+
+                        .then(response => {
+                            switch (response.error) {
+                                case "error":
+                                    showConfirm("Something went wrong. Please try again.")
+                                    break
+                                case "too_big":
+                                    showConfirm("File is too big. Max size is 3MB.")
+                                    break
+                                case "unsupported":
+                                    showConfirm("File type unsupported. Please try uploading a supported type")
+                                    break
+                            }
+
+                            if (response.file_url != null) {
+                                window.location = "profilepic_crop?file_url=" + response.file_url
+                            }
+                        })
+
+                        .catch(error => {
+                            showConfirm("Something went wrong. Please try again later.")
+                            console.error(error)
+                        })
                     };
 
                     // Add event listener for cancel button

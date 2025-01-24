@@ -4,9 +4,9 @@
 $( document ).ready(function() {
     // Set image src to blob in url
     const urlParams = new URLSearchParams(window.location.search);
-    const blob = urlParams.get('blob')
+    const file_url = urlParams.get('file_url')
     const image = document.getElementById("cropper-js-image")
-    image.src = blob
+    image.src = file_url
 
     // Configure cropper js
     const cropper = new Cropper(image, {

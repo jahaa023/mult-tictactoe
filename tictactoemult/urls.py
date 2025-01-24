@@ -31,5 +31,6 @@ urlpatterns = [
     path('your_friends', views.your_friends),
     path('ping', views.ping),
     path('add_friends', views.add_friends),
-    path('add_friends_result', views.add_friends_result)
+    path('add_friends_result', views.add_friends_result),
+    path('profilepic_temp_upload', views.profilepic_temp_upload)
 ]

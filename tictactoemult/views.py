@@ -5,20 +5,22 @@ from django.contrib.auth.hashers import make_password, check_password
 from .models import users, recovery_codes, friend_list, pending_friends
 import os
 import datetime
+from pathlib import Path
 import time
 from datetime import datetime, timedelta
-from django.views.decorators.csrf import csrf_exempt
 import json
 from .mail import send_mail
 import random
 import base64
 from colorthief import ColorThief
 from django.db.models import Q
+from django.core.files.storage import FileSystemStorage
 
 # Create your views here.
 
 # Sets global varible for static directory
 static_dir = os.getcwd() + '\\tictactoemult\\static'
+media_dir = os.getcwd() + '\\media'
 
 # Function for loading in static js and css files
 def importStaticFiles(name):
@@ -485,8 +487,6 @@ def editprofile_savechanges(request):
     else:
         return HttpResponseNotAllowed("Method not allowed")
 
-# STOPPED FETCH API STUFF HERE ------------------------------------------------------------------------
-
 # Renders a modal for uploading profilepic
 def profilepic_upload(request):
     # If user is not logged in, redirect
@@ -497,15 +497,58 @@ def profilepic_upload(request):
         context['profilepic_upload_css'] = data.read()
     return render(request, "modals/profilepic_upload.html", context)
 
+# Saves user uploaded image temporarily
+def profilepic_temp_upload(request):
+    # If user is not logged in, redirect
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
+
+    # Get posted file
+    file = request.FILES["file"]
+    fs = FileSystemStorage()
+
+    # Create name from unix timestamp and get file extension
+    expire = 60 * 15 # 15 minutes in seconds
+    file_name = int(time.time()) + expire
+    file_name = str(file_name)
+    file_ext = file.name.split(".")[-1]
+
+    # Check if file type is supported
+    whitelist = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
+    if file.content_type not in whitelist:
+        return JsonResponse({"error" : "unsupported"})
+
+    # Check if file size is under 3MB
+    file_size_mb = int((file.size / 1024) / 1024)
+    if file_size_mb > 3:
+        # If file size is more than 3 mb
+        return JsonResponse({"error" : "too_big"})
+
+    # Put new name and extenison together
+    file_name = file_name + "." + file_ext
+
+    # Save the file
+    filesave = fs.save(file_name, file)
+    if not filesave:
+        return JsonResponse({"error" : "error"})
+
+    # Get url for file
+    file_url = fs.url(filesave)
+
+    # Return path to file to user
+    return JsonResponse({
+        "file_url" : file_url
+    })
+
 # Renders page for cropping profile picture
 def profilepic_crop(request):
     # If user is not logged in, redirect
     if "user_id" not in request.session:
         return HttpResponseRedirect("/")
 
-    # if blob isnt in url, redirect back to settings
-    blob = request.GET.get("blob", False)
-    if not blob:
+    # if file path isnt in url, redirect back to settings
+    file_url = request.GET.get("file_url", False)
+    if not file_url:
         return HttpResponseRedirect("/settings")
     
     # Get static files
@@ -516,6 +559,18 @@ def profilepic_crop(request):
 # Handles upload of cropped profile picture
 def profilepic_cropped_upload(request):
     if request.method == "POST":
+        # Delete all expired temp files
+        unix_now = int(time.time())
+        for filename in os.listdir(media_dir):
+            f = os.path.join(media_dir, filename)
+            # checking if it is a file
+            if os.path.isfile(f):
+                # Get expiration timestamp from filename
+                timestamp = Path(f).stem
+                timestamp = int(timestamp)
+                if timestamp < unix_now:
+                    os.remove(f)
+
         # Convert post request to dict
         form = QueryDict.dict(request.POST)
         image_data = form["image_data"]
@@ -558,7 +613,6 @@ def profilepic_cropped_upload(request):
         old_profilepic_path = (profile_pictures_path + "\\" + user.profile_picture)
         if os.path.exists(old_profilepic_path) and not user.profile_picture == "defaultprofile.jpg" :
             os.remove(old_profilepic_path)
-
 
         # Save new image name and banner color in database
         user.profile_picture = image_name
