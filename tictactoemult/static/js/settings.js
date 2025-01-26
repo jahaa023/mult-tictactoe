@@ -390,3 +390,13 @@ document.getElementById("personal-information-mobile").addEventListener("click",
     loadPersonalInformation();
     hideUniversalDropdown();
 })
+
+// Ping interval
+setInterval(function() {
+    ping();
+}, 5000)
+
+// When document loads in, ping
+document.addEventListener("DOMContentLoaded", function() {
+    ping();
+})

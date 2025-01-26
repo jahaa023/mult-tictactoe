@@ -61,3 +61,13 @@ $( document ).ready(function() {
 document.getElementById("cancel-button").addEventListener("click", function(){
     window.location.href = "/settings"
 })
+
+// Ping interval
+setInterval(function() {
+    ping();
+}, 5000)
+
+// When document loads in, ping
+document.addEventListener("DOMContentLoaded", function() {
+    ping();
+})

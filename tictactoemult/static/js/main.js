@@ -60,3 +60,13 @@ document.getElementById("dropdown-button-exit").addEventListener("click", functi
     }, 200);
     $('#mobile-dropdown-background').delay(200).fadeOut(200)
 })
+
+// Ping interval
+setInterval(function() {
+    ping();
+}, 5000)
+
+// When document loads in, ping
+document.addEventListener("DOMContentLoaded", function() {
+    ping();
+})

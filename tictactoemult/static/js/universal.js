@@ -106,3 +106,13 @@ if ($('#universal-dropdown').length > 0) {
         hideUniversalDropdown();
     })
 }
+
+// Request that tells server that user is online
+function ping() {
+    var url = "/ping";
+
+    fetch(url, {
+        method : "GET",
+        credentials : "same-origin"
+    })
+}

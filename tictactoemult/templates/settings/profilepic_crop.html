@@ -21,7 +21,7 @@
     <link  href="/static/lib/cropper_js/node_modules/cropperjs/dist/cropper.css" rel="stylesheet">
     <script src="/static/lib/cropper_js/node_modules/cropperjs/dist/cropper.js"></script>
 </head>
-<body onload="$.get('/ping')">
+<body>
     <div id="confirmContainer"></div>
     <div class="profilepic-crop-container">
         <div class="profilepic-cropperjs-container">
@@ -43,11 +43,5 @@
 </script>
 <script>
     {{profilepic_crop_js | safe}}
-</script>
-<script>
-    // Ping interval to verify that user is online
-    setInterval(function() {
-        $.get("/ping")
-    }, 5000)
 </script>
 </html>

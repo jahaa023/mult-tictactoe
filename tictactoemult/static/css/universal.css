@@ -96,6 +96,8 @@ body {
     overflow-x: hidden;
     overflow-y: scroll;
     max-height: calc(100% - 150px);
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
 }
 
 .universal-dropdown-button {
