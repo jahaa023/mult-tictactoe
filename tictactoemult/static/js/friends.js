@@ -167,6 +167,41 @@ function cancelDeclineFriendRequest(row_id, cancel_decline) {
     })
 }
 
+// Function that accepts a friend request
+function acceptFriendRequest(row_id) {
+    var url = "/accept_friend_request";
+
+    fetch(url, {
+        method : "POST",
+        body : JSON.stringify({
+            row_id : row_id
+        }),
+        credentials : "same-origin",
+        headers : {
+            "X-CSRFToken" : csrfmiddlewaretoken
+        }
+    })
+
+    .then(response => response.json())
+
+    .then(response => {
+        switch(response.error) {
+            case "error":
+                showConfirm("Something went wrong.");
+                break;
+        }
+
+        if (response.ok == 1) {
+            showConfirm("Friend request accepted. You can see your new friend in the 'Your friends' tab.", 4000)
+        }
+    })
+
+    .catch(error => {
+        showConfirm("Something went wrong.")
+        console.error(error)
+    })
+}
+
 // Event listeners for dropdown and navbar
 document.getElementById("your_friends").addEventListener("click", function(){
     loadYourFriends();

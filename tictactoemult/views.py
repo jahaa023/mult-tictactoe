@@ -85,12 +85,12 @@ def login(request):
 
             # Check if user exists in database
             if not users.objects.filter(username=username).exists():
-                return JsonResponse({"error" : "wrong"})
+                return JsonResponse({"error" : "wrong"}, status=400)
             
             # Check that password is correct
             user = users.objects.get(username=username)
             if not check_password(password, user.password):
-                return JsonResponse({"error" : "wrong"})
+                return JsonResponse({"error" : "wrong"}, status=400)
             
             # set session variable
             uuid_str = str(user.user_id)
@@ -109,7 +109,7 @@ def login(request):
 
             return response
         else:
-            return JsonResponse({"error" : "error"})
+            return JsonResponse({"error" : "error"}, status=400)
     else:
         allowed = ['POST']
         return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
@@ -163,19 +163,19 @@ def create_account_form_handler(request):
             username_lower = username.lower()
             for c in username_lower:
                 if c not in whitelist:
-                    return JsonResponse({"error" : "ascii"})
+                    return JsonResponse({"error" : "ascii"}, status=400)
 
             # Check if username is taken
             if users.objects.filter(username=username).exists():
-                return JsonResponse({"error" : "taken"})
+                return JsonResponse({"error" : "taken"}, status=400)
             
             # Check if email is already registered
             if users.objects.filter(email=email).exists():
-                return JsonResponse({"error" : "email_taken"})
+                return JsonResponse({"error" : "email_taken"}, status=400)
             
             # Check if username is only numbers
             if username.isdigit():
-                return JsonResponse({"error" : "numeric"})
+                return JsonResponse({"error" : "numeric"}, status=400)
 
             # Hash password
             password_hash = make_password(password)
@@ -206,7 +206,7 @@ def create_account_form_handler(request):
 
             return JsonResponse({"redirect" : 1})
         else:
-            return JsonResponse({"error" : "error"})
+            return JsonResponse({"error" : "error"}, status=400)
     else:
         allowed = ['POST']
         return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
@@ -269,7 +269,7 @@ def account_recovery_email(request):
 
             # Check if email is registered
             if not users.objects.filter(email=email).exists():
-                return JsonResponse({"error" : "not_registered"})
+                return JsonResponse({"error" : "not_registered"}, status=400)
 
             # Generate recovery code
             recovery_code = random.randint(111111, 999999)
@@ -281,7 +281,7 @@ def account_recovery_email(request):
             # Send email
             mail_status = send_mail(email, "Tic Tac Toe - Recovery code", "Hi " + email + ". Your recovery code is: " + str(recovery_code))
             if mail_status == "error":
-                return JsonResponse({"error" : "error"})
+                return JsonResponse({"error" : "error"}, status=500)
 
             # Insert temporary recovery code inside database
             code = recovery_codes(
@@ -297,7 +297,7 @@ def account_recovery_email(request):
 
             return JsonResponse({"redirect" : 1})
         else:
-            return JsonResponse({"error" : "error"})
+            return JsonResponse({"error" : "error"}, status=400)
     else:
         allowed = ['POST']
         return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
@@ -325,7 +325,7 @@ def account_recovery_code(request):
             try:
                 code = int(code)
             except:
-                return JsonResponse({"error" : "error"})
+                return JsonResponse({"error" : "error"}, status=400)
 
             # Delete expired codes
             unix_now = int(time.time())
@@ -333,12 +333,12 @@ def account_recovery_code(request):
 
             # Check that recovery email session variable exists
             if 'temp_recovery_email' not in request.session:
-                return JsonResponse({"error" : "error"})
+                return JsonResponse({"error" : "error"}, status=400)
 
             # Check if code exists in database
             email = request.session.get('temp_recovery_email')
             if not recovery_codes.objects.filter(recovery_code=code, email=email).exists():
-                return JsonResponse({"error" : "expired_notfound"})
+                return JsonResponse({"error" : "expired_notfound"}, status=400)
 
             # Get user id of user with that email
             user = users.objects.get(email=email)
@@ -347,7 +347,7 @@ def account_recovery_code(request):
 
             return JsonResponse({"redirect" : 1})
         else:
-            return JsonResponse({"error" : "error"})
+            return JsonResponse({"error" : "error"}, status=400)
     else:
         allowed = ['POST']
         return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
@@ -380,11 +380,11 @@ def reset_password(request):
 
             # Check if passwords match
             if not new_password == new_password_confirm:
-                return JsonResponse({"error" : "no_match"})
+                return JsonResponse({"error" : "no_match"}, status=400)
 
             # Get temporary user id
             if 'temp_recovery_uid' not in request.session:
-                return JsonResponse({"error" : "error"})
+                return JsonResponse({"error" : "error"}, status=400)
             uid = request.session.get('temp_recovery_uid')
 
             # Check if new password is the same as old password
@@ -392,7 +392,7 @@ def reset_password(request):
             old_password_hash = user.password
 
             if check_password(new_password, old_password_hash):
-                return JsonResponse({"error" : "same"})
+                return JsonResponse({"error" : "same"}, status=400)
 
             # Hash new password and save it
             password_hash = make_password(new_password)
@@ -402,7 +402,7 @@ def reset_password(request):
 
             return JsonResponse({"ok" : 1})
         else:
-            return JsonResponse({"error" : "error"})
+            return JsonResponse({"error" : "error"}, status=400)
     else:
         allowed = ['POST']
         return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
@@ -450,7 +450,7 @@ def edit_profile(request):
         user = users.objects.get(user_id=user_id)
         context["user"] = user
     else:
-        return HttpResponse("error")
+        return HttpResponse("error", status=400)
 
     with open(static_dir + '\\css\\edit-profile.css', 'r') as data:
         context['edit_profile_css'] = data.read()
@@ -469,11 +469,11 @@ def editprofile_savechanges(request):
 
         # Check if nickname is empty
         if nickname.isspace():
-            return JsonResponse({"error" : "error"})
+            return JsonResponse({"error" : "error"}, status=400)
 
         # Check if nickname is under 5 chars or over 30 chars
         if len(nickname) > 30 or len(nickname) < 5:
-            return JsonResponse({"error" : "error"})
+            return JsonResponse({"error" : "error"}, status=400)
 
         # If description is empty, change it to "No description"
         if not description:
@@ -488,7 +488,7 @@ def editprofile_savechanges(request):
 
             user.save()
         else:
-            return JsonResponse({"error" : "error"})
+            return JsonResponse({"error" : "error"}, status=400)
 
         return JsonResponse({"ok" : 1})
     else:
@@ -524,13 +524,13 @@ def profilepic_temp_upload(request):
     # Check if file type is supported
     whitelist = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
     if file.content_type not in whitelist:
-        return JsonResponse({"error" : "unsupported"})
+        return JsonResponse({"error" : "unsupported"}, status=415)
 
     # Check if file size is under 3MB
     file_size_mb = int((file.size / 1024) / 1024)
     if file_size_mb > 3:
         # If file size is more than 3 mb
-        return JsonResponse({"error" : "too_big"})
+        return JsonResponse({"error" : "too_big"}, status=413)
 
     # Put new name and extenison together
     file_name = file_name + "." + file_ext
@@ -538,7 +538,7 @@ def profilepic_temp_upload(request):
     # Save the file
     filesave = fs.save(file_name, file)
     if not filesave:
-        return JsonResponse({"error" : "error"})
+        return JsonResponse({"error" : "error"}, status=500)
 
     # Get url for file
     file_url = fs.url(filesave)
@@ -615,7 +615,7 @@ def profilepic_cropped_upload(request):
         if users.objects.filter(user_id=user_id).exists():
             user = users.objects.get(user_id=user_id)
         else:
-            return HttpResponse("error")
+            return HttpResponse("error", status=400)
 
         # Delete old profile pic from server
         old_profilepic_path = (profile_pictures_path + "\\" + user.profile_picture)
@@ -667,7 +667,7 @@ def personal_information(request):
         user = users.objects.get(user_id=user_id)
         context["user"] = user
     else:
-        return HttpResponse("error")
+        return HttpResponse("error", status=400)
     
     # Get static files
     with open(static_dir + '\\css\\personal-information.css', 'r') as data:
@@ -691,11 +691,11 @@ def change_email_modal(request):
 
             # Check if emails match
             if new_email != confirm_new_email:
-                return HttpResponse("match")
+                return HttpResponse("match", status=400)
             
             # Check if email is already registered
             if users.objects.filter(email=new_email).exists():
-                return HttpResponse("email_taken")
+                return HttpResponse("email_taken", status=400)
 
             # Save email in session variable
             request.session['temp_new_email'] = new_email
@@ -722,13 +722,13 @@ def change_email_modal(request):
                 user = users.objects.get(user_id=user_id)
                 context["user"] = user
             else:
-                return HttpResponse("error")
+                return HttpResponse("error", status=400)
 
             # Send email
             email = user.email
             mail_status = send_mail(email, "Tic Tac Toe - Change e-mail", "Hi " + email + ". We see that you are trying to change your e-mail. The code to change it is: <b>" + str(recovery_code) + "</b>. If this is a mistake, please contact user support at: support@jakobjohannes.com")
             if mail_status == "error":
-                return HttpResponse("error")
+                return HttpResponse("error", status=500)
 
             # Insert temporary code inside database
             code = recovery_codes(
@@ -745,7 +745,7 @@ def change_email_modal(request):
             
             return render(request, "modals/change_email_password.html", context)
         else:
-            return HttpResponse("error")
+            return HttpResponse("error", status=400)
     else :
         allowed = ['POST']
         return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
@@ -763,7 +763,7 @@ def change_email_modal_confirm(request):
             try:
                 code = int(code)
             except:
-                return JsonResponse({"error" : "error"})
+                return JsonResponse({"error" : "error"}, status=400)
 
             # Delete expired codes
             unix_now = int(time.time())
@@ -771,7 +771,7 @@ def change_email_modal_confirm(request):
 
             # Check that new email session variable exists
             if 'temp_new_email' not in request.session:
-                return JsonResponse({"error" : "error"})
+                return JsonResponse({"error" : "error"}, status=400)
 
             # Get users current email
             user_id = request.session.get("user_id")
@@ -779,11 +779,11 @@ def change_email_modal_confirm(request):
                 user = users.objects.get(user_id=user_id)
                 email = user.email
             else:
-                return JsonResponse({"error" : "error"})
+                return JsonResponse({"error" : "error"}, status=400)
 
             # Check if code exists in database
             if not recovery_codes.objects.filter(recovery_code=code, email=email).exists():
-                return JsonResponse({"error" : "expired_notfound"})
+                return JsonResponse({"error" : "expired_notfound"}, status=400)
 
             # Change email
             user.email = request.session.get("temp_new_email")
@@ -794,7 +794,7 @@ def change_email_modal_confirm(request):
 
             return JsonResponse({"ok" : 1})
         else:
-            return JsonResponse({"error" : "error"})
+            return JsonResponse({"error" : "error"}, status=400)
     else :
         allowed = ['POST']
         return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
@@ -811,7 +811,7 @@ def change_password_modal(request):
 
             # Check if passwords match
             if new_password != confirm_new_password:
-                return HttpResponse("match")
+                return HttpResponse("match", status=400)
 
             context = {}
 
@@ -821,12 +821,12 @@ def change_password_modal(request):
                 user = users.objects.get(user_id=user_id)
                 context["user"] = user
             else:
-                return HttpResponse("error")
+                return HttpResponse("error", status=400)
 
             # Check if old password is the same as new password
             old_password_hash = user.password
             if check_password(new_password, old_password_hash):
-                return HttpResponse("same")
+                return HttpResponse("same", status=400)
 
             new_password_hash = make_password(new_password)
 
@@ -852,7 +852,7 @@ def change_password_modal(request):
             email = user.email
             mail_status = send_mail(email, "Tic Tac Toe - Change password", "Hi " + email + ". We see that you are trying to change your password. The code to change it is: <b>" + str(recovery_code) + "</b>. If this is a mistake, please contact user support at: support@jakobjohannes.com")
             if mail_status == "error":
-                return HttpResponse("error")
+                return HttpResponse("error", status=500)
 
             # Insert temporary code inside database
             code = recovery_codes(
@@ -869,7 +869,7 @@ def change_password_modal(request):
             
             return render(request, "modals/change_email_password.html", context)
         else:
-            return HttpResponse("error")
+            return HttpResponse("error", status=400)
     else :
         allowed = ['POST']
         return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
@@ -887,7 +887,7 @@ def change_password_modal_confirm(request):
             try:
                 code = int(code)
             except:
-                return JsonResponse({"error" : "error"})
+                return JsonResponse({"error" : "error"}, status=400)
 
             # Delete expired codes
             unix_now = int(time.time())
@@ -895,7 +895,7 @@ def change_password_modal_confirm(request):
 
             # Check that new email session variable exists
             if 'temp_new_password' not in request.session:
-                return JsonResponse({"error" : "error"})
+                return JsonResponse({"error" : "error"}, status=400)
 
             # Get users current email
             user_id = request.session.get("user_id")
@@ -903,11 +903,11 @@ def change_password_modal_confirm(request):
                 user = users.objects.get(user_id=user_id)
                 email = user.email
             else:
-                return JsonResponse({"error" : "error"})
+                return JsonResponse({"error" : "error"}, status=400)
 
             # Check if code exists in database
             if not recovery_codes.objects.filter(recovery_code=code, email=email).exists():
-                return JsonResponse({"error" : "expired_notfound"})
+                return JsonResponse({"error" : "expired_notfound"}, status=400)
 
             # Change password
             user.password = request.session.get("temp_new_password")
@@ -918,7 +918,7 @@ def change_password_modal_confirm(request):
 
             return JsonResponse({"ok" : 1})
         else:
-            return JsonResponse({"error" : "error"})
+            return JsonResponse({"error" : "error"}, status=400)
     else :
         allowed = ['POST']
         return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
@@ -1132,25 +1132,25 @@ def send_friend_request(request):
         try:
             friend_user_id_uuid = uuid.UUID(friend_user_id)
             if not users.objects.filter(user_id=friend_user_id_uuid).exists():
-                return JsonResponse({"error" : "noexist"})
+                return JsonResponse({"error" : "noexist"}, status=400)
         except:
-            return JsonResponse({"error" : "noexist"})
+            return JsonResponse({"error" : "noexist"}, status=400)
 
         # Check if user is already in friend list
         if friend_list.objects.filter(user_id_1=user_id, user_id_2=friend_user_id).exists():
-            return JsonResponse({"error" : "already_friends"})
+            return JsonResponse({"error" : "already_friends"}, status=400)
         
         # Check if user has already sent a friend request to this user
         if pending_friends.objects.filter(outgoing=user_id, incoming=friend_user_id).exists():
-            return JsonResponse({"error" : "alreadysent"})
+            return JsonResponse({"error" : "alreadysent"}, status=400)
         
         # Check if user has already received a friend request from this user
         if pending_friends.objects.filter(outgoing=friend_user_id, incoming=user_id).exists():
-            return JsonResponse({"error" : "alreadyreceived"})
+            return JsonResponse({"error" : "alreadyreceived"}, status=400)
         
         # Check if user is yourself
         if user_id == friend_user_id:
-            return JsonResponse({"error" : "yourself"})
+            return JsonResponse({"error" : "yourself"}, status=400)
         
         # Get current date and time for sent timestamp
         now = datetime.now()
@@ -1191,12 +1191,33 @@ def cancel_decline_friend_request(request):
 
         # Check if the friend request belongs to user
         if not pending_friends.objects.filter(id=row_id, outgoing=user_id).exists() | pending_friends.objects.filter(id=row_id, incoming=user_id).exists():
-            return JsonResponse({"error" : "error"})
+            return JsonResponse({"error" : "error"}, status=400)
         
         # Delete the row
         row = pending_friends.objects.get(id=row_id)
         row.delete()
 
+        return JsonResponse({"ok" : 1})
+    else:
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
+
+# Function that inserts rows for friend list in friends_list table
+def accept_friend_request(request):
+    if request.method == "POST":
+        # If user is not logged in, redirect
+        if "user_id" not in request.session:
+            return HttpResponseRedirect("/")
+        else:
+            user_id = request.session.get("user_id")
+        
+        # Get post data
+        body = json.loads(request.body)
+        row_id = body["row_id"]
+
+        # Check if the pending_friend row exists, and if your user id is in the incoming column
+        if not pending_friends.objects.filter(id=row_id, incoming=user_id).exists():
+            return JsonResponse({"error" : "error"}, status=400)
         return JsonResponse({"ok" : 1})
     else:
         allowed = ['POST']
