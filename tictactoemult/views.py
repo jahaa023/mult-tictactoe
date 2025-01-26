@@ -1091,7 +1091,7 @@ def add_friends_result(request):
 
         result_users = []
 
-        # Exclude any users in your friend list, users you have sent a request to and yourself
+        # Exclude any users in your friend list, users you have sent a request to, yourself and users that have already sent you a friend request
         for user in query_users:
             friend_uid = user.user_id
             if str(friend_uid) == user_id:
@@ -1100,8 +1100,8 @@ def add_friends_result(request):
                 continue
             elif pending_friends.objects.filter(outgoing=user_id, incoming=friend_uid).exists():
                 continue
-            else:
-                result_users.append(user)
+            elif pending_friends.objects.filter(outgoing=friend_uid, incoming=user_id).exists():
+                continue
 
         # Pass into context
         context = {}
@@ -1141,6 +1141,10 @@ def send_friend_request(request):
         # Check if user has already sent a friend request to this user
         if pending_friends.objects.filter(outgoing=user_id, incoming=friend_user_id).exists():
             return JsonResponse({"error" : "alreadysent"})
+        
+        # Check if user has already received a friend request from this user
+        if pending_friends.objects.filter(outgoing=friend_user_id, incoming=user_id).exists():
+            return JsonResponse({"error" : "alreadyreceived"})
         
         # Check if user is yourself
         if user_id == friend_user_id:

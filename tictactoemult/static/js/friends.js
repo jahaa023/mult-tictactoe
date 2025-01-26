@@ -109,6 +109,9 @@ function sendFriendRequest(user_id) {
             case "alreadysent":
                 showConfirm("You have already sent this user a friend request.");
                 break;
+            case "alreadyreceived":
+                showConfirm("You have already received a friend request from this user.");
+                break;
         }
 
         if (response.ok == 1) {
