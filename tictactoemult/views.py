@@ -1169,3 +1169,29 @@ def send_friend_request(request):
     else:
         allowed = ['POST']
         return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
+
+# Function that deletes a row from pending_friends table
+def cancel_decline_friend_request(request):
+    if request.method == "POST":
+        # If user is not logged in, redirect
+        if "user_id" not in request.session:
+            return HttpResponseRedirect("/")
+        else:
+            user_id = request.session.get("user_id")
+        
+        # Get posted row id
+        body = json.loads(request.body)
+        row_id = body["row_id"]
+
+        # Check if the friend request belongs to user
+        if not pending_friends.objects.filter(id=row_id, outgoing=user_id).exists() | pending_friends.objects.filter(id=row_id, incoming=user_id).exists():
+            return JsonResponse({"error" : "error"})
+        
+        # Delete the row
+        row = pending_friends.objects.get(id=row_id)
+        row.delete()
+
+        return JsonResponse({"ok" : 1})
+    else:
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")

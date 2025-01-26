@@ -127,6 +127,43 @@ function sendFriendRequest(user_id) {
     })
 }
 
+// Function that cancels or declines a friend request
+function cancelDeclineFriendRequest(row_id, cancel_decline) {
+    var url = "/cancel_decline_friend_request"
+
+    fetch(url, {
+        method : "POST",
+        body : JSON.stringify({
+            row_id : row_id
+        }),
+        credentials : "same-origin",
+        headers : {
+            "X-CSRFToken" : csrfmiddlewaretoken
+        }
+    })
+
+    .then(response => response.json())
+
+    .then(response => {
+        switch(response.error) {
+            case "error":
+                showConfirm("Something went wrong.");
+                break;
+        }
+
+        if (response.ok == 1) {
+            currentTab = ""
+            loadPendingInvites();
+            showConfirm("Friend request " + cancel_decline + ".");
+        }
+    })
+
+    .catch(error => {
+        showConfirm("Something went wrong")
+        console.error(error)
+    })
+}
+
 // Event listeners for dropdown and navbar
 document.getElementById("your_friends").addEventListener("click", function(){
     loadYourFriends();
