@@ -192,7 +192,9 @@ function acceptFriendRequest(row_id) {
         }
 
         if (response.ok == 1) {
-            showConfirm("Friend request accepted. You can see your new friend in the 'Your friends' tab.", 4000)
+            currentTab = ""
+            loadPendingInvites();
+            showConfirm("Friend request accepted. You can see your new friend in the 'Your friends' tab.")
         }
     })
 

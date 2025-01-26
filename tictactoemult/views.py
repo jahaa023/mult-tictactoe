@@ -1218,6 +1218,36 @@ def accept_friend_request(request):
         # Check if the pending_friend row exists, and if your user id is in the incoming column
         if not pending_friends.objects.filter(id=row_id, incoming=user_id).exists():
             return JsonResponse({"error" : "error"}, status=400)
+        else:
+            row = pending_friends.objects.get(id=row_id)
+        
+        # Get other user id for friend list table
+        user_id_2 = row.outgoing
+
+        # Delete pending friend request
+        row.delete()
+
+        # Get current date for when users became friends
+        now = datetime.now()
+        timestamp = now.strftime("%d/%m/%Y %H:%M")
+
+        # Insert rows into friend list table
+        row = friend_list(
+            user_id_1=user_id,
+            user_id_2=user_id_2,
+            became_friends=timestamp
+        )
+
+        row.save()
+
+        row = friend_list(
+            user_id_1=user_id_2,
+            user_id_2=user_id,
+            became_friends=timestamp
+        )
+
+        row.save()
+
         return JsonResponse({"ok" : 1})
     else:
         allowed = ['POST']
