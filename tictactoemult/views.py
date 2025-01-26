@@ -1011,6 +1011,66 @@ def add_friends(request):
 
     return render(request, "friends/add_friends.html", context)
 
+# Renders page for pending invites
+def pending_invites(request):
+    # If user is not logged in, redirect
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
+    else:
+        user_id = request.session.get("user_id")
+        user = users.objects.get(user_id=user_id)
+        context = {}
+        context["user"] = user
+    
+    # Get all incoming pending invites
+    incoming = []
+    incoming_invites = pending_friends.objects.filter(incoming=user_id)
+    for row in incoming_invites:
+        # Get info about the friend request
+        incoming_item = {}
+        incoming_item["sent"] = row.sent
+        incoming_item["row_id"] = row.id
+
+        # Get info about user
+        outgoing_userid = row.outgoing
+        outgoing_user = users.objects.get(user_id=outgoing_userid)
+        incoming_item["user_id"] = outgoing_user.user_id
+        incoming_item["nickname"] = outgoing_user.nickname
+        incoming_item["profile_picture"] = outgoing_user.profile_picture
+
+        incoming.append(incoming_item)
+    
+    context["incoming"] = incoming
+
+    # Get all outgoing pending invites
+    outgoing = []
+    outgoing_invites = pending_friends.objects.filter(outgoing=user_id)
+    for row in outgoing_invites:
+        # Get info about the friend request
+        outgoing_item = {}
+        outgoing_item["sent"] = row.sent
+        outgoing_item["row_id"] = row.id
+
+        # Get info about user
+        incoming_userid = row.incoming
+        incoming_user = users.objects.get(user_id=incoming_userid)
+        outgoing_item["user_id"] = incoming_user.user_id
+        outgoing_item["nickname"] = incoming_user.nickname
+        outgoing_item["profile_picture"] = incoming_user.profile_picture
+
+        outgoing.append(outgoing_item)
+
+    context["outgoing"] = outgoing
+
+
+    # Set static files
+    with open(static_dir + '\\css\\pending_invites.css', 'r') as data:
+        context['pending_invites_css'] = data.read()
+
+    # Render template
+    return render(request, "friends/pending_invites.html", context)
+
+
 # Renders a list of users that match search query for username and nickname
 def add_friends_result(request):
     if request.method == "POST":

@@ -1,0 +1,53 @@
+<style>
+    #pending_invites, #pending_invites_mobile {
+        background-color: var(--background-white);
+        color: var(--primary-black);
+        font-weight: 600;
+    }
+</style>
+<style>
+    {{pending_invites_css | safe}}
+</style>
+<h1 class="friends-headline">Pending invites</h1>
+<p>Here you can see all the friend requests you have sent, and friend requests sent to you.</p>
+<p class="pending-headline">INCOMING FRIEND REQUESTS</p>
+<div class="pending-headline-underline"></div>
+{% if incoming %}
+    <div class="pending-container">
+        {% for item in incoming %}
+            <div class="pending-row">
+                <img title="{{item.nickname}}" onclick="displayProfile('{{item.user_id}}')" src="static/img/profile_pictures/{{item.profile_picture}}" alt="{{item.nickname}}">
+                <div class="pending-row-name-container">
+                    <p onclick="displayProfile('{{item.user_id}}')" title="{{item.nickname}}">{{item.nickname}}</p>
+                    <i>Received: {{item.sent}}</i>
+                </div>
+                <div class="pending-row-button-container">
+                    <button onclick="acceptFriendRequest({{item.row_id}})" title="Accept {{item.nickname}}'s friend request">Accept</button>
+                    <div class="pending-row-button-container-divider"></div>
+                    <button onclick="declineFriendRequest({{item.row_id}})" title="Decline {{item.nickname}}'s friend request" id="decline-button">Decline</button>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>You have no incoming friend requests.</p>
+{% endif %}
+
+<p class="pending-headline">OUTGOING FRIEND REQUESTS</p>
+<div class="pending-headline-underline"></div>
+{% if outgoing %}
+    <div class="pending-container">
+        {% for item in outgoing %}
+            <div class="pending-row">
+                <img title="{{item.nickname}}" onclick="displayProfile('{{item.user_id}}')" src="static/img/profile_pictures/{{item.profile_picture}}" alt="{{item.nickname}}">
+                <div class="pending-row-name-container">
+                    <p onclick="displayProfile('{{item.user_id}}')" title="{{item.nickname}}">{{item.nickname}}</p>
+                    <i>Sent: {{item.sent}}</i>
+                </div>
+                <button class="pending-row-cancel" title="Cancel request" onclick="cancelFriendRequest({{item.row_id}})">Cancel</button>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>You have no outgoing friend requests.</p>
+{% endif %}

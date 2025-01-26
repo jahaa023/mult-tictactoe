@@ -1,0 +1,165 @@
+/* Stylesheet for pending invites page */
+
+.pending-headline-underline {
+    width: calc(100% - 20px);
+    height: 2px;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.pending-headline {
+    margin: 0;
+    color: rgba(0, 0, 0, 0.5);
+    letter-spacing: 3px;
+    font-weight: 500;
+}
+
+.pending-container {
+    padding: 10px;
+    border-radius: 10px;
+    width: calc(100% - 40px);
+    height: fit-content;
+    max-height: 300px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    background-color: white;
+    box-shadow: inset 0px 4px 4px 0px rgba(0, 0, 0, 25%);
+    margin-bottom: 10px;
+    margin-top: 10px;
+    border: solid 1px #ABABAB;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.pending-row {
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-bottom: solid 1px #ABABAB;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.pending-row img {
+    width: 40px;
+    height: 40px;
+    border-radius: 40px;
+    margin-left: 10px;
+    cursor: pointer;
+    border: solid 1px grey;
+}
+
+.pending-row img:hover {
+    filter: brightness(0.5);
+}
+
+.pending-row-name-container {
+    max-width: calc(100% - 160px);
+    height: 100%;
+    margin-left: 10px;
+    overflow: hidden;
+}
+
+.pending-row-name-container p {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-wrap: nowrap;
+    font-weight: 600;
+    margin-left: 10px;
+    font-size: 1.3rem;
+    cursor: pointer;
+    margin: 0;
+}
+
+.pending-row-name-container p:hover {
+    text-decoration: underline;
+}
+
+.pending-row-name-container i {
+    margin: 0;
+}
+
+.pending-row-cancel {
+    position: absolute;
+    margin-right: 15px;
+    right: 0;
+    padding: 10px;
+    font-weight: 500;
+    border: solid 3px var(--warning-red);
+    color: var(--warning-red);
+    background-color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.pending-row-cancel:hover {
+    background-color: var(--warning-red);
+    color: white;
+}
+
+.pending-row-button-container {
+    width: 155px;
+    justify-content: center;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pending-row-button-container-divider {
+    min-width: 2px;
+    height: 80%;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+}
+
+.pending-row-button-container button {
+    padding: 8px;
+    font-weight: 500;
+    border: solid 2px var(--accept-green);
+    color: var(--accept-green);
+    background-color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 0.9rem;
+}
+
+.pending-row-button-container button:hover {
+    background-color: var(--accept-green);
+    color: white;
+}
+
+#decline-button {
+    border: solid 2px var(--warning-red);
+    color: var(--warning-red);
+}
+
+#decline-button:hover {
+    color: white;
+    background-color: var(--warning-red);
+}
+
+@media screen and (max-width: 560px) {
+    .pending-row-button-container {
+        flex-direction: column;
+        width: fit-content;
+        height: 90px;
+        width: 70px;
+    }
+
+    .pending-row {
+        min-height: 95px;
+        height: fit-content;
+    }
+
+    .pending-row-button-container-divider {
+        display: none;
+    }
+}

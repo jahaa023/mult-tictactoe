@@ -33,5 +33,6 @@ urlpatterns = [
     path('add_friends', views.add_friends),
     path('add_friends_result', views.add_friends_result),
     path('profilepic_temp_upload', views.profilepic_temp_upload),
-    path('send_friend_request', views.send_friend_request)
+    path('send_friend_request', views.send_friend_request),
+    path('pending_invites', views.pending_invites)
 ]

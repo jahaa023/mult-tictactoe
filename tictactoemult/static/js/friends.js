@@ -65,6 +65,17 @@ function loadAddFriends() {
     }
 }
 
+// Function that loads in pending invites page
+function loadPendingInvites() {
+    if (currentTab != "pending_invites") {
+        ajaxGet("/pending_invites", "friends-page-container", function() {
+            currentTab = "pending_invites";
+            hideUniversalDropdown();
+            clearInterval(friendListInterval);
+        })
+    }
+}
+
 loadYourFriends();
 
 // Sends a friend request to user_id in parameter
@@ -131,4 +142,12 @@ document.getElementById("add_friends").addEventListener("click", function() {
 
 document.getElementById("add_friends_mobile").addEventListener("click", function() {
     loadAddFriends();
+})
+
+document.getElementById("pending_invites").addEventListener("click", function() {
+    loadPendingInvites();
+})
+
+document.getElementById("pending_invites_mobile").addEventListener("click", function() {
+    loadPendingInvites();
 })

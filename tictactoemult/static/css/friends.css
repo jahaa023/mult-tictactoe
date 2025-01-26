@@ -8,6 +8,8 @@
     background-color: var(--background-white);
     overflow-y: scroll;
     overflow-x: hidden;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
 }
 
 .friends-headline {

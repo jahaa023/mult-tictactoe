@@ -7,6 +7,7 @@
     --background-white: rgb(230, 230, 230);
     --cancel-grey: rgb(100, 100, 100);
     --warning-red: #d44848;
+    --accept-green: rgb(37, 126, 37);
 }
 
 /* Text highlight on selection */
@@ -89,7 +90,7 @@ body {
     background-color: #ABABAB;
 }
 
-.universal-dropdown-scroll-container::-webkit-scrollbar {
+.universal-dropdown-scroll-container {
     width: 100%;
     height: fit-content;
     overflow-x: hidden;
