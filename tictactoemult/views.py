@@ -111,7 +111,8 @@ def login(request):
         else:
             return JsonResponse({"error" : "error"})
     else:
-        return HttpResponseNotAllowed("Method not allowed")
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
 
 # Function to render main page
 def main(request):
@@ -207,7 +208,8 @@ def create_account_form_handler(request):
         else:
             return JsonResponse({"error" : "error"})
     else:
-        return HttpResponseNotAllowed("Method not allowed")
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
 
 # Function to validate username while user is typing it in
 def username_validate(request):
@@ -246,7 +248,8 @@ def username_validate(request):
 
         return JsonResponse(validate_list)
     else:
-        return HttpResponseNotAllowed("Method not allowed")
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
 
 # Function that renders account recovery page
 def account_recovery(request):
@@ -296,7 +299,8 @@ def account_recovery_email(request):
         else:
             return JsonResponse({"error" : "error"})
     else:
-        return HttpResponseNotAllowed("Method not allowed")
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
 
 def account_recovery_inputcode(request):
     # Check if temp_recovery_email session variable is set
@@ -345,7 +349,8 @@ def account_recovery_code(request):
         else:
             return JsonResponse({"error" : "error"})
     else:
-        return HttpResponseNotAllowed("Method not allowed")
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
 
 # Function to render page for the final step of account recovery
 def account_recovery_final(request):
@@ -399,7 +404,8 @@ def reset_password(request):
         else:
             return JsonResponse({"error" : "error"})
     else:
-        return HttpResponseNotAllowed("Method not allowed")
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
 
 # Logs the user out
 def logout(request):
@@ -486,7 +492,8 @@ def editprofile_savechanges(request):
 
         return JsonResponse({"ok" : 1})
     else:
-        return HttpResponseNotAllowed("Method not allowed")
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
 
 # Renders a modal for uploading profilepic
 def profilepic_upload(request):
@@ -622,7 +629,8 @@ def profilepic_cropped_upload(request):
         
         return HttpResponse("ok")
     else :
-        return HttpResponseNotAllowed("Method not allowed")
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
 
 # Renders a modal of a users profile
 def display_profile(request, uid):
@@ -739,7 +747,8 @@ def change_email_modal(request):
         else:
             return HttpResponse("error")
     else :
-        return HttpResponseNotAllowed("Method not allowed")
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
 
 # Form handler for inputting code when code has been sent to change emails
 def change_email_modal_confirm(request):
@@ -787,7 +796,8 @@ def change_email_modal_confirm(request):
         else:
             return JsonResponse({"error" : "error"})
     else :
-        return HttpResponseNotAllowed("Method not allowed")
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
 
 # Renders modal for confirming password change in settings
 def change_password_modal(request):
@@ -861,7 +871,8 @@ def change_password_modal(request):
         else:
             return HttpResponse("error")
     else :
-        return HttpResponseNotAllowed("Method not allowed")
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
 
 # Form handler for inputting code when code has been sent to change password
 def change_password_modal_confirm(request):
@@ -909,7 +920,8 @@ def change_password_modal_confirm(request):
         else:
             return JsonResponse({"error" : "error"})
     else :
-        return HttpResponseNotAllowed("Method not allowed")
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
 
 # Renders template for friends page
 def friends(request):
@@ -1038,7 +1050,8 @@ def add_friends_result(request):
 
         return render(request, "friends/add_friends_result.html", context)
     else:
-        return HttpResponseNotAllowed("Method not allowed")
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
 
 # Sends a friend request
 def send_friend_request(request):
@@ -1094,4 +1107,5 @@ def send_friend_request(request):
             "sentbutton" : alreadysentbutton
         })
     else:
-        return HttpResponseNotAllowed("Method not allowed")
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
