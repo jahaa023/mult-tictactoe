@@ -1102,6 +1102,8 @@ def add_friends_result(request):
                 continue
             elif pending_friends.objects.filter(outgoing=friend_uid, incoming=user_id).exists():
                 continue
+            else:
+                result_users.append(user)
 
         # Pass into context
         context = {}
