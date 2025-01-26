@@ -90,7 +90,7 @@ def login(request):
             # Check that password is correct
             user = users.objects.get(username=username)
             if not check_password(password, user.password):
-                return JsonResponse({"error" : "wrong"}, status=400)
+                return JsonResponse({"error" : "wrong"}, status=401)
             
             # set session variable
             uuid_str = str(user.user_id)
@@ -338,7 +338,7 @@ def account_recovery_code(request):
             # Check if code exists in database
             email = request.session.get('temp_recovery_email')
             if not recovery_codes.objects.filter(recovery_code=code, email=email).exists():
-                return JsonResponse({"error" : "expired_notfound"}, status=400)
+                return JsonResponse({"error" : "expired_notfound"}, status=401)
 
             # Get user id of user with that email
             user = users.objects.get(email=email)
@@ -783,7 +783,7 @@ def change_email_modal_confirm(request):
 
             # Check if code exists in database
             if not recovery_codes.objects.filter(recovery_code=code, email=email).exists():
-                return JsonResponse({"error" : "expired_notfound"}, status=400)
+                return JsonResponse({"error" : "expired_notfound"}, status=401)
 
             # Change email
             user.email = request.session.get("temp_new_email")
@@ -907,7 +907,7 @@ def change_password_modal_confirm(request):
 
             # Check if code exists in database
             if not recovery_codes.objects.filter(recovery_code=code, email=email).exists():
-                return JsonResponse({"error" : "expired_notfound"}, status=400)
+                return JsonResponse({"error" : "expired_notfound"}, status=401)
 
             # Change password
             user.password = request.session.get("temp_new_password")
