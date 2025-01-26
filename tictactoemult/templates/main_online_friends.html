@@ -1,0 +1,14 @@
+<!--HTML for list of online friends on main page-->
+{% if online_friends %}
+    {% for user in online_friends %}
+        <div class="online-friends-row">
+            <div class="online-friends-row-profile" title="View {{user.nickname}}'s profile" onclick="displayProfile('{{user.user_id}}')">
+                <div class="online-friends-row-profilepic" style="background-image: url(static/img/profile_pictures/{{user.profile_picture}});"></div>
+                <p class="online-friends-row-nickname">{{user.nickname}}</p>
+            </div>
+            <button class="online-friends-row-button" title="Invite {{user.nickname}} to match" onclick="inviteToMatch('{{user.user_id}}')">Invite</button>
+        </div>
+    {% endfor %}
+{% else %}
+    <p style="margin-left: 15px;">No friends online.</p>
+{% endif %}

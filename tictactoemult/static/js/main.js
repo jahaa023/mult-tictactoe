@@ -61,12 +61,30 @@ document.getElementById("dropdown-button-exit").addEventListener("click", functi
     $('#mobile-dropdown-background').delay(200).fadeOut(200)
 })
 
-// Ping interval
+// Function that loads in list of online friends
+function loadOnlineFriends() {
+    var url = "/main_online_friends"
+
+    fetch(url, {
+        method : "GET",
+        credentials : "same-origin"
+    })
+
+    .then(response => response.text())
+
+    .then(html => {
+        document.getElementById("online-friends-container").innerHTML = html
+    })
+}
+
+// Interval that pings and loads list of online friends
 setInterval(function() {
     ping();
+    loadOnlineFriends();
 }, 5000)
 
-// When document loads in, ping
+// When document loads in, ping and show online friends
 document.addEventListener("DOMContentLoaded", function() {
     ping();
+    loadOnlineFriends();
 })

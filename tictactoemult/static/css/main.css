@@ -266,6 +266,8 @@ header {
     border: solid #21212160 2px;
     overflow-y: scroll;
     overflow-x: hidden;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
 }
 
 .friends-list-link {
@@ -286,8 +288,10 @@ header {
 .online-friends-row-profilepic {
     width: 30px;
     height: 30px;
-    background-color: teal;
     border-radius: 32px;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
     margin-right: 5px;
     margin-left: 10px;
 }

@@ -1252,3 +1252,27 @@ def accept_friend_request(request):
     else:
         allowed = ['POST']
         return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
+
+# Function that gives a list of online friends
+def main_online_friends(request):
+    # If user is not logged in, redirect
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
+    else:
+        user_id = request.session.get("user_id")
+
+    # Get all friends
+    context = {}
+    online_friends = []
+    friends = friend_list.objects.filter(user_id_1=user_id)
+    for user in friends:
+        friend_uid = user.user_id_2
+        friend = users.objects.get(user_id=friend_uid)
+        unix_now = int(time.time())
+        # If friend is online, append to list of online friends
+        if friend.ping > unix_now:
+            online_friends.append(friend)
+
+    context["online_friends"] = online_friends
+
+    return render(request, "main_online_friends.html", context)
