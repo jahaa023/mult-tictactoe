@@ -44,7 +44,7 @@
                     <p onclick="displayProfile('{{item.user_id}}')" title="{{item.nickname}}">{{item.nickname}}</p>
                     <i>Sent: {{item.sent}}</i>
                 </div>
-                <button class="pending-row-cancel" title="Cancel request" onclick="cancelDeclineFriendRequest({{item.row_id}}, 'declined')">Cancel</button>
+                <button class="pending-row-cancel" title="Cancel request" onclick="cancelDeclineFriendRequest({{item.row_id}}, 'cancelled')">Cancel</button>
             </div>
         {% endfor %}
     </div>
