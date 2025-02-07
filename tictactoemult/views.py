@@ -1276,3 +1276,14 @@ def main_online_friends(request):
     context["online_friends"] = online_friends
 
     return render(request, "main_online_friends.html", context)
+
+# Renders matchmaking page
+def matchmaking(request):
+    # If user is not logged in, redirect
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
+
+    # Set static files
+    context = importStaticFiles("matchmaking")
+
+    return render(request, "matchmaking.html", context)

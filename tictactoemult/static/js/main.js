@@ -61,6 +61,10 @@ document.getElementById("dropdown-button-exit").addEventListener("click", functi
     $('#mobile-dropdown-background').delay(200).fadeOut(200)
 })
 
+document.getElementById("header-play-button-1").addEventListener("click", function(){
+    window.location.href = "/matchmaking";
+})
+
 // Function that loads in list of online friends
 function loadOnlineFriends() {
     var url = "/main_online_friends"
