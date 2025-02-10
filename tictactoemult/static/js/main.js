@@ -81,14 +81,59 @@ function loadOnlineFriends() {
     })
 }
 
-// Interval that pings and loads list of online friends
+// Get csrftoken from cookie
+const csrfmiddlewaretoken = document.cookie.split(';')
+    .find(cookie => cookie.trim().startsWith('csrftoken='))
+    ?.split('=')[1];
+
+var friendListBubbles = document.querySelectorAll(".universal-dropdown-notif")
+
+// Function that checks for pending friend invites and returns an amount of them
+function friendsListNotif() {
+    var url = "/pending_friends_notif"
+
+    fetch(url, {
+        method : "GET",
+        credentials : "same-origin",
+        headers : {
+            "X-CSRFToken" : csrfmiddlewaretoken
+        }
+    })
+
+    .then(response => response.json())
+
+    .then(response => {
+        if (response.amount > 0) {
+            friendListBubbles.forEach(element => {
+                var span = element.querySelector("span");
+                span.innerHTML = response.amount;
+                element.style.display = "flex";
+            })
+        } else {
+            friendListBubbles.forEach(element => {
+                element.style.display = "none";
+            })
+        }
+    })
+
+    .catch(error => {
+        console.error(error)
+        friendListBubbles.forEach(element => {
+            element.style.display = "none";
+        })
+    })
+}
+
+// Interval that pings and loads list of online friends and number of pending invites
 setInterval(function() {
     ping();
     loadOnlineFriends();
+    friendsListNotif();
 }, 5000)
 
 // When document loads in, ping and show online friends
 document.addEventListener("DOMContentLoaded", function() {
     ping();
     loadOnlineFriends();
+    friendsListNotif()
 })

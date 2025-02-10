@@ -206,7 +206,7 @@ header {
     justify-content: space-evenly;
 }
 
-.navigate-section-button-container div {
+.navigate-section-button-container-div {
     height: 50%;
     width: 100%;
     display: flex;
@@ -215,7 +215,7 @@ header {
     gap: 40px;
 }
 
-.navigate-section-button-container div button {
+.navigate-section-button-container-div button {
     cursor: pointer;
     background-color: var(--primary-black);
     color: var(--background-white);
@@ -226,6 +226,7 @@ header {
     font-weight: 500;
     width: 50%;
     height: 70%;
+    position: relative;
 }
 
 .navigate-section-button-container button:hover {
@@ -351,6 +352,29 @@ header {
 .mobile-dropdown-background {
     display: none;
 }
+
+#main-notif-desktop {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 5px;
+}
+
+#main-notif-desktop span {
+    right: auto;
+    left: auto;
+}
+
+#main-notif-mobile {
+    margin-right: 10px;
+}
+
+#main-notif-mobile span {
+    right: auto;
+    left: auto;
+}
+
+
 
 @media screen and (max-width: 1290px) {
     header {
@@ -504,6 +528,8 @@ header {
         text-decoration: none;
         font-family: "Roboto", serif;
         text-wrap: nowrap;
+        display: flex;
+        align-items: center;
     }
 
     .mobile-dropdown-links-container a:hover {
