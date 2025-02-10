@@ -23,6 +23,7 @@
                 <p class="friend-row-nickname" onclick="displayProfile('{{friend.user_id}}')">
                     {{friend.nickname}}
                 </p>
+                <button class="friend-row-more-button" title="Manage friend" onclick="manageFriend('{{friend.user_id}}')"></button>
             </div>
             <div class="friend-row-divider"></div>
         {% endfor %}
@@ -39,6 +40,7 @@
                 <p class="friend-row-nickname" onclick="displayProfile('{{friend.user_id}}')">
                     {{friend.nickname}}
                 </p>
+                <button class="friend-row-more-button" title="Manage friend" onclick="manageFriend('{{friend.user_id}}')"></button>
             </div>
             <div class="friend-row-divider"></div>
         {% endfor %}

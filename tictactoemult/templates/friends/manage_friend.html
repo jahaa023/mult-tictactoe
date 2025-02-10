@@ -1,0 +1,20 @@
+<style>
+    {{manage_friend_css | safe}}
+</style>
+<div class="manage-friend-container" id="manage-friend-container">
+    <div class="profile-container">
+        <div class="profilepic" style="background-image: url(static/img/profile_pictures/{{friend.profile_picture}});"></div>
+        <h1 class="nickname">{{friend.nickname}}</h1>
+    </div>
+    <button class="remove-friend" id="remove-friend" title="Remove friend">Remove friend</button>
+    <br>
+    <button title="Close" class="close" id="manage-friend-close">Close</button>
+</div>
+
+<div class="manage-friend-warning" id="manage-friend-warning">
+    <h1>Are you absolutely sure you want to remove {{friend.nickname}} from your friend list?</h1>
+    <div class="warning-button-container">
+        <button id="confirm-remove-friend" class="remove-friend" name="{{friend.user_id}}">Remove</button>
+        <button id="manage-friend-cancel" class="close">Cancel</button>
+    </div>
+</div>

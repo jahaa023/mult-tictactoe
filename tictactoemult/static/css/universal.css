@@ -114,6 +114,9 @@ body {
     text-align: left;
     font-weight: 500;
     font-size: 1.3rem;
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
 .universal-dropdown-button:hover {
@@ -148,6 +151,33 @@ body {
 
 .universal-dropdown-mobile {
     display: none;
+}
+
+.universal-dropdown-notif {
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    background-color: var(--primary-red);
+    position: absolute;
+    right: 0;
+    margin-right: 5px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: var(--background-white);
+}
+
+.universal-dropdown-notif:hover {
+    color: white;
+}
+
+.universal-dropdown-notif span {
+    width: fit-content;
+    height: fit-content;
+    margin: 0;
+    position: relative;
+    right: 3px;
 }
 
 @media screen and (max-width: 1300px) {

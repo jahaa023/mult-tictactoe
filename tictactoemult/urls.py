@@ -38,5 +38,8 @@ urlpatterns = [
     path('cancel_decline_friend_request', views.cancel_decline_friend_request),
     path('accept_friend_request', views.accept_friend_request),
     path('main_online_friends', views.main_online_friends),
-    path('matchmaking', views.matchmaking)
+    path('matchmaking', views.matchmaking),
+    path('pending_friends_notif', views.pending_friends_notif),
+    path('manage_friend', views.manage_friend),
+    path('remove_friend', views.remove_friend)
 ]

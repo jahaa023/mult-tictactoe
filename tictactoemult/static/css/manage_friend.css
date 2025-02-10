@@ -1,0 +1,131 @@
+/* Stylesheet for manage friend modal */
+.manage-friend-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    width: 50%;
+    height: fit-content;
+    max-height: 80vh;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+    background-color: var(--background-white);
+    border-radius: 15px;
+    padding: 15px;
+    border: solid 3px #ABABAB;
+}
+
+.manage-friend-warning {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    width: 50%;
+    height: fit-content;
+    max-height: 80vh;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+    background-color: var(--background-white);
+    border-radius: 15px;
+    padding: 15px;
+    border: solid 3px #ABABAB;
+    display: none;
+    text-align: center;
+}
+
+.profile-container {
+    display: flex;
+    align-items: center;
+}
+
+.profilepic {
+    width: 60px;
+    min-width: 60px;
+    height: 60px;
+    min-height: 60px;
+    border-radius: 100%;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin-right: 10px;
+    border: 2px var(--cancel-grey) solid;
+}
+
+.nickname {
+    font-weight: 600;
+    color: var(--primary-black);
+    text-wrap: nowrap;
+    white-space: nowrap;
+    max-width: 80%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.close {
+    padding: 7px;
+    color: var(--cancel-grey);
+    background-color: var(--background-white);
+    border: solid 3px var(--cancel-grey);
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-top: 10px;
+}
+
+.close:hover {
+    background-color: var(--cancel-grey);
+    color: var(--background-white);
+}
+
+.remove-friend {
+    padding: 7px;
+    color: var(--warning-red);
+    background-color: var(--background-white);
+    border: solid 3px var(--warning-red);
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-top: 10px;
+}
+
+.remove-friend:hover {
+    background-color: var(--warning-red);
+    color: var(--background-white);
+}
+
+.warning-button-container {
+    width: 100%;
+    height: fit-content;
+    justify-content: center;
+    gap: 15px;
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+@media screen and (max-width: 1300px) {
+    .manage-friend-container {
+        width: 80%;
+    }
+
+    .manage-friend-warning {
+        width: 80%;
+    }
+
+    .profilepic {
+        width: 50px;
+        height: 50px;
+    }
+
+    .nickname {
+        font-size: 1.4rem;
+    }
+}

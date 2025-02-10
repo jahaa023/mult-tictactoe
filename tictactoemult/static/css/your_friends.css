@@ -25,6 +25,35 @@
     border-radius: 5px;
     padding-top: 3px;
     padding-bottom: 3px;
+    position: relative;
+}
+
+.friend-row:hover {
+    background-color: rgba(0, 0, 0, 0.205);
+}
+
+.friend-row:hover > button {
+    display: block;
+}
+
+.friend-row-more-button {
+    width: 20px;
+    height: 25px;
+    position: absolute;
+    right: 0;
+    margin-right: 5px;
+    cursor: pointer;
+    display: none;
+    border: none;
+    background-color: transparent;
+    background-image: url(static/img/icons/dots-3.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.5;
+}
+
+.friend-row-more-button:hover {
+    opacity: 1;
 }
 
 .friend-row-profilepic {
@@ -32,7 +61,8 @@
     width: 40px;
     height: 40px;
     border-radius: 30px;
-    border: solid 1px gray;
+    border: solid 1px var(--cancel-grey);
+    margin-left: 5px;
 }
 
 .friend-row-profilepic:hover {
@@ -61,4 +91,10 @@
 
 .friend-row-nickname:hover {
     text-decoration: underline;
+}
+
+@media screen and (max-width: 1300px) {
+    .friend-row-more-button {
+        display: inline;
+    }
 }

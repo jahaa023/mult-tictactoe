@@ -1070,6 +1070,18 @@ def pending_invites(request):
     # Render template
     return render(request, "friends/pending_invites.html", context)
 
+# Gets all the users pending invites and returns an amount of them
+def pending_friends_notif(request):
+    # If user is not logged in, redirect
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
+    else:
+        user_id = request.session.get("user_id")
+
+    # Get the sum of all rows pending friends
+    count = pending_friends.objects.filter(incoming=user_id).count()
+    return JsonResponse({"amount":count})
+
 
 # Renders a list of users that match search query for username and nickname
 def add_friends_result(request):
@@ -1276,6 +1288,67 @@ def main_online_friends(request):
     context["online_friends"] = online_friends
 
     return render(request, "main_online_friends.html", context)
+
+# Renders modal for managing friend
+def manage_friend(request):
+    if request.method == "POST":
+        # If user is not logged in, redirect
+        if "user_id" not in request.session:
+            return HttpResponseRedirect("/")
+        else:
+            user_id = request.session.get("user_id")
+        
+        # Get posted user id
+        body = json.loads(request.body)
+        friend = body["user_id"]
+        
+        # Check if person is in friend list
+        if not friend_list.objects.filter(user_id_1=user_id, user_id_2=friend).exists():
+            return HttpResponse("error", status=400)
+        
+        # Get info about friend
+        user = users.objects.get(user_id=friend)
+        context = {}
+        context["friend"] = user
+
+        # Load static css file
+        with open(static_dir + '\\css\\manage_friend.css', 'r') as data:
+            context['manage_friend_css'] = data.read()
+
+        # Render the modal
+        return render(request, "friends/manage_friend.html", context)
+    else:
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
+
+# Removes a friend from friends list
+def remove_friend(request):
+    if request.method == "POST":
+        # If user is not logged in, redirect
+        if "user_id" not in request.session:
+            return HttpResponseRedirect("/")
+        else:
+            user_id = request.session.get("user_id")
+        
+        # Get posted user id
+        body = json.loads(request.body)
+        friend = body["user_id"]
+        
+        # Check if person is in friend list
+        if not friend_list.objects.filter(user_id_1=user_id, user_id_2=friend).exists():
+            return JsonResponse({"error" : "not_friend"}, status=400)
+        
+        # Remove friend from friend list
+        friend_list.objects.filter(user_id_1=user_id, user_id_2=friend).delete()
+
+        # Remove yourself from friends friend list
+        friend_list.objects.filter(user_id_1=friend, user_id_2=user_id).delete()
+
+        # Everything went well, return ok
+        return JsonResponse({"ok":1}, status=200)
+    else:
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
 
 # Renders matchmaking page
 def matchmaking(request):

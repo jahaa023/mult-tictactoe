@@ -3,12 +3,14 @@
 // Varible for keeping track of which tab the user is on. This is to prevent unnessesary get requests for the tab youre already on
 var currentTab = "";
 var friendListInterval = "";
+var pendingFriendsInterval = "";
 // Function that loads in your friends page
 function loadYourFriends() {
     if (currentTab != "your_friends") {
         ajaxGet("/your_friends", "friends-page-container", function() {
             currentTab = "your_friends";
             hideUniversalDropdown();
+            clearInterval(pendingFriendsInterval);
 
             // Update friends list every 10 seconds to update online and offline friends status
             friendListInterval = setInterval(function() {
@@ -30,6 +32,7 @@ function loadAddFriends() {
             currentTab = "add_friends";
             hideUniversalDropdown();
             clearInterval(friendListInterval);
+            clearInterval(pendingFriendsInterval);
 
             // Event listener for input for searching for friends
             document.getElementById("add-friends-input").addEventListener("keyup", function() {
@@ -72,6 +75,11 @@ function loadPendingInvites() {
             currentTab = "pending_invites";
             hideUniversalDropdown();
             clearInterval(friendListInterval);
+
+            // Update pending friends every 5 seconds to update requests coming in
+            pendingFriendsInterval = setInterval(function() {
+                ajaxGet("/pending_invites", "friends-page-container")
+            }, 5000)
         })
     }
 }
@@ -157,6 +165,7 @@ function cancelDeclineFriendRequest(row_id, cancel_decline) {
         if (response.ok == 1) {
             currentTab = ""
             loadPendingInvites();
+            friendsListNotif();
             showConfirm("Friend request " + cancel_decline + ".");
         }
     })
@@ -194,6 +203,7 @@ function acceptFriendRequest(row_id) {
         if (response.ok == 1) {
             currentTab = ""
             loadPendingInvites();
+            friendsListNotif();
             showConfirm("Friend request accepted. You can see your new friend in the 'Your friends' tab.")
         }
     })
@@ -223,10 +233,12 @@ document.getElementById("add_friends_mobile").addEventListener("click", function
 
 document.getElementById("pending_invites").addEventListener("click", function() {
     loadPendingInvites();
+    friendsListNotif();
 })
 
 document.getElementById("pending_invites_mobile").addEventListener("click", function() {
     loadPendingInvites();
+    friendsListNotif();
 })
 
 // Ping interval
@@ -237,4 +249,143 @@ setInterval(function() {
 // When document loads in, ping
 document.addEventListener("DOMContentLoaded", function() {
     ping();
+    friendsListNotif();
 })
+
+var friendListBubbles = document.querySelectorAll(".universal-dropdown-notif")
+
+// Check for pending invites and send to notif bubble
+const friendsNotifInterval = setInterval(function() {
+    friendsListNotif();
+}, 5000)
+
+// Function that checks for pending friend invites and returns an amount of them
+function friendsListNotif() {
+    var url = "/pending_friends_notif"
+
+    fetch(url, {
+        method : "GET",
+        credentials : "same-origin",
+        headers : {
+            "X-CSRFToken" : csrfmiddlewaretoken
+        }
+    })
+
+    .then(response => response.json())
+
+    .then(response => {
+        if (response.amount > 0) {
+            friendListBubbles.forEach(element => {
+                var span = element.querySelector("span");
+                span.innerHTML = response.amount;
+                element.style.display = "flex";
+            })
+        } else {
+            friendListBubbles.forEach(element => {
+                element.style.display = "none";
+            })
+        }
+    })
+
+    .catch(error => {
+        console.error(error)
+        friendListBubbles.forEach(element => {
+            element.style.display = "none";
+        })
+    })
+}
+
+// Renders modal for managing friend for things like removing friends
+function manageFriend(user_id) {
+    var url = "/manage_friend"
+
+    fetch(url, {
+        method : "POST",
+        credentials : "same-origin",
+        body : JSON.stringify({
+            user_id : user_id
+        }),
+        headers : {
+            "X-CSRFToken" : csrfmiddlewaretoken
+        }
+    })
+
+    .then(response => response.text())
+
+    .then(response => {
+        switch(response) {
+            case "error":
+                showConfirm("Something went wrong.")
+                break;
+        }
+
+        document.getElementById("dark-container").innerHTML = response;
+        $('#dark-container').fadeIn(300)
+    })
+
+    .then(() => {
+        // Event listeners for modal
+        document.getElementById("manage-friend-close").addEventListener("click", function() {
+            hideDarkContainer()
+        })
+
+        document.getElementById("remove-friend").addEventListener("click", function() {
+            document.getElementById("manage-friend-container").style.display = "none"
+            document.getElementById("manage-friend-warning").style.display = "inline"
+        })
+
+        document.getElementById("manage-friend-cancel").addEventListener("click", function() {
+            document.getElementById("manage-friend-container").style.display = "inline"
+            document.getElementById("manage-friend-warning").style.display = "none"
+        })
+
+        // When remove friend comfirm button is pressed, do post request
+        document.getElementById("confirm-remove-friend").addEventListener("click", function() {
+            // Get user id of friend from name
+            var user_id = this.name;
+            var url = "/remove_friend";
+
+            // Do post request
+            fetch(url, {
+                method : "POST",
+                credentials : "same-origin",
+                body : JSON.stringify({
+                    user_id : user_id
+                }),
+                headers : {
+                    "X-CSRFToken" : csrfmiddlewaretoken
+                }
+            })
+
+            .then(response => response.json())
+
+            .then(response => {
+                switch(response.error) {
+                    case "error":
+                        showConfirm("Something went wrong. Please try again later.");
+                        break;
+                    case "not_friend":
+                        showConfirm("This person is not in your friend list.");
+                        break;
+                }
+
+                if (response.ok == 1) {
+                    showConfirm("Friend removed.");
+                    hideDarkContainer();
+                    currentTab = "";
+                    ajaxGet("/your_friends", "friends-page-container")
+                }
+            })
+
+            .catch(error => {
+                console.error(error);
+                showConfirm("Something went wrong. Please try again later.");
+            })
+        })
+    })
+
+    .catch(error => {
+        console.error(error)
+        showConfirm("Something went wrong.")
+    })
+}
