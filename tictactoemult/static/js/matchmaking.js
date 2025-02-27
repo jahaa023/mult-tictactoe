@@ -51,7 +51,15 @@ const timeElapsedInterval = setInterval(function() {
     timeElapsed.innerHTML = `${hours_str}:${minutes_str}:${seconds_str}`
 }, 1000)
 
+const matchmakingSocket = new WebSocket('ws://' + window.location.host + "/matchmaking")
+
+matchmakingSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data)
+    console.log(data)
+}
+
 // event listener for cancelling matchmaking
 document.getElementById("cancel").addEventListener("click", function() {
+    matchmakingSocket.close()
     window.location = "/main";
 })
