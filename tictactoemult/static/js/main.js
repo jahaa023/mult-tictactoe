@@ -62,7 +62,7 @@ document.getElementById("dropdown-button-exit").addEventListener("click", functi
 })
 
 document.getElementById("header-play-button-1").addEventListener("click", function(){
-    window.location.href = "/matchmaking";
+    window.location.href = "/matchmaking?m=r";
 })
 
 // Function that loads in list of online friends

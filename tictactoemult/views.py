@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect, QueryDict, HttpResponseForbidden, JsonResponse, HttpResponseNotAllowed
 from .forms import LoginForm, CreateAccountForm, AccountRecoveryForm1, AccountRecoveryForm2, AccountRecoveryFormNewPassword, PersonalInformationEmail
 from django.contrib.auth.hashers import make_password, check_password
-from .models import users, recovery_codes, friend_list, pending_friends
+from .models import users, recovery_codes, friend_list, pending_friends, match, matchmaking
 import os
 import uuid
 import datetime
@@ -16,6 +16,7 @@ import base64
 from colorthief import ColorThief
 from django.db.models import Q
 from django.core.files.storage import FileSystemStorage
+import string
 
 # Create your views here.
 
@@ -1351,12 +1352,194 @@ def remove_friend(request):
         return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
 
 # Renders matchmaking page
-def matchmaking(request):
+def matchmaking_page(request):
     # If user is not logged in, redirect
     if "user_id" not in request.session:
         return HttpResponseRedirect("/")
+    else:
+        user_id = request.session.get("user_id")
 
     # Set static files
     context = importStaticFiles("matchmaking")
+    context["user_id"] = user_id
 
     return render(request, "matchmaking.html", context)
+
+# Backend that gets ran on load of matchmaking page
+def matchmaking_onload(request):
+    if request.method == "POST":
+        # Get post data
+        body = json.loads(request.body)
+        user_id = body["user_id"]
+        gamemode = body["gamemode"]
+
+        # Define null in uuid form
+        uuid_null = "00000000000000000000000000000000"
+
+        if gamemode == "r":
+            # Gamemode is random
+            
+            # Check matchmaking table to see if any rows dont have user id 2 filled out
+            if matchmaking.objects.filter(user_id_2=uuid_null).exists():
+                # Found available row
+                row = matchmaking.objects.filter(user_id_2=uuid_null).first()
+
+                # Insert user id into row
+                row.user_id_2 = user_id
+                row.save()
+
+                # Save row in session var
+                row_id = row.pk
+                request.session['matchmaking_row_id'] = row_id
+
+                # Return websocket message
+                uuid_str = str(row.user_id_1)
+                return JsonResponse({"nonefound": 0, "row_id": row_id, "user_id_1": uuid_str})
+            else:
+                # Found no rows, so create one
+                row = matchmaking(user_id_1 = user_id, user_id_2 = uuid_null)
+                row.save()
+                row_id = (matchmaking.objects.last()).pk
+
+                # Save row in session var
+                request.session['matchmaking_row_id'] = row_id
+                
+                # Pass none found message into context
+                return JsonResponse({"nonefound": 1, "id": row_id})
+        elif gamemode == "f":
+            # Gamemode is invite friend
+            print("dkldk")
+    else:
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
+
+# Cancels matchmaking
+def matchmaking_cancel(request):
+    if request.method == "GET":
+        # Get row id in session
+        if "matchmaking_row_id" not in request.session:
+            return HttpResponseRedirect("/")
+        else:
+            row_id = request.session.get("matchmaking_row_id")
+
+        # Delete row from matchmaking table
+        matchmaking.objects.get(pk=row_id).delete()
+
+        # Return response
+        return JsonResponse({"ok": 1, "row_id": row_id})
+    else:
+        allowed = ['GET']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
+
+def check_joined_row(request):
+    if request.method == "POST":
+        # Get row id in session
+        if "matchmaking_row_id" not in request.session:
+            return HttpResponseRedirect("/")
+        else:
+            matchmaking_row_id = request.session.get("matchmaking_row_id")
+
+        # If user is not logged in, redirect
+        if "user_id" not in request.session:
+            return HttpResponseRedirect("/")
+        else:
+            user_id = request.session.get("user_id")
+
+        # Check if the row and user_id matches the row youre in
+        body = json.loads(request.body)
+        user_id_1 = body["user_id_1"]
+        row_id = body["row_id"]
+
+        if user_id_1 == user_id:
+            if matchmaking.objects.filter(user_id_1=user_id, pk=row_id).exists():
+                # The row is your row, create a random room name
+                length = 16
+                room_name = ''.join(random.choices(string.ascii_letters + string.digits, k=length))
+
+                # Get info from matchmaking row
+                matchmaking_row = matchmaking.objects.get(pk=matchmaking_row_id)
+                user_id_2 = matchmaking_row.user_id_2
+
+                # Create random turn
+                random_turn = random.randint(1,2)
+                if random_turn == 1:
+                    turn = user_id_1
+                else:
+                    turn = user_id_2
+                
+                # Define taken slots
+                taken_slots = json.dumps({
+                    1: 0,
+                    2: 0,
+                    3: 0,
+                    4: 0,
+                    5: 0,
+                    6: 0,
+                    7: 0,
+                    8: 0,
+                    9: 0
+                })
+
+                # Create a new row in the match table
+                row = match(
+                    user_id_1 = user_id,
+                    user_id_2 = user_id_2,
+                    turn = turn,
+                    taken_slots = taken_slots,
+                    room_name = room_name
+                )
+                row.save()
+
+                # Delete session var from matchmaking
+                del request.session["matchmaking_row_id"]
+
+                # Return response
+                return JsonResponse({
+                    "yourrow": 1,
+                    "user_id": user_id_2,
+                    "row_id": matchmaking_row_id,
+                    "room_name": room_name
+                })
+            else:
+                return JsonResponse({"yourrow": 0})
+        else:
+            return JsonResponse({"yourrow": 0})
+    else:
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
+
+# Check if a match that was created includes you
+def check_match_created(request):
+    if request.method == "POST":
+        # Get row id in session
+        if "matchmaking_row_id" not in request.session:
+            return HttpResponseRedirect("/")
+        else:
+            matchmaking_row_id = request.session.get("matchmaking_row_id")
+
+        # If user is not logged in, redirect
+        if "user_id" not in request.session:
+            return HttpResponseRedirect("/")
+        else:
+            user_id = request.session.get("user_id")
+
+        # Check if the your user id is in the room
+        body = json.loads(request.body)
+        user_id_fetch = body["user_id"]
+        room_name = body["room_name"]
+
+        if user_id_fetch == user_id:
+            if match.objects.filter(user_id_2=user_id, room_name=room_name).exists():
+                # Match has you in it, delete matchmaking row and remove session vars from matchmaking
+                matchmaking.objects.get(pk=matchmaking_row_id).delete()
+                del request.session["matchmaking_row_id"]
+
+                # Send message to redirect to room
+                return JsonResponse({"yourmatch": 1})
+            else:
+                return JsonResponse({"yourmatch": 0})
+        else:
+            return JsonResponse({"yourmatch": 0})
+    else:
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")

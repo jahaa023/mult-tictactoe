@@ -34,3 +34,16 @@ class pending_friends(models.Model):
     outgoing = models.UUIDField() # User id who sent the invite
     incoming = models.UUIDField() # User id who received the invite
     sent = models.CharField(max_length=64) # Timestamp for when the invite was sent
+
+# Model for matchmaking
+class matchmaking(models.Model):
+    user_id_1 = models.UUIDField() # Host of the match
+    user_id_2 = models.UUIDField(default="00000000000000000000000000000000") # Person who joins the host
+
+# Model for matches
+class match(models.Model):
+    user_id_1 = models.UUIDField() # Host of the match
+    user_id_2 = models.UUIDField() # Person who joins the host
+    turn = models.UUIDField() # User id of whos turn it is
+    taken_slots = models.JSONField() # JSON of which slots on the board are taken
+    room_name = models.CharField(max_length=16, default="0") # Name of the room
