@@ -45,5 +45,7 @@ urlpatterns = [
     path('matchmaking_onload', views.matchmaking_onload),
     path('matchmaking_cancel', views.matchmaking_cancel),
     path('check_joined_row', views.check_joined_row),
-    path('check_match_created', views.check_match_created)
+    path('check_match_created', views.check_match_created),
+    path('match', views.match_page),
+    path('match_animation_sequence', views.match_animation_sequence)
 ]

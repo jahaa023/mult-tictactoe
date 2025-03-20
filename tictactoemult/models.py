@@ -47,3 +47,6 @@ class match(models.Model):
     turn = models.UUIDField() # User id of whos turn it is
     taken_slots = models.JSONField() # JSON of which slots on the board are taken
     room_name = models.CharField(max_length=16, default="0") # Name of the room
+    timer = models.IntegerField(default=0) # Unix timestamp for when timer runs out
+    x = models.UUIDField(default="00000000000000000000000000000000") # User id of person who is x
+    o = models.UUIDField(default="00000000000000000000000000000000") # User id of person who is o

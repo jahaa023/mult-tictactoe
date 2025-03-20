@@ -1,0 +1,200 @@
+/* CSS for match page */
+
+.timer-container {
+    top: 0;
+    left: 0;
+    position: fixed;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.timer {
+    font-size: 2rem;
+    color: var(--background-white);
+    background-color: var(--primary-black);
+    padding: 10px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+
+.board-container {
+    top: 0;
+    left: 0;
+    position: fixed;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    height: 70vh;
+    margin-top: 15vh;
+}
+
+table {
+    height: 70vh;
+}
+
+table, tr, td {
+    border: solid var(--primary-black) 8px;
+    border-collapse: collapse;
+    aspect-ratio: 1/1;
+}
+
+td {
+    cursor: pointer;
+    background-color: var(--background-white);
+}
+
+td:hover {
+    filter: brightness(0.5);
+}
+
+.table-container {
+    width: fit-content;
+    height: fit-content;
+}
+
+.leave-button {
+    padding: 7px;
+    color: var(--warning-red);
+    background-color: var(--background-white);
+    border: solid 3px var(--warning-red);
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.leave-button:hover {
+    background-color: var(--warning-red);
+    color: var(--background-white);
+}
+
+.animation-container {
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    backdrop-filter: blur(10px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.xo-container {
+    width: 100%;
+    height: 70vh;
+}
+
+.x-container {
+    height: 50%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--background-white);
+}
+
+.x-container {
+    height: 50%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--background-white);
+    animation-name: animationSequence;
+    animation-duration: 4s;
+}
+
+.o-container {
+    height: 50%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary-black);
+    animation-name: animationSequence2;
+    animation-duration: 4s;
+}
+
+.xo {
+    width: 75px;
+    height: 75px;
+    margin-left: 10px;
+}
+
+.xo-profilepic {
+    width: 55px;
+    height: 55px;
+    min-width: 55px;
+    min-height: 55px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 60px;
+    margin-left: 10px;
+    border: 5px solid var(--primary-black);
+}
+
+.xo-nickname {
+    color: var(--primary-black);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-left: 10px;
+    max-width: 60%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-wrap: nowrap;
+}
+
+#o-nickname {
+    color: var(--background-white);
+}
+
+#o-profilepic {
+    border: 5px solid var(--background-white);
+}
+
+@media screen and (max-width: 680px) {
+    table {
+        max-height: 340px;
+    }
+}
+
+@keyframes animationSequence {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    30% {
+        transform: translateX(0%);
+    }
+
+    70% {
+        transform: translateX(0%);
+    }
+
+    100% {
+        transform: translate(100%);
+    }
+}
+
+@keyframes animationSequence2 {
+    0% {
+        transform: translateX(100%);
+    }
+
+    30% {
+        transform: translateX(0%);
+    }
+
+    70% {
+        transform: translateX(0%);
+    }
+
+    100% {
+        transform: translate(-100%);
+    }
+}

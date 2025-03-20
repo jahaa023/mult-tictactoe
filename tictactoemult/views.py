@@ -1394,7 +1394,7 @@ def matchmaking_onload(request):
 
                 # Return websocket message
                 uuid_str = str(row.user_id_1)
-                return JsonResponse({"nonefound": 0, "row_id": row_id, "user_id_1": uuid_str})
+                return JsonResponse({"nonefound": 0, "row_id": row_id, "user_id_1": uuid_str}, status=200)
             else:
                 # Found no rows, so create one
                 row = matchmaking(user_id_1 = user_id, user_id_2 = uuid_null)
@@ -1405,7 +1405,7 @@ def matchmaking_onload(request):
                 request.session['matchmaking_row_id'] = row_id
                 
                 # Pass none found message into context
-                return JsonResponse({"nonefound": 1, "id": row_id})
+                return JsonResponse({"nonefound": 1, "id": row_id}, status=200)
         elif gamemode == "f":
             # Gamemode is invite friend
             print("dkldk")
@@ -1426,7 +1426,7 @@ def matchmaking_cancel(request):
         matchmaking.objects.get(pk=row_id).delete()
 
         # Return response
-        return JsonResponse({"ok": 1, "row_id": row_id})
+        return JsonResponse({"ok": 1, "row_id": row_id}, status=200)
     else:
         allowed = ['GET']
         return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
@@ -1467,6 +1467,19 @@ def check_joined_row(request):
                 else:
                     turn = user_id_2
                 
+                # Figure out who is x and o
+                random_xo = random.randint(1,2)
+                if random_xo == 1:
+                    x = user_id_1
+                    o = user_id_2
+                else:
+                    x = user_id_2
+                    o = user_id_1
+                
+                # Define timer. Each turn lasts a minute
+                unix_now = int(time.time())
+                timer = unix_now + 60
+                
                 # Define taken slots
                 taken_slots = json.dumps({
                     1: 0,
@@ -1486,7 +1499,10 @@ def check_joined_row(request):
                     user_id_2 = user_id_2,
                     turn = turn,
                     taken_slots = taken_slots,
-                    room_name = room_name
+                    room_name = room_name,
+                    timer = timer,
+                    x = x,
+                    o = o
                 )
                 row.save()
 
@@ -1501,9 +1517,9 @@ def check_joined_row(request):
                     "room_name": room_name
                 })
             else:
-                return JsonResponse({"yourrow": 0})
+                return JsonResponse({"yourrow": 0}, status=200)
         else:
-            return JsonResponse({"yourrow": 0})
+            return JsonResponse({"yourrow": 0}, status=200)
     else:
         allowed = ['POST']
         return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
@@ -1535,11 +1551,69 @@ def check_match_created(request):
                 del request.session["matchmaking_row_id"]
 
                 # Send message to redirect to room
-                return JsonResponse({"yourmatch": 1})
+                return JsonResponse({"yourmatch": 1}, status=200)
             else:
-                return JsonResponse({"yourmatch": 0})
+                return JsonResponse({"yourmatch": 0}, status=200)
         else:
-            return JsonResponse({"yourmatch": 0})
+            return JsonResponse({"yourmatch": 0}, status=200)
+    else:
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
+
+def match_page(request):
+    context = importStaticFiles("match")
+    return render(request, "match.html", context)
+
+# Gives info for animation sequence
+def match_animation_sequence(request):
+    if request.method == "POST":
+        # If user is not logged in, redirect
+        if "user_id" not in request.session:
+            return HttpResponseRedirect("/")
+        else:
+            user_id = request.session.get("user_id")
+        
+        # Check if animation has already been done
+        if "animation_sequence" not in request.session or request.session.get("animation_sequence") == 0:
+            # Get the room name
+            body = json.loads(request.body)
+            room_name = body["room_name"]
+
+            # check if room exists
+            if match.objects.filter(room_name=room_name).exists():
+                match_row = match.objects.get(room_name=room_name)
+
+                # Check if user is in the match
+                if str(match_row.user_id_1) == user_id or str(match_row.user_id_2) == user_id:
+                    # Get profilepic and nickname of users
+                    user_id_1 = match_row.user_id_1
+                    user_id_2 = match_row.user_id_2
+
+                    user_id_1_row = users.objects.get(user_id=user_id_1)
+                    user_id_2_row = users.objects.get(user_id=user_id_2)
+
+                    # Get x user id
+                    x = match_row.x
+
+                    # Set session variable to be 1
+                    request.session['animation_sequence'] = 1
+
+                    return JsonResponse({
+                        "user_id_1": user_id_1,
+                        "user_id_2": user_id_2,
+                        "user_id_1_nickname": user_id_1_row.nickname,
+                        "user_id_2_nickname": user_id_2_row.nickname,
+                        "user_id_1_profilepic": user_id_1_row.profile_picture,
+                        "user_id_2_profilepic": user_id_2_row.profile_picture,
+                        "x": x,
+                        "done": 0
+                    }, status=200)
+                else:
+                    return JsonResponse({"error": "noaccess"}, status=403)
+            else:
+                return JsonResponse({"error": "notfound"}, status=404)
+        else:
+            return JsonResponse({"done": 1})
     else:
         allowed = ['POST']
         return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")

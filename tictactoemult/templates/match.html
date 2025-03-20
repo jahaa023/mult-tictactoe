@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        {{match_css | safe}}
+    </style>
+    <style>
+        {{universal_css | safe}}
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe - Match</title>
+    <link href="/static/img/favicon.ico" rel="icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+    <div class="animation-container" id="animation-container">
+        <div class="xo-container">
+            <div class="x-container">
+                <img class="xo" src="static/img/icons/x-match.svg">
+                <div class="xo-profilepic" id="x-profilepic"></div>
+                <p class="xo-nickname" id="x-nickname"></p>
+            </div>
+            <div class="o-container">
+                <img class="xo" src="static/img/icons/o-match.svg">
+                <div class="xo-profilepic" id="o-profilepic"></div>
+                <p class="xo-nickname" id="o-nickname"></p>
+            </div>
+        </div>
+    </div>
+    <div class="timer-container">
+        <div class="timer">0:33</div>
+    </div>
+    <div class="board-container">
+        <div class="table-container">
+            <table>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+            <p>JakobChimas turn</p>
+            <button id="leave" class="leave-button" title="Leave match">Leave</button>
+        </div>
+    </div>
+</body>
+<script>
+    {{universal_js | safe}}
+</script>
+<script>
+    {{match_js | safe}}
+</script>
+</html>

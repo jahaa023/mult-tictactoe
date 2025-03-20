@@ -39,7 +39,6 @@ function startup() {
                 "row_id": response.row_id,
                 "user_id_1": response.user_id_1
             }))
-            alert(response.row_id)
         }
     })
 }
@@ -99,7 +98,6 @@ const timeElapsedInterval = setInterval(function() {
 const matchmakingSocket = new WebSocket('ws://' + window.location.host + "/ws/matchmaking/")
 matchmakingSocket.onmessage = function(e) {
     const data = JSON.parse(e.data)
-    console.log(data)
     
     // Read the message type
     var messagetype = data.message;
@@ -174,8 +172,7 @@ function checkJoinedRow(row_id, user_id_1) {
                 "row_id": response.row_id,
                 "room_name": response.room_name
             }))
-
-            window.location = "/match?rn=" + response.room_name
+            opponentFoundWarning(response.room_name)
         }
     })
 
@@ -205,13 +202,31 @@ function checkMatchCreated(row_id, room_name, user_id) {
 
     .then(response => {
         if (response.yourmatch == 1) {
-            window.location = "/match?rn=" + room_name
+            opponentFoundWarning(room_name)
         }
     })
 
     .catch(error => {
         console.error(error)
     })
+}
+
+// shows a popup that an opponent was found before redirecting
+function opponentFoundWarning(room_name) {
+    var timeElapsed = document.getElementById("time-elapsed-container");
+    clearInterval(timeElapsedInterval)
+    clearInterval(findingOpponentInterval)
+    timeElapsed.remove();
+
+    var cancelButton = document.getElementById("cancel");
+    cancelButton.remove();
+
+    var opponentFoundText = document.getElementById("finding-opponent");
+    opponentFoundText.innerHTML = "Opponent found! Redirecting..."
+
+    setTimeout(function() {
+        window.location = "/match?rn=" + room_name;
+    }, 2000)
 }
 
 setTimeout(startup, 500)
