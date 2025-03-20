@@ -1358,6 +1358,10 @@ def matchmaking_page(request):
         return HttpResponseRedirect("/")
     else:
         user_id = request.session.get("user_id")
+    
+    # If animation from previous match was done, reset it
+    if "animation_sequence" in request.session:
+        del request.session["animation_sequence"]
 
     # Set static files
     context = importStaticFiles("matchmaking")
