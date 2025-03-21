@@ -10,6 +10,21 @@ const csrfmiddlewaretoken = document.cookie.split(';')
     .find(cookie => cookie.trim().startsWith('csrftoken='))
     ?.split('=')[1];
 
+// Connect to websocket for this room
+const matchWebSocket = new WebSocket("ws://" + window.location.host + "/ws/match/" + room_name + "/")
+
+// Listen for message and parse the message data
+matchWebSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data)
+    console.log(data)
+    
+    // Read the message type
+    var messagetype = data.message;
+    switch(messagetype) {
+        
+    }
+}
+
 // Checks if startup animation has been done. If it hasnt, do it
 function animationSequence() {
     var url = "/match_animation_sequence"
