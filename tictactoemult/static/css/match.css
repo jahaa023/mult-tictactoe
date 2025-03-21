@@ -30,7 +30,7 @@
 }
 
 table {
-    height: 70vh;
+    height: 65vh;
 }
 
 table, tr, td {
@@ -155,6 +155,43 @@ td:hover {
 
 #o-profilepic {
     border: 5px solid var(--background-white);
+}
+
+.turn-container {
+    width: 100%;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#turn-icon {
+    width: 35px;
+    height: 35px;
+}
+
+#turn-profilepic {
+    width: 35px;
+    height: 35px;
+    border-radius: 35px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.turn-nickname-container {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+#error-container {
+    font-size: 1rem;
+    color: var(--warning-red);
+    margin: 0;
+    display: none;
+    margin-bottom: 10px;
 }
 
 @media screen and (max-width: 680px) {

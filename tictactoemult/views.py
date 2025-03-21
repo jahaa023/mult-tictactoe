@@ -1565,7 +1565,13 @@ def check_match_created(request):
         return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
 
 def match_page(request):
+    # If user is not logged in, redirect
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
+    else:
+        user_id = request.session.get("user_id")
     context = importStaticFiles("match")
+    context["user_id"] = user_id
     return render(request, "match.html", context)
 
 # Gives info for animation sequence
@@ -1617,7 +1623,153 @@ def match_animation_sequence(request):
             else:
                 return JsonResponse({"error": "notfound"}, status=404)
         else:
-            return JsonResponse({"done": 1})
+            return JsonResponse({"done": 1}, status=200)
+    else:
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
+
+# Gets various info of the match the current user is in
+def get_match_info(request, room_name):
+    if request.method == "GET":
+        # If user is not logged in, redirect
+        if "user_id" not in request.session:
+            return HttpResponseRedirect("/")
+        else:
+            user_id = request.session.get("user_id")
+        
+        # Check if user is allowed in match
+        if match.objects.filter(room_name=room_name).exists():
+            match_row = match.objects.get(room_name=room_name)
+            if str(match_row.user_id_1) == user_id or str(match_row.user_id_2) == user_id:
+                # User is in match
+                
+                # Get slots
+                match_slots = match_row.taken_slots
+
+                # Get nickname and profile pic of x and o
+                x_uid = match_row.x
+                o_uid = match_row.o
+
+                x_row = users.objects.get(user_id=x_uid)
+                x_nickname = x_row.nickname
+                x_profilepic = x_row.profile_picture
+
+                o_row = users.objects.get(user_id=o_uid)
+                o_nickname = o_row.nickname
+                o_profilepic = o_row.profile_picture
+
+                # Get time left from match timer start
+                unix_now = int(time.time())
+                seconds = match_row.timer - unix_now
+
+                # If time ran out, change turns
+                if (seconds <= 0):
+                    # Update the turn
+                    if match_row.turn == match_row.user_id_1:
+                        turn = match_row.user_id_2
+                    elif match_row.turn == match_row.user_id_2:
+                        turn = match_row.user_id_1
+                    
+                    # Update timer
+                    unix_now = int(time.time())
+                    timer = unix_now + 60
+
+                    # Update row in database
+                    match_row.turn = turn
+                    match_row.timer = timer
+                    match_row.save()
+
+                # Get whos turn it is
+                if match_row.turn == x_uid:
+                    turn = "x"
+                else:
+                    turn = "o"
+
+                # Return response
+                return JsonResponse({
+                    "allowed": 1,
+                    "slots": match_slots,
+                    "x_nickname": x_nickname,
+                    "o_nickname": o_nickname,
+                    "x_profilepic": x_profilepic,
+                    "o_profilepic": o_profilepic,
+                    "turn": turn,
+                    "seconds": seconds
+                }, status=200)
+            else:
+                # Kick user because theyre not in match
+                return JsonResponse({"allowed": 0}, status=403)
+        else:
+            # Kick user because match doesnt exist.
+            return JsonResponse({"allowed": 0}, status=404)
+    else:
+        allowed = ['GET']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
+
+# Verifies a move in match and updates database
+def match_do_move(request):
+    if request.method == "POST":
+        # If user is not logged in, redirect
+        if "user_id" not in request.session:
+            return HttpResponseRedirect("/")
+        else:
+            user_id = request.session.get("user_id")
+
+        # Get JSON data
+        body = json.loads(request.body)
+        room_name = body["room_name"]
+        slot_id = body["slot_id"]
+
+        # Check if match exists
+        if match.objects.filter(room_name=room_name).exists():
+            match_row = match.objects.get(room_name=room_name)
+            if str(match_row.user_id_1) == user_id or str(match_row.user_id_2) == user_id:
+                # User is in match, check if its their turn
+                if str(match_row.turn) == user_id:
+                    # It is users turn, check if slot is taken
+                    slots = json.loads(match_row.taken_slots)
+                    if slots[slot_id] == 0:
+                        # Slot is not taken
+
+                        # Check if user is x or o
+                        if str(match_row.x) == user_id:
+                            slot_value = "x"
+                        else:
+                            slot_value = "o"
+
+                        # Update the slot
+                        slots[slot_id] = slot_value
+                        slots = json.dumps(slots)
+
+                        # Update the turn
+                        if str(match_row.user_id_1) == user_id:
+                            turn = match_row.user_id_2
+                        else:
+                            turn = match_row.user_id_1
+                        
+                        # Update timer
+                        unix_now = int(time.time())
+                        timer = unix_now + 60
+
+                        # Update row in database
+                        match_row.taken_slots = slots
+                        match_row.turn = turn
+                        match_row.timer = timer
+                        match_row.save()
+
+                        return JsonResponse({"allowed": 1,"available": 1, "turn":1}, status=200)
+                    else:
+                        # Slot is already taken
+                        return JsonResponse({"allowed": 1,"available": 0, "turn":1}, status=200)
+                else:
+                    # It is not the users turn
+                    return JsonResponse({"allowed": 1,"turn": 0, "available": 0}, status=200)
+            else:
+                # Kick user because theyre not in match
+                return JsonResponse({"allowed": 0}, status=403)
+        else:
+            # Kick user because match doesnt exist.
+            return JsonResponse({"allowed": 0}, status=404)
     else:
         allowed = ['POST']
         return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")

@@ -32,32 +32,38 @@
         </div>
     </div>
     <div class="timer-container">
-        <div class="timer">0:33</div>
+        <div class="timer" id="timer">0:33</div>
     </div>
     <div class="board-container">
         <div class="table-container">
+            <p id="error-container">Brah</p>
             <table>
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td id="1"></td>
+                    <td id="2"></td>
+                    <td id="3"></td>
                 </tr>
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td id="4"></td>
+                    <td id="5"></td>
+                    <td id="6"></td>
                 </tr>
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td id="7"></td>
+                    <td id="8"></td>
+                    <td id="9"></td>
                 </tr>
             </table>
-            <p>JakobChimas turn</p>
+            <div class="turn-container">
+                <img id="turn-icon"><div id="turn-profilepic"></div><p class="turn-nickname-container"><span id="turn-nickname"></span>'s turn</p>
+            </div>
             <button id="leave" class="leave-button" title="Leave match">Leave</button>
         </div>
     </div>
 </body>
+<script>
+    const user_id = "{{user_id}}";
+</script>
 <script>
     {{universal_js | safe}}
 </script>
