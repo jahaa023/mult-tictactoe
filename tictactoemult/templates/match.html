@@ -17,6 +17,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
+    <div id="dark-container"></div>
+    <div id="confirmContainer"></div>
     <div class="animation-container" id="animation-container">
         <div class="xo-container">
             <div class="x-container">
@@ -32,11 +34,14 @@
         </div>
     </div>
     <div class="timer-container">
-        <div class="timer" id="timer">0:33</div>
+        <div class="timer" id="timer">0</div>
+    </div>
+    <div class="round-container">
+        <p>Round <span id="round-count">0</span></p>
     </div>
     <div class="board-container">
         <div class="table-container">
-            <p id="error-container">Brah</p>
+            <p id="error-container"></p>
             <table>
                 <tr>
                     <td id="1"></td>
@@ -55,7 +60,7 @@
                 </tr>
             </table>
             <div class="turn-container">
-                <img id="turn-icon"><div id="turn-profilepic"></div><p class="turn-nickname-container"><span id="turn-nickname"></span>'s turn</p>
+                <img id="turn-icon"><div id="turn-profilepic" title="See profile"></div><p class="turn-nickname-container"><span id="turn-nickname"></span>'s turn</p>
             </div>
             <button id="leave" class="leave-button" title="Leave match">Leave</button>
         </div>

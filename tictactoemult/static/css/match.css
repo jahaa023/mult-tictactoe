@@ -18,6 +18,22 @@
     border-bottom-right-radius: 15px;
 }
 
+.round-container {
+    top: 0;
+    left: 0;
+    position: fixed;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 60px;
+    font-size: 1.4rem;
+}
+
+.round-container * {
+    margin: 0;
+}
+
+
 .board-container {
     top: 0;
     left: 0;
@@ -179,6 +195,11 @@ td:hover {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    cursor: pointer;
+}
+
+#turn-profilepic:hover {
+    filter: brightness(0.7);
 }
 
 .turn-nickname-container {

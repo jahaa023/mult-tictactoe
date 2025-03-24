@@ -50,3 +50,8 @@ class match(models.Model):
     timer = models.IntegerField(default=0) # Unix timestamp for when timer runs out
     x = models.UUIDField(default="00000000000000000000000000000000") # User id of person who is x
     o = models.UUIDField(default="00000000000000000000000000000000") # User id of person who is o
+    left = models.UUIDField(default="00000000000000000000000000000000") # User id of person who left
+    user_id_1_ping = models.IntegerField(default=0) # Unix timestamp for last update from user id 1
+    user_id_2_ping = models.IntegerField(default=0) # Unix timestamp for last update from user id 2
+    round = models.IntegerField(default=1) # Keeps track of which round it is
+    match_status = models.JSONField(default=dict) # Includes diffrent stats about match

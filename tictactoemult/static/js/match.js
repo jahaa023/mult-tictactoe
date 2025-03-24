@@ -5,6 +5,9 @@ const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const room_name = urlParams.get('rn')
 
+// Keeps track of current round
+var currentRound = 1;
+
 // Get csrftoken from cookie
 const csrfmiddlewaretoken = document.cookie.split(';')
     .find(cookie => cookie.trim().startsWith('csrftoken='))
@@ -16,6 +19,7 @@ const matchWebSocket = new WebSocket("ws://" + window.location.host + "/ws/match
 // Listen for message and parse the message data
 matchWebSocket.onmessage = function(e) {
     const data = JSON.parse(e.data)
+    console.log(data)
 
     // Read the message type
     var messagetype = data.message;
@@ -151,7 +155,7 @@ td_tags.forEach((td) => {
 
 // Get match info, like which slots are taken, whos turn it is, if the timer ran out etc.
 function getMatchInfo() {
-    var url = "/get_match_info/" + room_name
+    var url = "/get_match_info/" + room_name + "/" + currentRound + "/"
 
     fetch(url,{
         method: "GET",
@@ -196,6 +200,8 @@ function getMatchInfo() {
             var oNickname = response.o_nickname
             var xProfilePic = response.x_profilepic
             var oProfilePic = response.o_profilepic
+            var xUserId = response.x_uid
+            var oUserId = response.o_uid
 
             // Get turn elements
             var turnIcon = document.getElementById("turn-icon")
@@ -207,14 +213,23 @@ function getMatchInfo() {
                 turnNickname.innerHTML = xNickname;
                 turnProfilePic.style.backgroundImage = `url(static/img/profile_pictures/${xProfilePic})`;
                 turnIcon.src = "static/img/icons/x-match.svg";
+                turnProfilePicUid = xUserId
             } else if (response.turn == "o") {
                 turnNickname.innerHTML = oNickname;
                 turnProfilePic.style.backgroundImage = `url(static/img/profile_pictures/${oProfilePic})`;
                 turnIcon.src = "static/img/icons/o-match.svg";
+                turnProfilePicUid = oUserId
             }
 
             // Start timer
             startTimer(response.seconds)
+
+            // Get round
+            var roundSpan = document.getElementById("round-count")
+            roundSpan.innerHTML = response.round
+            setTimeout(function() {
+                currentRound = response.round
+            }, 200)
         } else {
             matchWebSocket.close()
             window.location.href = "/main"
@@ -227,12 +242,20 @@ function getMatchInfo() {
 }
 
 var timerInterval = "";
+var turnProfilePicUid = "";
+
+document.getElementById("turn-profilepic").addEventListener("click", function() {
+    displayProfile(turnProfilePicUid)
+})
 
 // Start a timer that counts down from 60
 function startTimer(start_seconds) {
     clearInterval(timerInterval)
     var timerElement = document.getElementById("timer")
     timerElement.innerHTML = start_seconds
+    if (start_seconds < 0) {
+        timerElement.innerHTML = 0;
+    }
 
     timerInterval = setInterval(function() {
         start_seconds = start_seconds - 1
@@ -248,8 +271,82 @@ function startTimer(start_seconds) {
     }, 1000)
 }
 
-// Do animation sequence and get match info on load of dom content
+// Event listener for leave match button
+document.getElementById("leave").addEventListener("click", function() {
+    ajaxGet("/leave_match_modal", "dark-container", function() {
+        document.getElementById("leave-confirm").addEventListener("click", function() {
+            var url = "/leave_match"
+
+            fetch(url, {
+                method: "POST",
+                body: JSON.stringify({
+                    "room_name": room_name
+                }),
+                headers : {
+                    "X-CSRFToken" : csrfmiddlewaretoken
+                },
+                credentials: "same-origin"
+            })
+
+            .then(response => response.json())
+
+            .then(response => {
+                if (response.ok == 1) {
+                    // Send message that you left the match
+                    matchWebSocket.send(JSON.stringify({
+                        "message": "left_match",
+                        "user_id": user_id
+                    }))
+                }
+            })
+
+            .finally(() => {
+                matchWebSocket.close()
+                window.location = "/main";
+            })
+        })
+    })
+})
+
+// Update users online state in match
+function matchPing() {
+    var url = `/match_ping/${room_name}/`
+
+    fetch(url, {
+        method: "GET",
+        headers : {
+            "X-CSRFToken" : csrfmiddlewaretoken
+        },
+        credentials: "same-origin"
+    })
+
+    .then(response => response.json())
+
+    .then(response => {
+        if (response.allowed == 0) {
+            matchWebSocket.close()
+            window.location = "/main"
+        }
+
+        if (response.opponent_offline == 1) {
+            // opponent is offline, get info
+            getMatchInfo()
+        }
+    })
+
+    .catch(error => {
+        console.error(error)
+    })
+}
+
+// Long polling for updateing match ping
+const matchPingInterval = setInterval(function() {
+    matchPing()
+}, 7000)
+
+// Do animation sequence, ping and get match info on load of dom content
 document.addEventListener("DOMContentLoaded", function() {
     animationSequence()
     getMatchInfo()
+    matchPing()
 })

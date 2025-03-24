@@ -1483,6 +1483,9 @@ def check_joined_row(request):
                 # Define timer. Each turn lasts a minute
                 unix_now = int(time.time())
                 timer = unix_now + 60
+
+                # Define ping
+                unix_ping = unix_now + 10
                 
                 # Define taken slots
                 taken_slots = json.dumps({
@@ -1506,7 +1509,9 @@ def check_joined_row(request):
                     room_name = room_name,
                     timer = timer,
                     x = x,
-                    o = o
+                    o = o,
+                    user_id_1_ping = unix_ping,
+                    user_id_2_ping = unix_ping
                 )
                 row.save()
 
@@ -1629,7 +1634,7 @@ def match_animation_sequence(request):
         return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
 
 # Gets various info of the match the current user is in
-def get_match_info(request, room_name):
+def get_match_info(request, room_name, user_round):
     if request.method == "GET":
         # If user is not logged in, redirect
         if "user_id" not in request.session:
@@ -1645,6 +1650,58 @@ def get_match_info(request, room_name):
                 
                 # Get slots
                 match_slots = match_row.taken_slots
+
+                # Define winning patterns
+                match_slots_dict = json.loads(match_slots)
+                winning_patterns = [
+                    [1, 2, 3],
+                    [1, 4, 7],
+                    [1, 5, 9],
+                    [2, 5, 8],
+                    [3, 6, 9],
+                    [3, 5, 7],
+                    [4, 5, 6],
+                    [7, 8, 9]
+                ]
+
+                # Define slots that x has
+                x_slots = []
+                for key in match_slots_dict:
+                    if match_slots_dict[key] == "x":
+                        x_slots.append(int(key))
+                
+                # Define slots that o has
+                o_slots = []
+                for key in match_slots_dict:
+                    if match_slots_dict[key] == "o":
+                        o_slots.append(int(key))
+
+                won = "none"
+
+                for pattern in winning_patterns:
+                    x_count = 0
+                    o_count = 0
+                    for element in pattern:
+                        if int(element) in x_slots:
+                            x_count += 1
+                        if int(element) in o_slots:
+                            o_count += 1
+                    if x_count == 3:
+                        won = "x"
+                        break
+                    elif o_count == 3:
+                        won = "o"
+                        break
+                
+                for pattern in winning_patterns:
+                    count = 0
+                    for element in pattern:
+                        if int(element) in o_slots:
+                            count += 1
+                    if count == 3:
+                        count = 0
+                        print("o won")
+                        break
 
                 # Get nickname and profile pic of x and o
                 x_uid = match_row.x
@@ -1684,6 +1741,9 @@ def get_match_info(request, room_name):
                     turn = "x"
                 else:
                     turn = "o"
+                
+                # Get the current round
+                round = match_row.round
 
                 # Return response
                 return JsonResponse({
@@ -1694,7 +1754,10 @@ def get_match_info(request, room_name):
                     "x_profilepic": x_profilepic,
                     "o_profilepic": o_profilepic,
                     "turn": turn,
-                    "seconds": seconds
+                    "seconds": seconds,
+                    "x_uid": x_uid,
+                    "o_uid": o_uid,
+                    "round": round
                 }, status=200)
             else:
                 # Kick user because theyre not in match
@@ -1772,4 +1835,99 @@ def match_do_move(request):
             return JsonResponse({"allowed": 0}, status=404)
     else:
         allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
+
+# Renders a modal for confirming leaving match
+def leave_match_modal(request):
+    # If user is not logged in, redirect
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
+
+    # Get css file
+    context = {}
+    with open(static_dir + '\\css\\leave-match-modal.css', 'r') as data:
+        context['leave_match_modal_css'] = data.read()
+
+    return render(request, "modals/leave_match_modal.html", context)
+
+# Leaves the current match youre in
+def leave_match(request):
+    if request.method == "POST":
+        # If user is not logged in, redirect
+        if "user_id" not in request.session:
+            return HttpResponseRedirect("/")
+        else:
+            user_id = request.session.get("user_id")
+
+        # Get JSON data
+        body = json.loads(request.body)
+        room_name = body["room_name"]
+
+        # Check if match exists
+        if match.objects.filter(room_name=room_name).exists():
+            match_row = match.objects.get(room_name=room_name)
+            if str(match_row.user_id_1) == user_id or str(match_row.user_id_2) == user_id:
+                # User is in match, change left row
+                match_row.left = user_id
+                match_row.save()
+
+                # Return
+                return JsonResponse({"ok" : 1})
+            else:
+                # Kick user because theyre not in match
+                return JsonResponse({"allowed": 0}, status=403)
+        else:
+            # Kick user because match doesnt exist.
+            return JsonResponse({"allowed": 0}, status=404)
+    else:
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
+
+# Long polling for unix timestamp of users in match
+def match_ping(request, room_name):
+    if request.method == "GET":
+        # If user is not logged in, redirect
+        if "user_id" not in request.session:
+            return HttpResponseRedirect("/")
+        else:
+            user_id = request.session.get("user_id")
+
+        # Check if match exists
+        if match.objects.filter(room_name=room_name).exists():
+            match_row = match.objects.get(room_name=room_name)
+            if str(match_row.user_id_1) == user_id or str(match_row.user_id_2) == user_id:
+                # User is in match
+
+                # Get current unix timestamp
+                unix_now = int(time.time())
+
+                # Make unix timestamp 10 seconds from now
+                ping_unix = unix_now + 10
+
+                # Create ping
+                if str(match_row.user_id_1) == user_id:
+                    match_row.user_id_1_ping = ping_unix
+                    opponent_ping = match_row.user_id_2_ping
+                else:
+                    match_row.user_id_2_ping = ping_unix
+                    opponent_ping = match_row.user_id_1_ping
+
+                match_row.save()
+
+                # Check if opponent is offline
+                if opponent_ping < unix_now:
+                    opponent_offline = 1
+                else:
+                    opponent_offline = 0
+
+                # Return
+                return JsonResponse({"ok" : 1, "opponent_offline": opponent_offline})
+            else:
+                # Kick user because theyre not in match
+                return JsonResponse({"allowed": 0}, status=403)
+        else:
+            # Kick user because match doesnt exist.
+            return JsonResponse({"allowed": 0}, status=404)
+    else:
+        allowed = ['GET']
         return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")

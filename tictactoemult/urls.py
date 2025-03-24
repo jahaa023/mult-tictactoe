@@ -48,6 +48,9 @@ urlpatterns = [
     path('check_match_created', views.check_match_created),
     path('match', views.match_page),
     path('match_animation_sequence', views.match_animation_sequence),
-    path('get_match_info/<str:room_name>/', views.get_match_info),
-    path('match_do_move', views.match_do_move)
+    path('get_match_info/<str:room_name>/<int:user_round>/', views.get_match_info),
+    path('match_do_move', views.match_do_move),
+    path('leave_match_modal', views.leave_match_modal),
+    path('leave_match', views.leave_match),
+    path('match_ping/<str:room_name>/', views.match_ping)
 ]
