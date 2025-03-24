@@ -1676,8 +1676,7 @@ def get_match_info(request, room_name, user_round):
                     if match_slots_dict[key] == "o":
                         o_slots.append(int(key))
 
-                won = "none"
-
+                # See if they have winning patterns
                 for pattern in winning_patterns:
                     x_count = 0
                     o_count = 0
@@ -1692,16 +1691,20 @@ def get_match_info(request, room_name, user_round):
                     elif o_count == 3:
                         won = "o"
                         break
-                
-                for pattern in winning_patterns:
-                    count = 0
-                    for element in pattern:
-                        if int(element) in o_slots:
-                            count += 1
-                    if count == 3:
-                        count = 0
-                        print("o won")
-                        break
+                    else:
+                        won = "none"
+
+                # See if match is a draw
+                if won == "none":
+                    tie = 0
+                    for key in match_slots_dict:
+                        if match_slots_dict[key] != 0:
+                            tie += 1
+                    
+                    if tie >= 9:
+                        tie = True
+                    else:
+                        tie = False
 
                 # Get nickname and profile pic of x and o
                 x_uid = match_row.x
@@ -1757,7 +1760,8 @@ def get_match_info(request, room_name, user_round):
                     "seconds": seconds,
                     "x_uid": x_uid,
                     "o_uid": o_uid,
-                    "round": round
+                    "round": round,
+                    "won": won
                 }, status=200)
             else:
                 # Kick user because theyre not in match
