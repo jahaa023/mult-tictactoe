@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect, QueryDict, HttpResponseForbidden, JsonResponse, HttpResponseNotAllowed
 from .forms import LoginForm, CreateAccountForm, AccountRecoveryForm1, AccountRecoveryForm2, AccountRecoveryFormNewPassword, PersonalInformationEmail
 from django.contrib.auth.hashers import make_password, check_password
-from .models import users, recovery_codes, friend_list, pending_friends, match, matchmaking
+from .models import users, recovery_codes, friend_list, pending_friends, match, matchmaking, leaderboard
 import os
 import uuid
 import datetime
@@ -199,6 +199,12 @@ def create_account_form_handler(request):
                 description=description,
             )
             user.save()
+
+            # Register user to leaderboard
+            leaderboard_user = leaderboard(
+                user_id = user.user_id
+            )
+            leaderboard_user.save()
 
             # Set session variables
             user = users.objects.get(username=username)
@@ -1515,6 +1521,16 @@ def check_joined_row(request):
                 )
                 row.save()
 
+                # Add match played in leaderboard
+                user_id_1_leaderboard = leaderboard.objects.get(user_id=user_id_1)
+                user_id_2_leaderboard = leaderboard.objects.get(user_id=user_id_2)
+
+                user_id_1_leaderboard.matches_played = user_id_1_leaderboard.matches_played + 1
+                user_id_1_leaderboard.save()
+
+                user_id_2_leaderboard.matches_played = user_id_2_leaderboard.matches_played + 1
+                user_id_2_leaderboard.save()
+
                 # Delete session var from matchmaking
                 del request.session["matchmaking_row_id"]
 
@@ -1651,61 +1667,6 @@ def get_match_info(request, room_name, user_round):
                 # Get slots
                 match_slots = match_row.taken_slots
 
-                # Define winning patterns
-                match_slots_dict = json.loads(match_slots)
-                winning_patterns = [
-                    [1, 2, 3],
-                    [1, 4, 7],
-                    [1, 5, 9],
-                    [2, 5, 8],
-                    [3, 6, 9],
-                    [3, 5, 7],
-                    [4, 5, 6],
-                    [7, 8, 9]
-                ]
-
-                # Define slots that x has
-                x_slots = []
-                for key in match_slots_dict:
-                    if match_slots_dict[key] == "x":
-                        x_slots.append(int(key))
-                
-                # Define slots that o has
-                o_slots = []
-                for key in match_slots_dict:
-                    if match_slots_dict[key] == "o":
-                        o_slots.append(int(key))
-
-                # See if they have winning patterns
-                for pattern in winning_patterns:
-                    x_count = 0
-                    o_count = 0
-                    for element in pattern:
-                        if int(element) in x_slots:
-                            x_count += 1
-                        if int(element) in o_slots:
-                            o_count += 1
-                    if x_count == 3:
-                        won = "x"
-                        break
-                    elif o_count == 3:
-                        won = "o"
-                        break
-                    else:
-                        won = "none"
-
-                # See if match is a draw
-                if won == "none":
-                    tie = 0
-                    for key in match_slots_dict:
-                        if match_slots_dict[key] != 0:
-                            tie += 1
-                    
-                    if tie >= 9:
-                        tie = True
-                    else:
-                        tie = False
-
                 # Get nickname and profile pic of x and o
                 x_uid = match_row.x
                 o_uid = match_row.o
@@ -1748,6 +1709,65 @@ def get_match_info(request, room_name, user_round):
                 # Get the current round
                 round = match_row.round
 
+                # Define winning patterns
+                match_slots_dict = json.loads(match_slots)
+                winning_patterns = [
+                    [1, 2, 3],
+                    [1, 4, 7],
+                    [1, 5, 9],
+                    [2, 5, 8],
+                    [3, 6, 9],
+                    [3, 5, 7],
+                    [4, 5, 6],
+                    [7, 8, 9]
+                ]
+
+                # Define slots that x has
+                x_slots = []
+                for key in match_slots_dict:
+                    if match_slots_dict[key] == "x":
+                        x_slots.append(int(key))
+                
+                # Define slots that o has
+                o_slots = []
+                for key in match_slots_dict:
+                    if match_slots_dict[key] == "o":
+                        o_slots.append(int(key))
+
+                # See if they have winning patterns
+                won = "none"
+                for pattern in winning_patterns:
+                    x_count = 0
+                    o_count = 0
+                    for element in pattern:
+                        if int(element) in x_slots:
+                            x_count += 1
+                        if int(element) in o_slots:
+                            o_count += 1
+                    if x_count == 3:
+                        won = "x"
+                        break
+                    elif o_count == 3:
+                        won = "o"
+                        break
+
+                # See if match is a draw
+                if won == "none":
+                    tie = 0
+                    for key in match_slots_dict:
+                        if match_slots_dict[key] != 0:
+                            tie += 1
+                    
+                    if tie >= 9:
+                        tie = True
+                    else:
+                        tie = False
+
+                # Check if anyone left the match
+                #if str(match_row.left) != "00000000000000000000000000000000":
+                #    if str(match_row.left) != user_id:
+                #        # Opponent left
+
                 # Return response
                 return JsonResponse({
                     "allowed": 1,
@@ -1761,7 +1781,7 @@ def get_match_info(request, room_name, user_round):
                     "x_uid": x_uid,
                     "o_uid": o_uid,
                     "round": round,
-                    "won": won
+                    "won": won,
                 }, status=200)
             else:
                 # Kick user because theyre not in match
@@ -1874,6 +1894,11 @@ def leave_match(request):
                 # User is in match, change left row
                 match_row.left = user_id
                 match_row.save()
+
+                # Update leaderboard
+                leaderboard_row = leaderboard.objects.get(user_id=user_id)
+                leaderboard_row.losses = leaderboard_row.losses + 1
+                leaderboard_row.save()
 
                 # Return
                 return JsonResponse({"ok" : 1})
