@@ -128,6 +128,20 @@ def main(request):
     if users.objects.filter(user_id=user_id).exists():
         user = users.objects.get(user_id=user_id)
         context["user"] = user
+
+        # Get leaderboard stats
+        leaderboard_row = leaderboard.objects.get(user_id=user_id)
+        context["wins"] = leaderboard_row.wins
+        context["losses"] = leaderboard_row.losses
+        context["matches_played"] = leaderboard_row.matches_played
+
+        # Calculate win loss ration
+        if leaderboard_row.wins != 0 and leaderboard_row.losses != 0:
+            win_loss = leaderboard_row.wins / leaderboard_row.losses
+        else:
+            win_loss = 0
+
+        context["win_loss_ratio"] = win_loss
     else:
         # If user_id is not valid, force user to log in again
         request.session.flush()
@@ -1710,7 +1724,7 @@ def get_match_info(request, room_name, user_round):
                 round = match_row.round
 
                 # Define winning patterns
-                match_slots_dict = json.loads(match_slots)
+                match_slots_dict = json.loads(match_row.taken_slots)
                 winning_patterns = [
                     [1, 2, 3],
                     [1, 4, 7],
@@ -1735,7 +1749,7 @@ def get_match_info(request, room_name, user_round):
                         o_slots.append(int(key))
 
                 # See if they have winning patterns
-                won = "none"
+                match_outcome = "none"
                 for pattern in winning_patterns:
                     x_count = 0
                     o_count = 0
@@ -1745,28 +1759,78 @@ def get_match_info(request, room_name, user_round):
                         if int(element) in o_slots:
                             o_count += 1
                     if x_count == 3:
-                        won = "x"
+                        match_outcome = "x"
                         break
                     elif o_count == 3:
-                        won = "o"
+                        match_outcome = "o"
                         break
 
                 # See if match is a draw
-                if won == "none":
+                if match_outcome == "none":
                     tie = 0
                     for key in match_slots_dict:
                         if match_slots_dict[key] != 0:
                             tie += 1
                     
                     if tie >= 9:
-                        tie = True
+                        match_outcome = "tie"
                     else:
-                        tie = False
+                        match_outcome = "none"
+                
+                # See if its a win or 
+                if match_outcome != "none":
+                    match_status_temp = str(match_row.match_status )
+                    match_status_dict = json.loads(match_status_temp)
+                    if match_outcome == "x":
+                        # x won
+                        message = f"{x_nickname} won."
+                        match_status_dict[round] = {"result": "win", "won": "x", "message": message}
+                    elif match_outcome == "o":
+                        # o won
+                        message = f"{o_nickname} won."
+                        match_status_dict[round] = {"result": "win", "won": "o", "message": message}
+                    elif match_outcome == "tie":
+                        # It was a tie
+                        message = "It was a tie"
+                        match_status_dict[round] = {"result": "tie", "message": message}
 
-                # Check if anyone left the match
-                #if str(match_row.left) != "00000000000000000000000000000000":
-                #    if str(match_row.left) != user_id:
-                #        # Opponent left
+                    # Reset match slots
+                    taken_slots = json.dumps({
+                        1: 0,
+                        2: 0,
+                        3: 0,
+                        4: 0,
+                        5: 0,
+                        6: 0,
+                        7: 0,
+                        8: 0,
+                        9: 0
+                    })
+
+                    # Increment round
+                    round = round + 1
+                    newround = 1
+
+                    # Update the match status
+                    match_status = json.dumps(match_status_dict)
+
+                    # Update the row
+                    match_row.taken_slots = taken_slots
+                    match_row.round = round
+                    match_row.match_status = match_status
+                    match_row.save()
+                else:
+                    newround = 0
+
+                # Check if user needs match status
+                if user_round < round:
+                    match_status_dict = json.loads(match_row.match_status)
+                    match_status_response = json.dumps(match_status_dict[str(user_round)])
+                else:
+                    match_status_response = "none"
+
+                # Refresh the taken slots
+                match_slots = match_row.taken_slots
 
                 # Return response
                 return JsonResponse({
@@ -1781,7 +1845,8 @@ def get_match_info(request, room_name, user_round):
                     "x_uid": x_uid,
                     "o_uid": o_uid,
                     "round": round,
-                    "won": won,
+                    "match_status": match_status_response,
+                    "newround": newround
                 }, status=200)
             else:
                 # Kick user because theyre not in match

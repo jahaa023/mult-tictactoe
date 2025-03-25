@@ -145,14 +145,7 @@ function doMove(td_element) {
     })
 }
 
-// Add event listeners to each slot for a click
-const td_tags = document.querySelectorAll("td")
-td_tags.forEach((td) => {
-    td.addEventListener("click", function tdEvent() {
-        doMove(td)
-    })
-})
-
+var slotsJSON = ""
 // Get match info, like which slots are taken, whos turn it is, if the timer ran out etc.
 function getMatchInfo() {
     var url = "/get_match_info/" + room_name + "/" + currentRound + "/"
@@ -171,29 +164,8 @@ function getMatchInfo() {
         // If user is allowed in the match
         if (response.allowed == 1) {
             // Fill out slots on tictactoe board according to the backend
-            var slotsJSON = response.slots;
+            slotsJSON = response.slots;
             slotsJSON = JSON.parse(slotsJSON)
-            for (var key in slotsJSON) {
-                if (slotsJSON[key] == "x") {
-                    // Replace element to remove event listener
-                    var old_element = document.getElementById(key);
-                    var new_element = old_element.cloneNode(true);
-                    old_element.parentNode.replaceChild(new_element, old_element);
-
-                    document.getElementById(key).style.backgroundImage = "url('static/img/icons/x-match.svg')"
-                    document.getElementById(key).style.cursor = "not-allowed"
-                } else if (slotsJSON[key] == "o") {
-                    // Replace element to remove event listener
-                    var old_element = document.getElementById(key);
-                    var new_element = old_element.cloneNode(true);
-                    old_element.parentNode.replaceChild(new_element, old_element);
-
-                    document.getElementById(key).style.backgroundImage = "url('static/img/icons/o-match.svg')"
-                    document.getElementById(key).style.cursor = "not-allowed"
-                } else {
-                    document.getElementById(key).style.backgroundImage = ""
-                }
-            }
 
             // Get x and o info
             var xNickname = response.x_nickname
@@ -224,6 +196,13 @@ function getMatchInfo() {
             // Start timer
             startTimer(response.seconds)
 
+            // Check if a status is available
+            if (response.match_status != "none") {
+                var match_status_json = JSON.parse(response.match_status)
+                var message = match_status_json.message
+                showMessage(message)
+            }
+
             // Get round
             var roundSpan = document.getElementById("round-count")
             roundSpan.innerHTML = response.round
@@ -233,6 +212,40 @@ function getMatchInfo() {
         } else {
             matchWebSocket.close()
             window.location.href = "/main"
+        }
+    })
+
+    .finally(() => {
+        // First check if there is a new round. If there is, replace all elements
+        for (var key in slotsJSON) {
+            if (slotsJSON[key] == "x") {
+                // Replace element to remove event listener
+                var old_element = document.getElementById(key);
+                var new_element = old_element.cloneNode(true);
+                old_element.parentNode.replaceChild(new_element, old_element);
+
+                document.getElementById(key).style.backgroundImage = "url('static/img/icons/x-match.svg')"
+                document.getElementById(key).style.cursor = "not-allowed"
+            } else if (slotsJSON[key] == "o") {
+                // Replace element to remove event listener
+                var old_element = document.getElementById(key);
+                var new_element = old_element.cloneNode(true);
+                old_element.parentNode.replaceChild(new_element, old_element);
+
+                document.getElementById(key).style.backgroundImage = "url('static/img/icons/o-match.svg')"
+                document.getElementById(key).style.cursor = "not-allowed"
+            } else {
+                const old_element = document.getElementById(key);
+                const new_element = old_element.cloneNode(true);
+                old_element.parentNode.replaceChild(new_element, old_element);
+
+                new_element.style.cursor = "pointer"
+                new_element.style.backgroundImage = ""
+
+                new_element.addEventListener("click", function() {
+                    doMove(new_element)
+                })
+            }
         }
     })
 
@@ -337,6 +350,30 @@ function matchPing() {
     .catch(error => {
         console.error(error)
     })
+}
+
+var opacityInterval = ""
+// Shows a message from the current match status
+function showMessage(text) {
+    if (text !== undefined) {
+        clearInterval(opacityInterval)
+        var messageContainer = document.getElementById("message-container")
+        messageContainer.innerHTML = text
+        messageContainer.style.opacity = "1";
+        messageContainer.style.display = "block"
+        setTimeout(function() {
+            var opacity = 1
+            opacityInterval = setInterval(function() {
+                opacity = opacity - 0.1
+                messageContainer.style.opacity = opacity
+                if (opacity <= 0) {
+                    clearInterval(opacityInterval)
+                    messageContainer.style.display = "none";
+                    messageContainer.style.opacity = "0"
+                }
+            }, 100)
+        }, 2000)
+    }
 }
 
 // Long polling for updateing match ping
