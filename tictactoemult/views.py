@@ -134,14 +134,7 @@ def main(request):
         context["wins"] = leaderboard_row.wins
         context["losses"] = leaderboard_row.losses
         context["matches_played"] = leaderboard_row.matches_played
-
-        # Calculate win loss ration
-        if leaderboard_row.wins != 0 and leaderboard_row.losses != 0:
-            win_loss = leaderboard_row.wins / leaderboard_row.losses
-        else:
-            win_loss = 0
-
-        context["win_loss_ratio"] = win_loss
+        context["win_loss_ratio"] = leaderboard_row.win_loss
     else:
         # If user_id is not valid, force user to log in again
         request.session.flush()
@@ -1663,6 +1656,18 @@ def match_animation_sequence(request):
         allowed = ['POST']
         return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
 
+def addToLeaderboard(user_id, win=0, loss=0):
+    # Update leaderboard
+    user_id_leaderboard = leaderboard.objects.get(user_id=user_id)
+    user_id_leaderboard.wins = user_id_leaderboard.wins + win
+    user_id_leaderboard.losses = user_id_leaderboard.losses + loss
+
+    # Calculate win loss ratio
+    win_loss = int(user_id_leaderboard.wins) / int(user_id_leaderboard.losses)
+    win_loss = round(win_loss, 2)
+    user_id_leaderboard.win_loss = win_loss
+    user_id_leaderboard.save()
+
 # Gets various info of the match the current user is in
 def get_match_info(request, room_name, user_round):
     if request.method == "GET":
@@ -1842,12 +1847,30 @@ def get_match_info(request, room_name, user_round):
                         final_win = json.dumps({"uid": user_id, "reason": "Opponent left the match."})
 
                         # Update leaderboard
-                        user_id_leaderboard = leaderboard.objects.get(user_id=user_id)
-                        user_id_leaderboard.wins = user_id_leaderboard.wins + 1
-                        user_id_leaderboard.save()
+                        addToLeaderboard(user_id, 1)
 
                         # Delete the row
                         match.objects.get(pk=match_row.pk).delete()
+                
+                # Check if opponent is inactive
+                if user_id == str(match_row.user_id_1):
+                    opponent_ping = match_row.user_id_2_ping
+                    opponent_uid = match_row.user_id_2
+                elif user_id == str(match_row.user_id_2):
+                    opponent_ping = match_row.user_id_1_ping
+                    opponent_uid = match_row.user_id_1
+                
+                unix_now = int(time.time())
+                if opponent_ping < unix_now:
+                    # Opponent is offline
+                    final_win = json.dumps({"uid": user_id, "reason": "Opponent timed out or disconnected."})
+
+                    # Update leaderboard
+                    addToLeaderboard(user_id=user_id, win=1)
+                    addToLeaderboard(user_id=opponent_uid, loss=1)
+
+                    # Delete the row
+                    match.objects.get(pk=match_row.pk).delete()
 
                 # Return response
                 return JsonResponse({
@@ -1979,9 +2002,7 @@ def leave_match(request):
                 match_row.save()
 
                 # Update leaderboard
-                leaderboard_row = leaderboard.objects.get(user_id=user_id)
-                leaderboard_row.losses = leaderboard_row.losses + 1
-                leaderboard_row.save()
+                addToLeaderboard(user_id=user_id, loss=1)
 
                 # Return
                 return JsonResponse({"ok" : 1})

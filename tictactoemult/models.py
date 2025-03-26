@@ -63,3 +63,4 @@ class leaderboard(models.Model):
     wins = models.IntegerField(default=0) # How many wins the user has
     losses = models.IntegerField(default=0) # How many losses the user has
     matches_played = models.IntegerField(default=0) # How many matches the user has played
+    win_loss = models.FloatField(default=0.0) # Win loss ratio

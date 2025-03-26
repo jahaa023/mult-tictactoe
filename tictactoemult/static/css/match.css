@@ -232,6 +232,14 @@ td:hover {
 .end-animation-container {
     width: 100%;
     height: 70vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.end-animation-wrapper {
+    width: fit-content;
+    height: fit-content;
 }
 
 .end-animation-headline {
