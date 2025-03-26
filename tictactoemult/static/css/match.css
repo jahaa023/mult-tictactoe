@@ -271,6 +271,11 @@ td:hover {
     background-color: var(--background-white);
 }
 
+.end-animation-button-tie:hover {
+    color: gray;
+    background-color: var(--background-white);
+}
+
 @media screen and (max-width: 680px) {
     table {
         max-height: 340px;

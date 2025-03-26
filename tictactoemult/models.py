@@ -56,6 +56,7 @@ class match(models.Model):
     round = models.IntegerField(default=1) # Keeps track of which round it is
     match_status = models.JSONField(default=dict) # Includes diffrent stats about match
     final_win = models.JSONField(default=dict) # User id of person who won the entire match and reason to why they won
+    over = models.IntegerField(default=0) # Check if the match is over
 
 # Model for leaderboard table
 class leaderboard(models.Model):

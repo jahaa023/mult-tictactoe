@@ -139,131 +139,139 @@ function doMove(td_element) {
 }
 
 var slotsJSON = ""
+var matchInfoRunning = 0 // Makes sure only one match info can be run at once
 // Get match info, like which slots are taken, whos turn it is, if the timer ran out etc.
 function getMatchInfo() {
-    var url = "/get_match_info/" + room_name + "/" + currentRound + "/"
+    if (matchInfoRunning == 0) {
+        var url = "/get_match_info/" + room_name + "/" + currentRound + "/"
+        matchInfoRunning = 1
 
-    fetch(url,{
-        method: "GET",
-        headers : {
-            "X-CSRFToken" : csrfmiddlewaretoken
-        },
-        credentials: "same-origin"
-    })
+        fetch(url,{
+            method: "GET",
+            headers : {
+                "X-CSRFToken" : csrfmiddlewaretoken
+            },
+            credentials: "same-origin"
+        })
 
-    .then(response => response.json())
+        .then(response => response.json())
 
-    .then(response => {
-        // If user is allowed in the match
-        if (response.allowed == 1) {
-            // Fill out slots on tictactoe board according to the backend
-            slotsJSON = response.slots;
-            slotsJSON = JSON.parse(slotsJSON)
+        .then(response => {
+            // If user is allowed in the match
+            if (response.allowed == 1) {
+                // Fill out slots on tictactoe board according to the backend
+                slotsJSON = response.slots;
+                slotsJSON = JSON.parse(slotsJSON)
 
-            // Get x and o info
-            var xNickname = response.x_nickname
-            var oNickname = response.o_nickname
-            var xProfilePic = response.x_profilepic
-            var oProfilePic = response.o_profilepic
-            var xUserId = response.x_uid
-            var oUserId = response.o_uid
+                // Get x and o info
+                var xNickname = response.x_nickname
+                var oNickname = response.o_nickname
+                var xProfilePic = response.x_profilepic
+                var oProfilePic = response.o_profilepic
+                var xUserId = response.x_uid
+                var oUserId = response.o_uid
 
-            // Get turn elements
-            var turnIcon = document.getElementById("turn-icon")
-            var turnProfilePic = document.getElementById("turn-profilepic")
-            var turnNickname = document.getElementById("turn-nickname")
+                // Get turn elements
+                var turnIcon = document.getElementById("turn-icon")
+                var turnProfilePic = document.getElementById("turn-profilepic")
+                var turnNickname = document.getElementById("turn-nickname")
 
-            // Check whos turn it is
-            if (response.turn == "x") {
-                turnNickname.innerHTML = xNickname;
-                turnProfilePic.style.backgroundImage = `url(static/img/profile_pictures/${xProfilePic})`;
-                turnIcon.src = "static/img/icons/x-match.svg";
-                turnProfilePicUid = xUserId
-            } else if (response.turn == "o") {
-                turnNickname.innerHTML = oNickname;
-                turnProfilePic.style.backgroundImage = `url(static/img/profile_pictures/${oProfilePic})`;
-                turnIcon.src = "static/img/icons/o-match.svg";
-                turnProfilePicUid = oUserId
-            }
-
-            // Start timer
-            startTimer(response.seconds)
-
-            // Check if a status is available
-            if (response.match_status != "none") {
-                var match_status_json = JSON.parse(response.match_status)
-                var message = match_status_json.message
-                showMessage(message)
-            }
-
-            // Get round
-            var roundSpan = document.getElementById("round-count")
-            roundSpan.innerHTML = response.round
-            setTimeout(function() {
-                currentRound = response.round
-            }, 200)
-
-            // Check if anyone lost, won or left the match
-            if (response.final_win != "none") {
-                var final_win_json = JSON.parse(response.final_win)
-                var reason = final_win_json.reason
-
-                if (final_win_json.uid == user_id) {
-                    // You won
-                    endAnimation("win", reason)
-                } else {
-                    // You lost
-                    endAnimation("loss", reason)
+                // Check whos turn it is
+                if (response.turn == "x") {
+                    turnNickname.innerHTML = xNickname;
+                    turnProfilePic.style.backgroundImage = `url(static/img/profile_pictures/${xProfilePic})`;
+                    turnIcon.src = "static/img/icons/x-match.svg";
+                    turnProfilePicUid = xUserId
+                } else if (response.turn == "o") {
+                    turnNickname.innerHTML = oNickname;
+                    turnProfilePic.style.backgroundImage = `url(static/img/profile_pictures/${oProfilePic})`;
+                    turnIcon.src = "static/img/icons/o-match.svg";
+                    turnProfilePicUid = oUserId
                 }
 
-                // Cancel intervals, close websocket
-                clearInterval(matchPingInterval)
-                clearInterval(timerInterval)
-                matchWebSocket.close()
-            }
-        } else {
-            matchWebSocket.close()
-            window.location.href = "/main"
-        }
-    })
+                // Start timer
+                startTimer(response.seconds)
 
-    .finally(() => {
-        // First check if there is a new round. If there is, replace all elements
-        for (var key in slotsJSON) {
-            if (slotsJSON[key] == "x") {
-                // Replace element to remove event listener
-                var old_element = document.getElementById(key);
-                var new_element = old_element.cloneNode(true);
-                old_element.parentNode.replaceChild(new_element, old_element);
+                // Check if a status is available
+                if (response.match_status != "none") {
+                    var match_status_json = JSON.parse(response.match_status)
+                    var message = match_status_json.message
+                    showMessage(message)
+                }
 
-                document.getElementById(key).style.backgroundImage = "url('static/img/icons/x-match.svg')"
-                document.getElementById(key).style.cursor = "not-allowed"
-            } else if (slotsJSON[key] == "o") {
-                // Replace element to remove event listener
-                var old_element = document.getElementById(key);
-                var new_element = old_element.cloneNode(true);
-                old_element.parentNode.replaceChild(new_element, old_element);
+                // Get round
+                var roundSpan = document.getElementById("round-count")
+                roundSpan.innerHTML = response.round
+                setTimeout(function() {
+                    currentRound = response.round
+                }, 200)
 
-                document.getElementById(key).style.backgroundImage = "url('static/img/icons/o-match.svg')"
-                document.getElementById(key).style.cursor = "not-allowed"
+                // Check if anyone lost, won or left the match
+                if (response.final_win != "none") {
+                    var final_win_json = JSON.parse(response.final_win)
+                    var reason = final_win_json.reason
+
+                    if (final_win_json.uid == user_id) {
+                        // You won
+                        endAnimation("win", reason)
+                    } else if (final_win_json.uid == "tie"){
+                        // it was a tie
+                        endAnimation("tie", reason)
+                    } else {
+                        // you lost
+                        endAnimation("loss", reason)
+                    }
+
+                    // Cancel intervals, close websocket
+                    clearInterval(matchPingInterval)
+                    clearInterval(timerInterval)
+                    matchWebSocket.close()
+                }
             } else {
-                const old_element = document.getElementById(key);
-                const new_element = old_element.cloneNode(true);
-                old_element.parentNode.replaceChild(new_element, old_element);
-
-                new_element.style.cursor = "pointer"
-                new_element.style.backgroundImage = ""
-
-                new_element.addEventListener("click", function() {
-                    doMove(new_element)
-                })
+                matchWebSocket.close()
+                window.location.href = "/main"
             }
-        }
-    })
+        })
 
-    .catch(error => {
-        console.log(error)
-    })
+        .finally(() => {
+            // First check if there is a new round. If there is, replace all elements
+            for (var key in slotsJSON) {
+                if (slotsJSON[key] == "x") {
+                    // Replace element to remove event listener
+                    var old_element = document.getElementById(key);
+                    var new_element = old_element.cloneNode(true);
+                    old_element.parentNode.replaceChild(new_element, old_element);
+
+                    document.getElementById(key).style.backgroundImage = "url('static/img/icons/x-match.svg')"
+                    document.getElementById(key).style.cursor = "not-allowed"
+                } else if (slotsJSON[key] == "o") {
+                    // Replace element to remove event listener
+                    var old_element = document.getElementById(key);
+                    var new_element = old_element.cloneNode(true);
+                    old_element.parentNode.replaceChild(new_element, old_element);
+
+                    document.getElementById(key).style.backgroundImage = "url('static/img/icons/o-match.svg')"
+                    document.getElementById(key).style.cursor = "not-allowed"
+                } else {
+                    const old_element = document.getElementById(key);
+                    const new_element = old_element.cloneNode(true);
+                    old_element.parentNode.replaceChild(new_element, old_element);
+
+                    new_element.style.cursor = "pointer"
+                    new_element.style.backgroundImage = ""
+
+                    new_element.addEventListener("click", function() {
+                        doMove(new_element)
+                    })
+                }
+            }
+            matchInfoRunning = 0
+        })
+
+        .catch(error => {
+            console.log(error)
+        })
+    }
 }
 
 var timerInterval = "";
@@ -392,8 +400,12 @@ function endAnimation(winloss, reason) {
         endAnimationButton.classList.add("end-animation-button-win")
     } else if (winloss == "loss") {
         endAnimationContainer.style.backgroundColor = "var(--warning-red)"
-        endAnimationH1 = "You lost."
+        endAnimationH1.innerHTML = "You lost."
         endAnimationButton.classList.add("end-animation-button-loss")
+    } else if (winloss == "tie") {
+        endAnimationContainer.style.backgroundColor = "gray"
+        endAnimationH1.innerHTML = "It was a tie."
+        endAnimationButton.classList.add("end-animation-button-tie")
     }
 
     endAnimationReasonP.innerHTML = reason

@@ -163,6 +163,7 @@ function cancelDeclineFriendRequest(row_id, cancel_decline) {
         }
 
         if (response.ok == 1) {
+            clearInterval(pendingFriendsInterval)
             currentTab = ""
             loadPendingInvites();
             friendsListNotif();
@@ -202,6 +203,7 @@ function acceptFriendRequest(row_id) {
 
         if (response.ok == 1) {
             currentTab = ""
+            clearInterval(pendingFriendsInterval)
             loadPendingInvites();
             friendsListNotif();
             showConfirm("Friend request accepted. You can see your new friend in the 'Your friends' tab.")

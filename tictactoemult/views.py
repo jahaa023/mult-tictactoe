@@ -1871,6 +1871,48 @@ def get_match_info(request, room_name, user_round):
 
                     # Delete the row
                     match.objects.get(pk=match_row.pk).delete()
+                
+                # Check if match is over
+                if match_row.round > 5:
+                    # Check how many wins, ties and losses each user has
+                    x_wins = 0
+                    x_losses = 0
+                    o_wins = 0
+                    o_losses = 0
+                    ties = 0
+                    match_status_dict = json.loads(match_row.match_status)
+                    for key in match_status_dict:
+                        round_dict = match_status_dict[key]
+                        if round_dict["result"] == "win":
+                            if round_dict["won"] == "x":
+                                x_wins += 1
+                                o_losses += 1
+                            elif round_dict["won"] == "o":
+                                o_wins += 1
+                                x_losses += 1
+                        elif round_dict["result"] == "tie":
+                            ties += 1
+
+                    # See who won and who lost
+                    if x_wins > o_wins:
+                        # x won
+                        final_win = json.dumps({"uid": str(x_uid), "reason": "X got the most wins."})
+                        addToLeaderboard(user_id=x_uid, win=1)
+                        addToLeaderboard(user_id=o_uid, loss=1)
+                    elif o_wins > x_wins:
+                        # o won
+                        final_win = json.dumps({"uid": str(o_uid), "reason": "O got the most wins."})
+                        addToLeaderboard(user_id=o_uid, win=1)
+                        addToLeaderboard(user_id=x_uid, loss=1)
+                    elif o_wins == x_wins:
+                        final_win = json.dumps({"uid": "tie", "reason": "Both users had the same amount of wins"})
+                    
+                    match_row.over = match_row.over + 1
+                    match_row.save()
+
+                    if match_row.over >= 2:
+                        # End the match
+                        match.objects.get(pk=match_row.pk).delete()
 
                 # Return response
                 return JsonResponse({
@@ -2034,8 +2076,8 @@ def match_ping(request, room_name):
                 # Get current unix timestamp
                 unix_now = int(time.time())
 
-                # Make unix timestamp 10 seconds from now
-                ping_unix = unix_now + 10
+                # Make unix timestamp 15 seconds from now
+                ping_unix = unix_now + 15
 
                 # Create ping
                 if str(match_row.user_id_1) == user_id:
