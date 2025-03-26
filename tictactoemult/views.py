@@ -1677,6 +1677,7 @@ def get_match_info(request, room_name, user_round):
             match_row = match.objects.get(room_name=room_name)
             if str(match_row.user_id_1) == user_id or str(match_row.user_id_2) == user_id:
                 # User is in match
+                final_win = "none"
                 
                 # Get slots
                 match_slots = match_row.taken_slots
@@ -1777,7 +1778,7 @@ def get_match_info(request, room_name, user_round):
                     else:
                         match_outcome = "none"
                 
-                # See if its a win or 
+                # See if its a win or tie
                 if match_outcome != "none":
                     match_status_temp = str(match_row.match_status )
                     match_status_dict = json.loads(match_status_temp)
@@ -1832,6 +1833,22 @@ def get_match_info(request, room_name, user_round):
                 # Refresh the taken slots
                 match_slots = match_row.taken_slots
 
+                # Check if anyone left
+                if str(match_row.left) != "00000000-0000-0000-0000-000000000000":
+                    left_uid = match_row.left
+
+                    # Update table to give win to person who didnt leave and delete row
+                    if str(left_uid) != user_id:
+                        final_win = json.dumps({"uid": user_id, "reason": "Opponent left the match."})
+
+                        # Update leaderboard
+                        user_id_leaderboard = leaderboard.objects.get(user_id=user_id)
+                        user_id_leaderboard.wins = user_id_leaderboard.wins + 1
+                        user_id_leaderboard.save()
+
+                        # Delete the row
+                        match.objects.get(pk=match_row.pk).delete()
+
                 # Return response
                 return JsonResponse({
                     "allowed": 1,
@@ -1846,7 +1863,8 @@ def get_match_info(request, room_name, user_round):
                     "o_uid": o_uid,
                     "round": round,
                     "match_status": match_status_response,
-                    "newround": newround
+                    "newround": newround,
+                    "final_win": final_win
                 }, status=200)
             else:
                 # Kick user because theyre not in match

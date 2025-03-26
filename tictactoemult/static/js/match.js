@@ -20,16 +20,9 @@ const matchWebSocket = new WebSocket("ws://" + window.location.host + "/ws/match
 matchWebSocket.onmessage = function(e) {
     const data = JSON.parse(e.data)
     console.log(data)
-
-    // Read the message type
-    var messagetype = data.message;
-    switch(messagetype) {
-        case "move":
-            if (data.user_id !== user_id) {
-                // Update match
-                getMatchInfo()
-            }
-    }
+    
+    // Update match
+    getMatchInfo()
 }
 
 // Shows an error
@@ -209,6 +202,25 @@ function getMatchInfo() {
             setTimeout(function() {
                 currentRound = response.round
             }, 200)
+
+            // Check if anyone lost, won or left the match
+            if (response.final_win != "none") {
+                var final_win_json = JSON.parse(response.final_win)
+                var reason = final_win_json.reason
+
+                if (final_win_json.uid == user_id) {
+                    // You won
+                    endAnimation("win", reason)
+                } else {
+                    // You lost
+                    endAnimation("loss", reason)
+                }
+
+                // Cancel intervals, close websocket
+                clearInterval(matchPingInterval)
+                clearInterval(timerInterval)
+                matchWebSocket.close()
+            }
         } else {
             matchWebSocket.close()
             window.location.href = "/main"
@@ -352,28 +364,40 @@ function matchPing() {
     })
 }
 
-var opacityInterval = ""
+var messageTimeout = ""
 // Shows a message from the current match status
 function showMessage(text) {
+    clearTimeout(messageTimeout)
     if (text !== undefined) {
-        clearInterval(opacityInterval)
         var messageContainer = document.getElementById("message-container")
         messageContainer.innerHTML = text
-        messageContainer.style.opacity = "1";
         messageContainer.style.display = "block"
-        setTimeout(function() {
-            var opacity = 1
-            opacityInterval = setInterval(function() {
-                opacity = opacity - 0.1
-                messageContainer.style.opacity = opacity
-                if (opacity <= 0) {
-                    clearInterval(opacityInterval)
-                    messageContainer.style.display = "none";
-                    messageContainer.style.opacity = "0"
-                }
-            }, 100)
+        messageTimeout = setTimeout(function() {
+            messageContainer.style.display = "none"
         }, 2000)
     }
+}
+
+// Show the end animation for either winning or losing
+function endAnimation(winloss, reason) {
+    var endAnimationBackground = document.getElementById("endAnimationContainerBackground")
+    var endAnimationContainer = document.getElementById("endAnimationContainer")
+    var endAnimationH1 = document.getElementById("endAnimationH1")
+    var endAnimationReasonP = document.getElementById("endAnimationReasonP")
+    var endAnimationButton = document.getElementById("endAnimationButton")
+
+    if (winloss == "win") {
+        endAnimationContainer.style.backgroundColor = "var(--accept-green)"
+        endAnimationH1.innerHTML = "You won!"
+        endAnimationButton.classList.add("end-animation-button-win")
+    } else if (winloss == "loss") {
+        endAnimationContainer.style.backgroundColor = "var(--warning-red)"
+        endAnimationH1 = "You lost."
+        endAnimationButton.classList.add("end-animation-button-loss")
+    }
+
+    endAnimationReasonP.innerHTML = reason
+    endAnimationBackground.style.display = "flex"
 }
 
 // Long polling for updateing match ping

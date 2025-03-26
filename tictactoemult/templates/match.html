@@ -33,11 +33,18 @@
             </div>
         </div>
     </div>
+    <div id="endAnimationContainerBackground" class="end-animation-background" style="display: none;">
+        <div class="end-animation-container" id="endAnimationContainer">
+            <h1 class="end-animation-headline" id="endAnimationH1">You Won!</h1>
+            <p class="end-animation-reason" id="endAnimationReasonP"></p>
+            <button class="end-animation-button" id="endAnimationButton" onclick="window.location = '/main'">Back to main page</button>
+        </div>
+    </div>
     <div class="timer-container">
         <div class="timer" id="timer">0</div>
     </div>
     <div class="round-container">
-        <p>Round <span id="round-count">0</span></p>
+        <p>Round <span id="round-count">0</span>/5</p>
     </div>
     <div class="board-container">
         <div class="table-container">

@@ -215,6 +215,54 @@ td:hover {
     margin-bottom: 10px;
 }
 
+.end-animation-background {
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    backdrop-filter: blur(10px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.end-animation-container {
+    width: 100%;
+    height: 70vh;
+}
+
+.end-animation-headline {
+    color: var(--background-white);
+}
+
+.end-animation-reason {
+    color: var(--background-white);
+}
+
+.end-animation-button {
+    padding: 7px;
+    cursor: pointer;
+    color: var(--background-white);
+    background-color: transparent;
+    border: solid 3px var(--background-white);
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.end-animation-button-loss:hover {
+    color: var(--warning-red);
+    background-color: var(--background-white);
+}
+
+.end-animation-button-win:hover {
+    color: var(--accept-green);
+    background-color: var(--background-white);
+}
+
 @media screen and (max-width: 680px) {
     table {
         max-height: 340px;

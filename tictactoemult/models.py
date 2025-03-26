@@ -55,6 +55,7 @@ class match(models.Model):
     user_id_2_ping = models.IntegerField(default=0) # Unix timestamp for last update from user id 2
     round = models.IntegerField(default=1) # Keeps track of which round it is
     match_status = models.JSONField(default=dict) # Includes diffrent stats about match
+    final_win = models.JSONField(default=dict) # User id of person who won the entire match and reason to why they won
 
 # Model for leaderboard table
 class leaderboard(models.Model):
