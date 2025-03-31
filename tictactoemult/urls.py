@@ -58,5 +58,7 @@ urlpatterns = [
     path('check_invite_deny', views.check_invite_deny),
     path('check_match_invites', views.check_match_invites),
     path('accept_invite', views.accept_invite),
-    path('decline_invite', views.decline_invite)
+    path('decline_invite', views.decline_invite),
+    path('leaderboard', views.leaderboard_page),
+    path('load_leaderboard', views.load_leaderboard)
 ]

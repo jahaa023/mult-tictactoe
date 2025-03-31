@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        {{leaderboard_css | safe}}
+    </style>
+    <style>
+        {{universal_css | safe}}
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe - Leaderboard</title>
+    <link href="/static/img/favicon.ico" rel="icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+    <div id="dark-container"></div>
+    <div id="confirmContainer"></div>
+    <div class="friend-invite-popup-container" id="friend-invite-popup">
+        <div class="friend-invite-popup">
+            <div class="friend-invite-profile">
+                <div class="friend-invite-profilepic" id="friend-invite-profilepic"></div>
+                <p><b id="friend-invite-nickname"></b> invites you to a match!</p>
+            </div>
+            <div class="friend-invite-buttons">
+                <button id="friend-invite-accept" title="Accept invite">Accept</button>
+                <button id="friend-invite-decline" title="Decline invite">Decline</button>
+            </div>
+        </div>
+    </div>
+    <header class="leaderboard-header">
+        <button class="leaderboard-back-button" id="back-button" title="Back to main page">Back</button>
+    </header>
+    <div class="content">
+        <div class="leaderboard-logo-container">
+            <img src="static/img/logo.svg" alt="Tic Tac Toe Logo" draggable="false">
+            <h1>Leaderboard</h1>
+        </div>
+        <table>
+            <tr>
+                <th colspan="6">
+                    <input type="text" placeholder="Search for player">
+                    <label for="sortby">Sort by: </label>
+                    <select name="sortby" id="sortby">
+                        <option value="wins" selected>Wins</option>
+                        <option value="losses">Losses</option>
+                        <option value="matches_played">Matches played</option>
+                        <option value="win_loss">Win Loss ratio</option>
+                    </select>
+                </th>
+            </tr>
+            <tr>
+                <th>Position</th>
+                <th>Player</th>
+                <th>Wins</th>
+                <th>Losses</th>
+                <th>Matches played</th>
+                <th>Win Loss ratio</th>
+            </tr>
+            <tbody id="table-content">
+                
+            </tbody>
+        </table>
+    </div>
+</body>
+<script>
+    {{universal_js | safe}}
+</script>
+<script>
+    {{leaderboard_js | safe}}
+</script>
+</html>

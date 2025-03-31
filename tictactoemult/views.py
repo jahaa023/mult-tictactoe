@@ -2371,3 +2371,27 @@ def decline_invite(request):
     else:
         allowed = ['POST']
         return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
+
+# Renders the leaderboard page
+def leaderboard_page(request):
+    # If user is not logged in, redirect
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
+    else:
+        user_id = request.session.get("user_id")
+
+    # Get static files
+    context = importStaticFiles("leaderboard")
+
+    # Return render
+    return render(request, "leaderboard.html", context)
+
+# Loads in a html table of the leaderboard table
+def load_leaderboard(request):
+    # If user is not logged in, redirect
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
+    else:
+        user_id = request.session.get("user_id")
+    
+    return HttpResponse("TODO")
