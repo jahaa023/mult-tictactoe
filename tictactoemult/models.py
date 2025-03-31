@@ -39,6 +39,7 @@ class pending_friends(models.Model):
 class matchmaking(models.Model):
     user_id_1 = models.UUIDField() # Host of the match
     user_id_2 = models.UUIDField(default="00000000000000000000000000000000") # Person who joins the host
+    gamemode = models.CharField(max_length=32, default="random") # The type of match, random or friend invite
 
 # Model for matches
 class match(models.Model):
@@ -65,3 +66,11 @@ class leaderboard(models.Model):
     losses = models.IntegerField(default=0) # How many losses the user has
     matches_played = models.IntegerField(default=0) # How many matches the user has played
     win_loss = models.FloatField(default=0.0) # Win loss ratio
+
+# Model for invites for matches
+class match_invites(models.Model):
+    user_id_1 = models.UUIDField() # Person who sent invite
+    user_id_2 = models.UUIDField() # Person who receives invite
+    matchmaking_row = models.IntegerField() # Id of row in matchmaking table
+    denied = models.BooleanField(default=False) # If request was denied or not
+    accepted = models.BooleanField(default=False) # If request was accepted or not

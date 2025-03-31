@@ -16,6 +16,11 @@ $( document ).ready(function() {
     changeFavicon();
 });
 
+// Get csrftoken from cookie
+const universalCsrfToken = document.cookie.split(';')
+    .find(cookie => cookie.trim().startsWith('csrftoken='))
+    ?.split('=')[1];
+
 //password visibility button
 function changeVisibility(inputID, buttonID){
     var passwordInput = document.getElementById(inputID)
@@ -114,5 +119,148 @@ function ping() {
     fetch(url, {
         method : "GET",
         credentials : "same-origin"
+    })
+}
+
+// Check if you have any invites to a match
+function checkMatchInvites() {
+    var url = "/check_match_invites"
+    fetch(url, {
+        method: "GET",
+        credentials: "same-origin"
+    })
+
+    .then(response => response.json())
+
+    .then(response => {
+        if (response.found == 1) {
+            var profilepic = response.profilepic
+            var nickname = response.nickname
+            var row_id = response.row_id
+            invitePopUp(row_id, nickname, profilepic)
+        } else {
+            hideInvitePopUp()
+        }
+    })
+}
+
+// Shows a popup for an invite
+function invitePopUp(row_id, nickname, profilepic) {
+    // Get relevant elements on page
+    var inviteContainer = document.getElementById("friend-invite-popup")
+    var inviteProfilePic = document.getElementById("friend-invite-profilepic")
+    var inviteNickname = document.getElementById("friend-invite-nickname")
+    var inviteAccept = document.getElementById("friend-invite-accept")
+    var inviteDecline = document.getElementById("friend-invite-decline")
+
+    // Change nickname and profile picture
+    inviteNickname.innerHTML = nickname;
+    inviteProfilePic.style.backgroundImage = `url(static/img/profile_pictures/${profilepic})`
+
+    // Replace buttons to remove previous event listeners
+    var newAccept = inviteAccept.cloneNode(true);
+    inviteAccept.parentNode.replaceChild(newAccept, inviteAccept);
+    var newDecline = inviteDecline.cloneNode(true);
+    inviteDecline.parentNode.replaceChild(newDecline, inviteDecline);
+
+    // Add event listeners
+    newAccept.addEventListener("click", function() {
+        acceptInvite(row_id)
+    })
+    newDecline.addEventListener("click", function() {
+        declineInvite(row_id)
+    })
+
+    // Show container
+    inviteContainer.style.display = "flex"
+}
+
+// Hides invite popup
+function hideInvitePopUp() {
+    // Get relevant elements on page
+    var inviteContainer = document.getElementById("friend-invite-popup")
+    var inviteProfilePic = document.getElementById("friend-invite-profilepic")
+    var inviteNickname = document.getElementById("friend-invite-nickname")
+    var inviteAccept = document.getElementById("friend-invite-accept")
+    var inviteDecline = document.getElementById("friend-invite-decline")
+
+    // reset nickname and profilepic
+    inviteNickname.innerHTML = "";
+    inviteProfilePic.style.backgroundImage = "";
+
+    // Replace buttons to remove previous event listeners
+    var newAccept = inviteAccept.cloneNode(true);
+    inviteAccept.parentNode.replaceChild(newAccept, inviteAccept);
+    var newDecline = inviteDecline.cloneNode(true);
+    inviteDecline.parentNode.replaceChild(newDecline, inviteDecline);
+
+    // hide container
+    inviteContainer.style.display = "none"
+}
+
+// Accepts an invite
+function acceptInvite(row_id) {
+    var url = "/accept_invite"
+
+    fetch(url, {
+        method: "POST",
+        body: JSON.stringify({
+            "row_id": row_id
+        }),
+        credentials : "same-origin",
+        headers : {
+            "X-CSRFToken" : universalCsrfToken,
+        }
+    })
+
+    .then(response => response.json())
+
+    .then(response => {
+        switch(response.error) {
+            case "notfound":
+                showConfirm("The invite was not found.")
+                break;
+            case "notallowed":
+                showConfirm("The invite was not sent to you.")
+                break;
+        }
+        if (response.ok == 1) {
+            window.location = response.redirect
+        }
+    })
+
+    .catch(error => {
+        showConfirm("Something went wrong.")
+        console.error(error)
+    })
+}
+
+// Declines an invite
+function declineInvite(row_id) {
+    var url = "/decline_invite"
+
+    fetch(url, {
+        method: "POST",
+        body: JSON.stringify({
+            "row_id": row_id
+        }),
+        credentials : "same-origin",
+        headers : {
+            "X-CSRFToken" : universalCsrfToken,
+        }
+    })
+
+    .then(response => response.json())
+
+    .then(response => {
+        if (response.ok == 1) {
+            showConfirm("Invite declined.");
+            hideInvitePopUp();
+        }
+    })
+
+    .catch(error => {
+        showConfirm("Something went wrong.")
+        console.error(error)
     })
 }

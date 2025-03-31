@@ -222,7 +222,7 @@ td:hover {
     top: 0;
     left: 0;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
+    z-index: 997;
     backdrop-filter: blur(10px);
     display: none;
     align-items: center;
@@ -274,6 +274,36 @@ td:hover {
 .end-animation-button-tie:hover {
     color: gray;
     background-color: var(--background-white);
+}
+
+.end-animation-wrapper i {
+    color: white;
+}
+
+.end-animation-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.end-animation-profilepic {
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+    min-width: 30px;
+    min-height: 30px;
+    border-radius: 30px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.end-animation-profilepic:hover {
+    filter: brightness(0.7);
+}
+
+.end-animation-nickname {
+    color: white;
 }
 
 @media screen and (max-width: 680px) {

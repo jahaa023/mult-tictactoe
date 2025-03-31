@@ -246,12 +246,14 @@ document.getElementById("pending_invites_mobile").addEventListener("click", func
 // Ping interval
 setInterval(function() {
     ping();
+    checkMatchInvites()
 }, 5000)
 
 // When document loads in, ping
 document.addEventListener("DOMContentLoaded", function() {
     ping();
     friendsListNotif();
+    checkMatchInvites()
 })
 
 var friendListBubbles = document.querySelectorAll(".universal-dropdown-notif")

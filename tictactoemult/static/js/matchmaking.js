@@ -4,6 +4,12 @@
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const gamemode = urlParams.get("m")
+var friend_rowid = ""
+if (urlParams.get("ri") == null) {
+    friend_rowid = "none";
+} else {
+    friend_rowid = urlParams.get("ri")
+}
 
 // Get csrftoken from cookie
 const csrfmiddlewaretoken = document.cookie.split(';')
@@ -21,7 +27,8 @@ function startup() {
         method: "POST",
         body: JSON.stringify({
             "user_id": user_id,
-            "gamemode": gamemode
+            "gamemode": gamemode,
+            "row_id": friend_rowid
         }),
         headers : {
             "X-CSRFToken" : csrfmiddlewaretoken
@@ -40,19 +47,40 @@ function startup() {
                 "user_id_1": response.user_id_1
             }))
         }
+
+        if (response.allowed == 0) {
+            matchmakingSocket.close()
+            window.location = "/main"
+        }
     })
 }
 
+var findingOpponentInterval = "";
+
 // Finding opponent text animation
-var findingOpponent = document.getElementById("finding-opponent");
-var dots = ""
-const findingOpponentInterval = setInterval(function() {
-    dots = dots + "."
-    if (dots.length > 5) {
-        dots = ".";
-    }
-    findingOpponent.innerHTML = "Finding opponent" + dots
-}, 1000)
+if (gamemode == "r") {
+    var findingOpponent = document.getElementById("finding-opponent");
+    var dots = ""
+    findingOpponentInterval = setInterval(function() {
+        dots = dots + "."
+        if (dots.length > 5) {
+            dots = ".";
+        }
+        findingOpponent.innerHTML = "Finding opponent" + dots
+    }, 1000)
+} else if (gamemode == "f") {
+    // If gamemode is friend, say waiting for friend instead
+    var findingOpponent = document.getElementById("finding-opponent");
+    var dots = ""
+    findingOpponentInterval = setInterval(function() {
+        dots = dots + "."
+        if (dots.length > 5) {
+            dots = ".";
+        }
+        findingOpponent.innerHTML = "Waiting for friend" + dots
+    }, 1000)
+}
+
 
 // Time elapsed timer
 var timeElapsed = document.getElementById("time-elapsed");
@@ -222,10 +250,63 @@ function opponentFoundWarning(room_name) {
     cancelButton.remove();
 
     var opponentFoundText = document.getElementById("finding-opponent");
-    opponentFoundText.innerHTML = "Opponent found! Redirecting..."
+    if (gamemode == "r") {
+        opponentFoundText.innerHTML = "Opponent found! Redirecting..."
+    } else if (gamemode == "f") {
+        opponentFoundText.innerHTML = "Friend accepted! Redirecting..."
+    }
+    
 
     setTimeout(function() {
         window.location = "/match?rn=" + room_name;
+    }, 2000)
+}
+
+// Function to check if invite is denied
+function checkInviteDeny(match_invite_id) {
+    var url = "/check_invite_deny"
+    fetch(url, {
+        method: "POST",
+        body: JSON.stringify({
+            "row_id": match_invite_id
+        }),
+        headers : {
+            "X-CSRFToken" : csrfmiddlewaretoken
+        },
+        credentials: "same-origin"
+    })
+
+    .then(response => response.json())
+
+    .then(response => {
+        if (response.denied == 1) {
+            matchmakingSocket.close()
+            clearInterval(inviteDenyInterval)
+
+            var timeElapsed = document.getElementById("time-elapsed-container");
+            clearInterval(timeElapsedInterval)
+            clearInterval(findingOpponentInterval)
+            timeElapsed.remove();
+
+            var opponentFoundText = document.getElementById("finding-opponent");
+            opponentFoundText.innerHTML = "Friend denied invite."
+
+            var cancelButton = document.getElementById("cancel");
+            cancelButton.innerHTML = "Back to main menu"
+        }
+
+        if (response.allowed == 0) {
+            matchmakingSocket.close()
+            window.location = "/main"
+        }
+    })
+}
+
+var inviteDenyInterval = "";
+
+if (gamemode == "f") {
+    inviteDenyInterval = setInterval(function() {
+        checkInviteDeny(friend_rowid)
     }, 2000)
 }
 

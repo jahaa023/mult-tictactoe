@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect, QueryDict, HttpResponseForbidden, JsonResponse, HttpResponseNotAllowed
 from .forms import LoginForm, CreateAccountForm, AccountRecoveryForm1, AccountRecoveryForm2, AccountRecoveryFormNewPassword, PersonalInformationEmail
 from django.contrib.auth.hashers import make_password, check_password
-from .models import users, recovery_codes, friend_list, pending_friends, match, matchmaking, leaderboard
+from .models import users, recovery_codes, friend_list, pending_friends, match, matchmaking, leaderboard, match_invites
 import os
 import uuid
 import datetime
@@ -1389,6 +1389,7 @@ def matchmaking_onload(request):
         body = json.loads(request.body)
         user_id = body["user_id"]
         gamemode = body["gamemode"]
+        matchinvite_id = body["row_id"]
 
         # Define null in uuid form
         uuid_null = "00000000000000000000000000000000"
@@ -1397,7 +1398,7 @@ def matchmaking_onload(request):
             # Gamemode is random
             
             # Check matchmaking table to see if any rows dont have user id 2 filled out
-            if matchmaking.objects.filter(user_id_2=uuid_null).exists():
+            if matchmaking.objects.filter(user_id_2=uuid_null, gamemode="random").exists():
                 # Found available row
                 row = matchmaking.objects.filter(user_id_2=uuid_null).first()
 
@@ -1414,7 +1415,7 @@ def matchmaking_onload(request):
                 return JsonResponse({"nonefound": 0, "row_id": row_id, "user_id_1": uuid_str}, status=200)
             else:
                 # Found no rows, so create one
-                row = matchmaking(user_id_1 = user_id, user_id_2 = uuid_null)
+                row = matchmaking(user_id_1 = user_id, user_id_2 = uuid_null, gamemode="random")
                 row.save()
                 row_id = (matchmaking.objects.last()).pk
 
@@ -1425,7 +1426,39 @@ def matchmaking_onload(request):
                 return JsonResponse({"nonefound": 1, "id": row_id}, status=200)
         elif gamemode == "f":
             # Gamemode is invite friend
-            print("dkldk")
+            if match_invites.objects.filter(pk=matchinvite_id).exists():
+                # Get matchmaking row id from match invite
+                match_invite_row = match_invites.objects.get(pk=matchinvite_id)
+                matchmaking_row_id = match_invite_row.matchmaking_row
+
+                # Check if matchmaking row exists
+                if matchmaking.objects.filter(pk=matchmaking_row_id).exists():
+                    # Check if youre user id 1 or 2
+                    matchmaking_row = matchmaking.objects.get(pk=matchmaking_row_id)
+                    if str(match_invite_row.user_id_1) == user_id:
+                        # Youre the inviter, return response
+                        request.session['matchmaking_row_id'] = matchmaking_row_id
+                        return JsonResponse({"nonefound": 1, "id": matchmaking_row_id}, status=200)
+                    elif str(match_invite_row.user_id_2) == user_id:
+                        # Youre the friend that gets invited, insert yourself into row
+                        matchmaking_row.user_id_2 = user_id
+                        matchmaking_row.save()
+
+                        request.session['matchmaking_row_id'] = matchmaking_row_id
+
+                        # Return websocket message
+                        uuid_str = str(matchmaking_row.user_id_1)
+                        return JsonResponse({"nonefound": 0, "row_id": matchmaking_row_id, "user_id_1": uuid_str}, status=200)
+                    else:
+                        # Youre not invited
+                        return JsonResponse({"allowed": 0}, status=403)
+                else:
+                    # Row not found
+                    return JsonResponse({"allowed": 0}, status=404)
+            else:
+                # Invite not found
+                return JsonResponse({"allowed": 0}, status=404)
+            
     else:
         allowed = ['POST']
         return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
@@ -1438,6 +1471,14 @@ def matchmaking_cancel(request):
             return HttpResponseRedirect("/")
         else:
             row_id = request.session.get("matchmaking_row_id")
+        
+        # Check if gamemode is friend
+        matchmaking_row = matchmaking.objects.get(pk=row_id)
+        if matchmaking_row.gamemode == "friend":
+            # Get match invite row and delete it
+            if match_invites.objects.filter(matchmaking_row=row_id).exists():
+                match_invite_row = match_invites.objects.get(matchmaking_row=row_id)
+                match_invite_row.delete()
 
         # Delete row from matchmaking table
         matchmaking.objects.get(pk=row_id).delete()
@@ -1663,7 +1704,10 @@ def addToLeaderboard(user_id, win=0, loss=0):
     user_id_leaderboard.losses = user_id_leaderboard.losses + loss
 
     # Calculate win loss ratio
-    win_loss = int(user_id_leaderboard.wins) / int(user_id_leaderboard.losses)
+    if user_id_leaderboard.wins == 0 or user_id_leaderboard.losses == 0:
+        win_loss = 0
+    else:
+        win_loss = int(user_id_leaderboard.wins) / int(user_id_leaderboard.losses)
     win_loss = round(win_loss, 2)
     user_id_leaderboard.win_loss = win_loss
     user_id_leaderboard.save()
@@ -1905,7 +1949,7 @@ def get_match_info(request, room_name, user_round):
                         addToLeaderboard(user_id=o_uid, win=1)
                         addToLeaderboard(user_id=x_uid, loss=1)
                     elif o_wins == x_wins:
-                        final_win = json.dumps({"uid": "tie", "reason": "Both users had the same amount of wins"})
+                        final_win = json.dumps({"uid": "tie", "reason": "Both users had the same amount of streaks"})
                     
                     match_row.over = match_row.over + 1
                     match_row.save()
@@ -2105,4 +2149,225 @@ def match_ping(request, room_name):
             return JsonResponse({"allowed": 0}, status=404)
     else:
         allowed = ['GET']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
+
+# Renders a modal for inviting friends to match
+def invite_friend_modal(request):
+    # If user is not logged in, redirect
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
+    else:
+        user_id = request.session.get("user_id")
+    
+    context = {}
+    context["friends"] = []
+
+    # Get current unix timestamp
+    unix_now = int(time.time())
+    
+    # Get users friend list
+    user_friend_list = friend_list.objects.filter(user_id_1=user_id)
+    for row in user_friend_list:
+        friend_uid = row.user_id_2
+
+        # Get friends profile and add to context
+        friend_profile = users.objects.get(user_id=friend_uid)
+        if friend_profile.ping > unix_now:
+            context["friends"].append(friend_profile)
+    
+    # Get static css file
+    with open(static_dir + '\\css\\invite-friend-modal.css', 'r') as data:
+        context['invite_friend_modal_css'] = data.read()
+
+    return render(request, "modals/invite_friend_modal.html", context)
+
+# Invites a friend to a match
+def invite_friend(request):
+    if request.method == "POST":
+        # If user is not logged in, redirect
+        if "user_id" not in request.session:
+            return HttpResponseRedirect("/")
+        else:
+            user_id = request.session.get("user_id")
+        
+        # Get post data
+        body = json.loads(request.body)
+        friend_uid = body["user_id"]
+
+        # Check if friend exists
+        if not users.objects.filter(user_id=friend_uid).exists():
+            return JsonResponse({"error": "noexist"}, status=404)
+        
+        # Check if you are friends with the user
+        if not friend_list.objects.filter(user_id_1=user_id, user_id_2=friend_uid).exists():
+            return JsonResponse({"error": "notfriend"}, status=403)
+        
+        # Check if friend is online
+        unix_now = int(time.time())
+        friend_row = users.objects.get(user_id=friend_uid)
+        if friend_row.ping < unix_now:
+            return JsonResponse({"error": "offline"}, status=404)
+        
+        # Define null in uuid form
+        uuid_null = "00000000000000000000000000000000"
+        
+        # Create a new row in the matchmaking table
+        matchmaking_row = matchmaking(
+            user_id_1=user_id,
+            user_id_2=uuid_null,
+            gamemode="friend"
+        )
+
+        matchmaking_row.save()
+
+        # Get the row id
+        matchmaking_row_id = matchmaking_row.pk
+
+        # Create new row in match invites table
+        match_invite = match_invites(
+            user_id_1=user_id,
+            user_id_2=friend_uid,
+            matchmaking_row=matchmaking_row_id
+        )
+
+        match_invite.save()
+
+        # Get row id from match invite
+        row_id = match_invite.pk
+
+        # Return response
+        return JsonResponse({
+            "ok": 1,
+            "row_id": row_id
+        })
+    else:
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
+
+# Check if your invite was denied
+def check_invite_deny(request):
+    if request.method == "POST":
+        # If user is not logged in, redirect
+        if "user_id" not in request.session:
+            return HttpResponseRedirect("/")
+
+        # Get post data
+        body = json.loads(request.body)
+        match_invite_id = body["row_id"]
+
+        # Check if invite exists
+        if not match_invites.objects.filter(pk=match_invite_id).exists():
+            return JsonResponse({"allowed": 0}, status=404)
+
+        # Check if denied columns is true or false
+        match_invite_row = match_invites.objects.get(pk=match_invite_id)
+        if match_invite_row.denied == True:
+            # Delete invite row and return
+            match_invite_row.delete()
+
+            return JsonResponse({"denied": 1}, status=200)
+        else:
+            return JsonResponse({"denied": 0}, status=200)
+    else:
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
+
+# Check if you have any invites to a match on an interval
+def check_match_invites(request):
+    if request.method == "GET":
+        # If user is not logged in, redirect
+        if "user_id" not in request.session:
+            return HttpResponseRedirect("/")
+        else:
+            user_id = request.session.get("user_id")
+        
+        # Look for rows in match invite with your user id
+        if match_invites.objects.filter(user_id_2=user_id, denied=False, accepted=False).exists():
+            match_invite = match_invites.objects.filter(user_id_2=user_id, denied=False, accepted=False).first()
+
+            # Get info about user
+            inviter = match_invite.user_id_1
+            inviter_profile = users.objects.get(user_id=inviter)
+            invite_profilepic = inviter_profile.profile_picture
+            invite_nickname = inviter_profile.nickname
+
+            # Return row id, nickname and profilepic
+            row_id = match_invite.pk
+            return JsonResponse({
+                "found": 1,
+                "row_id": row_id,
+                "profilepic": invite_profilepic,
+                "nickname": invite_nickname
+            }, status=200)
+        else:
+            return JsonResponse({"found": 0}, status=200)
+    else:
+        allowed = ['GET']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
+
+# Accepts a match invite
+def accept_invite(request):
+    if request.method == "POST":
+        # If user is not logged in, redirect
+        if "user_id" not in request.session:
+            return HttpResponseRedirect("/")
+        else:
+            user_id = request.session.get("user_id")
+        
+        # Get the row id
+        body = json.loads(request.body)
+        row_id = body["row_id"]
+        
+        # Check if row exist
+        if not match_invites.objects.filter(pk=row_id).exists():
+            return JsonResponse({"error": "notfound"}, status=404)
+        
+        # Check if youre in the row
+        if not match_invites.objects.filter(user_id_2=user_id, pk=row_id).exists():
+            return JsonResponse({"error": "notallowed"}, status=403)
+        
+        # Change accepted column
+        match_invite_row = match_invites.objects.get(pk=row_id)
+        match_invite_row.accepted = True
+        match_invite_row.save()
+
+        # Create the url
+        match_url = f"/matchmaking?m=f&ri={row_id}"
+
+        # Respond
+        return JsonResponse({"ok": 1, "redirect": match_url}, status=200)
+    else:
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
+
+# Declines an invite
+def decline_invite(request):
+    if request.method == "POST":
+        # If user is not logged in, redirect
+        if "user_id" not in request.session:
+            return HttpResponseRedirect("/")
+        else:
+            user_id = request.session.get("user_id")
+        
+        # Get the row id
+        body = json.loads(request.body)
+        row_id = body["row_id"]
+        
+        # Check if row exist
+        if not match_invites.objects.filter(pk=row_id).exists():
+            return JsonResponse({"error": "notfound"}, status=404)
+        
+        # Check if youre in the row
+        if not match_invites.objects.filter(user_id_2=user_id, pk=row_id).exists():
+            return JsonResponse({"error": "notallowed"}, status=403)
+
+        # Change denied column
+        match_invite_row = match_invites.objects.get(pk=row_id)
+        match_invite_row.denied = True
+        match_invite_row.save()
+
+        # Respond
+        return JsonResponse({"ok": 1}, status=200)
+    else:
+        allowed = ['POST']
         return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")

@@ -1,0 +1,20 @@
+<style>
+    {{ invite_friend_modal_css }}
+</style>
+<div class="invite-friend-container">
+    <h1>Invite friend to match</h1>
+    <div class="friend-container">
+        {% if friends %}
+            {% for user in friends %}
+                <div class="friend-row">
+                    <div class="friend-row-profilepic" style="background-image: url(static/img/profile_pictures/{{ user.profile_picture }});"></div>
+                    <b> {{ user.nickname }} </b>
+                    <button class="friend-row-invite-button" onclick="inviteToMatch('{{ user.user_id }}')">Invite</button>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p style="margin: 10px;">No online friends.</p>
+        {% endif %}
+    </div>
+    <button class="close-button" onclick="hideDarkContainer()" title="Close">Close</button>
+</div>

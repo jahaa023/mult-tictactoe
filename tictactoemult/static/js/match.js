@@ -211,15 +211,30 @@ function getMatchInfo() {
                     var final_win_json = JSON.parse(response.final_win)
                     var reason = final_win_json.reason
 
+                    // Figure out who opponent is
+                    if (xUserId == user_id) {
+                        var opponentUid = oUserId
+                        var opponentProfilePic = oProfilePic
+                        var opponentNickname = oNickname
+                    } else if (oUserId == user_id) {
+                        var opponentUid = xUserId
+                        var opponentProfilePic = xProfilePic
+                        var opponentNickname = xNickname
+                    } else {
+                        var opponentUid = "unknown"
+                        var opponentProfilePic = "defaultprofile.jpg"
+                        var opponentNickname = "Unknown"
+                    }
+
                     if (final_win_json.uid == user_id) {
                         // You won
-                        endAnimation("win", reason)
+                        endAnimation("win", reason, opponentProfilePic, opponentNickname, opponentUid)
                     } else if (final_win_json.uid == "tie"){
                         // it was a tie
-                        endAnimation("tie", reason)
+                        endAnimation("tie", reason, opponentProfilePic, opponentNickname, opponentUid)
                     } else {
                         // you lost
-                        endAnimation("loss", reason)
+                        endAnimation("loss", reason, opponentProfilePic, opponentNickname, opponentUid)
                     }
 
                     // Cancel intervals, close websocket
@@ -387,12 +402,14 @@ function showMessage(text) {
 }
 
 // Show the end animation for either winning or losing
-function endAnimation(winloss, reason) {
+function endAnimation(winloss, reason, profilepic, nickname, uid) {
     var endAnimationBackground = document.getElementById("endAnimationContainerBackground")
     var endAnimationContainer = document.getElementById("endAnimationContainer")
     var endAnimationH1 = document.getElementById("endAnimationH1")
     var endAnimationReasonP = document.getElementById("endAnimationReasonP")
     var endAnimationButton = document.getElementById("endAnimationButton")
+    var endAnimationProfilePic = document.getElementById("endAnimationProfilepic")
+    var endAnimationNickname = document.getElementById("endAnimationNickname")
 
     if (winloss == "win") {
         endAnimationContainer.style.backgroundColor = "var(--accept-green)"
@@ -410,6 +427,12 @@ function endAnimation(winloss, reason) {
 
     endAnimationReasonP.innerHTML = reason
     endAnimationBackground.style.display = "flex"
+    endAnimationProfilePic.style.backgroundImage = `url(static/img/profile_pictures/${profilepic})`
+    endAnimationNickname.innerHTML = nickname
+
+    endAnimationProfilePic.addEventListener("click", function() {
+        displayProfile(uid)
+    })
 }
 
 // Long polling for updateing match ping

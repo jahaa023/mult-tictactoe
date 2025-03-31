@@ -52,5 +52,11 @@ urlpatterns = [
     path('match_do_move', views.match_do_move),
     path('leave_match_modal', views.leave_match_modal),
     path('leave_match', views.leave_match),
-    path('match_ping/<str:room_name>/', views.match_ping)
+    path('match_ping/<str:room_name>/', views.match_ping),
+    path('invite_friend_modal', views.invite_friend_modal),
+    path('invite_friend', views.invite_friend),
+    path('check_invite_deny', views.check_invite_deny),
+    path('check_match_invites', views.check_match_invites),
+    path('accept_invite', views.accept_invite),
+    path('decline_invite', views.decline_invite)
 ]

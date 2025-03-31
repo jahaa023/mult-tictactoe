@@ -394,9 +394,11 @@ document.getElementById("personal-information-mobile").addEventListener("click",
 // Ping interval
 setInterval(function() {
     ping();
+    checkMatchInvites();
 }, 5000)
 
 // When document loads in, ping
 document.addEventListener("DOMContentLoaded", function() {
     ping();
+    checkMatchInvites();
 })

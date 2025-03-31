@@ -65,6 +65,54 @@ document.getElementById("header-play-button-1").addEventListener("click", functi
     window.location.href = "/matchmaking?m=r";
 })
 
+document.getElementById("header-play-button-2").addEventListener("click", function(){
+    ajaxGet("/invite_friend_modal", "dark-container")
+})
+
+// Function that invites friend to match
+function inviteToMatch(user_id) {
+    var url = "/invite_friend"
+    hideDarkContainer()
+
+    fetch(url, {
+        method: "POST",
+        body: JSON.stringify({
+            user_id : user_id
+        }),
+        credentials : "same-origin",
+        headers : {
+            "X-CSRFToken" : csrfmiddlewaretoken
+        }
+    })
+
+    .then(response => response.json())
+
+    .then(response => {
+        switch(response.error) {
+            case "error":
+                showConfirm("Something went wrong.")
+                break;
+            case "noexist":
+                showConfirm("User not found.")
+                break;
+            case "notfriend":
+                showConfirm("This user is not in your friends list.")
+                break;
+        }
+
+        if (response.ok == 1) {
+            var row_id = response.row_id
+
+            window.location = "/matchmaking?m=f&ri=" + row_id
+        }
+    })
+
+    .catch(error => {
+        showConfirm("Something went wrong.")
+        console.error(error)
+    })
+}
+
 // Function that loads in list of online friends
 function loadOnlineFriends() {
     var url = "/main_online_friends"
@@ -129,11 +177,13 @@ setInterval(function() {
     ping();
     loadOnlineFriends();
     friendsListNotif();
+    checkMatchInvites();
 }, 5000)
 
 // When document loads in, ping and show online friends
 document.addEventListener("DOMContentLoaded", function() {
     ping();
     loadOnlineFriends();
-    friendsListNotif()
+    friendsListNotif();
+    checkMatchInvites();
 })
