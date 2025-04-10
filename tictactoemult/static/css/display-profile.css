@@ -125,6 +125,27 @@
     color: #D9D9D9;
 }
 
+.display-profile-add-friend-button {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    background-image: url(static/img/icons/add-friend-black.svg);
+    background-position: center;
+    background-size: 90%;
+    background-repeat: no-repeat;
+    opacity: 0.7;
+    position: absolute;
+    right: 0;
+    top: 216px;
+    margin-right: 20px;
+}
+
+.display-profile-add-friend-button:hover {
+    opacity: 1;
+}
+
 @media screen and (max-height: 857px) {
     .display-profile-banner {
         height: 180px;
@@ -157,6 +178,10 @@
 @media screen and (max-width: 950px) {
     .display-profile-profilepic-container {
         left: 10px;
+    }
+
+    .display-profile-add-friend-button {
+        top: 186px;
     }
 
     .display-profile-name-container {

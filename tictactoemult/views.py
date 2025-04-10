@@ -651,6 +651,8 @@ def display_profile(request, uid):
     # If user is not logged in, redirect
     if "user_id" not in request.session:
         return HttpResponseRedirect("/")
+    else:
+        user_id = request.session.get("user_id")
 
     # Get user details
     user = get_object_or_404(users, user_id=uid)
@@ -661,6 +663,27 @@ def display_profile(request, uid):
     context["profile_picture"] = user.profile_picture
     context["description"] = user.description
     context["joindate"] = user.joindate
+    context["user_id"] = user.user_id
+
+    can_be_friend = True
+    cant_be_friend_reason = "Add friend"
+
+    # Check if user is your friend
+    if friend_list.objects.filter(user_id_1=user_id, user_id_2=user.user_id).exists():
+        can_be_friend = False
+        cant_be_friend_reason = "You are already friends with this user."
+    elif pending_friends.objects.filter(outgoing=user_id, incoming=user.user_id).exists():
+        can_be_friend = False
+        cant_be_friend_reason = "You have already sent a friend request to this user."
+    elif pending_friends.objects.filter(incoming=user_id, outgoing=user.user_id).exists():
+        can_be_friend = False
+        cant_be_friend_reason = "This user has already sent you a friend request."
+    elif user_id == str(user.user_id):
+        can_be_friend = False
+        cant_be_friend_reason = "This user is yourself"
+    
+    context["can_be_friend"] = can_be_friend
+    context["cant_be_friend_reason"] = cant_be_friend_reason
 
     # Get static files
     with open(static_dir + '\\css\\display-profile.css', 'r') as data:

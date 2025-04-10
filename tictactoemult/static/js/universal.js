@@ -264,3 +264,55 @@ function declineInvite(row_id) {
         console.error(error)
     })
 }
+
+// Sends a friend request to user_id in parameter
+function displayProfileSendFriendRequest(user_id) {
+    var url = "/send_friend_request"
+
+    fetch(url, {
+        method : "POST",
+        body : JSON.stringify({
+            user_id:user_id
+        }),
+        credentials : "same-origin",
+        headers : {
+            "X-CSRFToken" : csrfmiddlewaretoken
+        }
+    })
+
+    .then(response => response.json())
+
+    .then(response => {
+        switch(response.error) {
+            case "already_friends":
+                showConfirm("This user is already in your friends list.");
+                break;
+            case "yourself":
+                showConfirm("This user is yourself");
+                break;
+            case "noexist":
+                showConfirm("This user doesnt exist.");
+                break;
+            case "alreadysent":
+                showConfirm("You have already sent this user a friend request.");
+                break;
+            case "alreadyreceived":
+                showConfirm("You have already received a friend request from this user.");
+                break;
+        }
+
+        if (response.ok == 1) {
+            // Get button that user pressed and disable it
+            var alreadySentButton = document.getElementById("display-profile-add-friend-button");
+            alreadySentButton.disabled = true;
+            alreadySentButton.style.cursor = "not-allowed";
+            alreadySentButton.title = "You have already sent this user a friend request.";
+            showConfirm("Friend request sent!");
+        }
+    })
+
+    .catch(error => {
+        showConfirm("Something went wrong.");
+        console.error(error);
+    })
+}

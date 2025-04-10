@@ -11,6 +11,14 @@
         <h1>{{nickname}}</h1>
         <i>{{username}}</i>
     </div>
+    <button id="display-profile-add-friend-button" class="display-profile-add-friend-button"
+    {% if can_be_friend %}
+        onclick="displayProfileSendFriendRequest('{{user_id}}')"
+    {% else %}
+        style="cursor: not-allowed;"
+    {% endif %}
+    title="{{ cant_be_friend_reason }}"
+    ></button>
     <div class="display-profile-description">
         {{description}}
     </div>
