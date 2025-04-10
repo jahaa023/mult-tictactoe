@@ -7,6 +7,7 @@ function showError(error) {
 
 // When login form is submitted, do a fetch api post request
 document.getElementById("login-form").addEventListener("submit", function(e) {
+    document.getElementById("login-form-error-notif").style.display = "none"
     e.preventDefault();
     var formData = new FormData(this);
 
@@ -22,10 +23,14 @@ document.getElementById("login-form").addEventListener("submit", function(e) {
     .then(response => {
         switch(response.error) {
             case "error":
-                showError("Something went wrong. Make sure inputs are filled.")
+                setTimeout(function() {
+                    showError("Something went wrong. Make sure inputs are filled.")
+                }, 300)
                 break
             case "wrong":
-                showError("Username or password incorrect!")
+                setTimeout(function() {
+                    showError("Username or password incorrect!")
+                }, 300)
                 break
         }
 
