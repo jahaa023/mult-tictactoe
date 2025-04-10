@@ -60,5 +60,9 @@ urlpatterns = [
     path('accept_invite', views.accept_invite),
     path('decline_invite', views.decline_invite),
     path('leaderboard', views.leaderboard_page),
-    path('load_leaderboard', views.load_leaderboard)
+    path('load_leaderboard', views.load_leaderboard),
+    path('delete_account_modal', views.delete_account_modal),
+    path('delete_account_code_send', views.delete_account_code_send),
+    path('delete_account_final_modal', views.delete_account_final_modal),
+    path('delete_account', views.delete_account)
 ]

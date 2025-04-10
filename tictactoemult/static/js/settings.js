@@ -381,6 +381,90 @@ function loadPersonalInformation() {
     }
 }
 
+// Function that loads in modals for deleting account
+function loadDeleteAccount() {
+    ajaxGet("/delete_account_modal", "dark-container", function() {
+        document.getElementById("delete-confirm").addEventListener("click", function() {
+            // Post to backend to send code to email
+            var url = "/delete_account_code_send"
+
+            fetch(url, {
+                method: "GET",
+                credentials: "same-origin"
+            })
+
+            .then(response => response.json())
+
+            .then(response => {
+                switch(response.error) {
+                    case "noexist":
+                        hideDarkContainer()
+                        showConfirm("Something went wrong, please try again later.", 3000)
+                    case "error":
+                        hideDarkContainer()
+                        showConfirm("Something went wrong, please try again later.", 3000)
+                }
+
+                if (response.ok == 1) {
+                    loadDeleteAccountFinal()
+                }
+            })
+
+            .catch(error => {
+                console.error(error)
+                hideDarkContainer()
+                showConfirm("Something went wrong, please try again later.", 3000)
+            })
+        })
+    })
+}
+
+// Function that shows modal for inputting deletion code
+function loadDeleteAccountFinal() {
+    ajaxGet("/delete_account_final_modal", "dark-container", function() {
+        document.getElementById("cancel-button").addEventListener("click", function() {
+            hideDarkContainer()
+        })
+
+        document.getElementById("delete-form").addEventListener("submit", function(e) {
+            e.preventDefault()
+
+            var formData = new FormData(this)
+
+            var url = "/delete_account"
+
+            fetch(url, {
+                method: "POST",
+                body: formData,
+                credentials: "same-origin"
+            })
+
+            .then(response => response.json())
+
+            .then(response => {
+                switch (response.error) {
+                    case "error":
+                        showConfirm("Something went wrong. Make sure input is only numbers.", 3000);
+                        break;
+                    case "expired_notfound":
+                        showConfirm("Code is incorrect or expired.", 3000);
+                        break;
+                }
+
+                if (response.ok == 1) {
+                    alert("Account deleted.")
+                    window.location.href = "/"
+                }
+            })
+
+            .catch(error => {
+                console.error(error)
+                showConfirm("Something went wrong.")
+            })
+        })
+    })
+}
+
 // Event listeners for dropdown
 document.getElementById("personal-information").addEventListener("click", function() {
     loadPersonalInformation();
@@ -389,6 +473,15 @@ document.getElementById("personal-information").addEventListener("click", functi
 document.getElementById("personal-information-mobile").addEventListener("click", function() {
     loadPersonalInformation();
     hideUniversalDropdown();
+})
+
+document.getElementById("delete-account").addEventListener("click", function() {
+    loadDeleteAccount()
+})
+
+document.getElementById("delete-account-mobile").addEventListener("click", function() {
+    hideUniversalDropdown()
+    loadDeleteAccount()
 })
 
 // Ping interval

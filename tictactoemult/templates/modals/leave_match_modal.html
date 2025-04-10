@@ -1,5 +1,11 @@
-<div>
+<style>
+    {{ leave_match_modal_css | safe }}
+</style>
+<div class="leave-match-container">
     <h1>Are you sure you want to leave this match?</h1>
     <p>Leaving a match counts as a loss.</p>
-    <button id="leave-confirm">Leave</button>
+    <div class="leave-match-button-container">
+        <button id="leave-confirm" class="leave-match-confirm" title="Leave">Leave</button>
+        <button class="leave-match-cancel" onclick="hideDarkContainer()" title="Cancel">Cancel</button>
+    </div>
 </div>

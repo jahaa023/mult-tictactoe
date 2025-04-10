@@ -2391,7 +2391,144 @@ def load_leaderboard(request):
     # If user is not logged in, redirect
     if "user_id" not in request.session:
         return HttpResponseRedirect("/")
+
+    return render(request, "leaderboard/leaderboard_load.html")
+
+# Renders a modal to confirm deletion of account
+def delete_account_modal(request):
+    # If user is not logged in, redirect
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
+    
+    # Get css file
+    context = {}
+    with open(static_dir + '\\css\\delete-account-modal.css', 'r') as data:
+        context['delete_account_modal_css'] = data.read()
+    
+    # return render
+    return render(request, "modals/delete_account_modal.html", context)
+
+# Sends a confirmation code for deleting account
+def delete_account_code_send(request):
+    # If user is not logged in, redirect
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
     else:
         user_id = request.session.get("user_id")
     
-    return HttpResponse("TODO")
+    # Check if account exists
+    if not users.objects.filter(user_id=user_id).exists():
+        return JsonResponse({"error": "noexist"}, status=404)
+    
+    # Get the email for the account
+    email = users.objects.get(user_id=user_id).email
+    
+    # Generate code
+    confirm_code = random.randint(111111, 999999)
+
+    # Set a expiration in unix time
+    unix_now = int(time.time())
+    expire = unix_now + (60 * 15) # 15 minutes
+
+    # Send email
+    mail_status = send_mail(email, "Tic Tac Toe - Account deletion confirmation", "Hi " + email + ". Your code for deletion of account is: " + str(confirm_code))
+    if mail_status == "error":
+        return JsonResponse({"error" : "error"}, status=500)
+
+    # Insert temporary confirm code inside database
+    code = recovery_codes(
+        email = email,
+        recovery_code=confirm_code,
+        expire=expire
+    )
+
+    code.save()
+
+    # Save email in session var
+    request.session['temp_deletion_email'] = email
+
+    return JsonResponse({"ok": 1})
+
+# Renders modal for inputting code for deleting account
+def delete_account_final_modal(request):
+    # If user is not logged in, redirect
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
+    
+    # Get css file
+    context = {}
+    with open(static_dir + '\\css\\account_recovery.css', 'r') as data:
+        context['delete_account_final_css'] = data.read()
+    
+    context["form"] = AccountRecoveryForm2()
+    
+    # return render
+    return render(request, "modals/delete_account_final.html", context)
+
+# Deletes account if code for deleting account is correct
+def delete_account(request):
+    if request.method == "POST":
+        # If user is not logged in, redirect
+        if "user_id" not in request.session:
+            return HttpResponseRedirect("/")
+        else:
+            user_id = request.session.get("user_id")
+
+        form = AccountRecoveryForm2(request.POST)
+
+        if form.is_valid():
+            code = form.cleaned_data["code"]
+
+            # Check if code is integer
+            try:
+                code = int(code)
+            except:
+                return JsonResponse({"error" : "error"}, status=400)
+
+            # Delete expired codes
+            unix_now = int(time.time())
+            recovery_codes.objects.filter(expire__lt=unix_now).delete()
+
+            # Get users email
+            email = users.objects.get(user_id=user_id).email
+
+            # Check if code exists in database
+            if not recovery_codes.objects.filter(recovery_code=code, email=email).exists():
+                return JsonResponse({"error" : "expired_notfound"}, status=401)
+
+            # Delete profile picture
+            profile_pictures_path = os.getcwd() + "\\tictactoemult\\static\\img\\profile_pictures"
+            profilepic = users.objects.get(user_id=user_id).profile_picture
+            if profilepic != "defaultprofile.jpg":
+                profilepic_path = (profile_pictures_path + "\\" + profilepic)
+                os.remove(profilepic_path)
+
+            # Delete user from all tables
+            users.objects.get(user_id=user_id).delete()
+            matchmaking.objects.filter(user_id_1=user_id).delete()
+            matchmaking.objects.filter(user_id_2=user_id).delete()
+            match.objects.filter(user_id_1=user_id).delete()
+            match.objects.filter(user_id_2=user_id).delete()
+            leaderboard.objects.filter(user_id=user_id).delete()
+            match_invites.objects.filter(user_id_1=user_id).delete()
+            match_invites.objects.filter(user_id_2=user_id).delete()
+            pending_friends.objects.filter(outgoing=user_id).delete()
+            pending_friends.objects.filter(incoming=user_id).delete()
+            friend_list.objects.filter(user_id_1=user_id).delete()
+            friend_list.objects.filter(user_id_2=user_id).delete()
+
+            # Remove all session variables
+            request.session.flush()
+
+            response = JsonResponse({"ok" : 1})
+
+            # Delete stayloggedin cookie if it is set
+            if "stay_loggedin" in request.COOKIES.keys():
+                response.delete_cookie('stay_loggedin')
+
+            return response
+        else:
+            return JsonResponse({"error" : "error"}, status=400)
+    else:
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")

@@ -1,0 +1,16 @@
+<style>
+    {{ delete_account_final_css | safe }}
+</style>
+<!--Reusing styling from account recovery-->
+<div class="account-recovery-container">
+    <h1>Delete account</h1>
+    <p>An e-mail with a code has been sent to <b>{{request.session.temp_deletion_email}}</b>. Check your spam folder if you cannot find it. The code expires in 15 minutes.</p>
+    <form id="delete-form" action="/delete_account" method="post">
+        {% csrf_token %}
+        {{form}}
+        <div class="account-recovery-form-button-container">
+            <button title="Confirm" id="delete-button" type="submit">Confirm</button>
+            <button title="Cancel" type="button" id="cancel-button">Cancel</button>
+        </div>
+    </form>
+</div>

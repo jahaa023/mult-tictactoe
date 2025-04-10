@@ -1,5 +1,6 @@
-/* CSS file for modal for confirming leaving match */
-.leave-match-container {
+/* Stylesheet for modal for deleting account */
+
+.delete-account-container {
     padding: 20px;
     width: fit-content;
     height: fit-content;
@@ -13,20 +14,30 @@
     transform: translate(-50%, -50%);
 }
 
-.leave-match-container h1 {
+.delete-account-container h1 {
     font-family: "Roboto", serif;
     color: var(--primary-black);
     margin: 0;
     margin-bottom: 10px;
+    max-width: 300px;
 }
 
-.leave-match-container p {
+.delete-account-container p {
+    margin: 0;
+}
+
+.delete-account-container ul {
+    margin: 0;
+    margin-top: 10px;
+}
+
+.delete-account-container li {
     font-family: "Roboto", serif;
     color: var(--primary-black);
     margin: 0;
 }
 
-.leave-match-confirm {
+.delete-account-button {
     padding: 10px;
     max-width: 150px;
     border-radius: 10px;
@@ -42,7 +53,12 @@
     font-size: 1rem;
 }
 
-.leave-match-cancel {
+.delete-account-button:hover {
+    background-color: var(--warning-red);
+    color: var(--background-white);
+}
+
+.delete-account-cancel {
     padding: 10px;
     max-width: 150px;
     border-radius: 10px;
@@ -58,26 +74,20 @@
     font-size: 1rem;
 }
 
-.leave-match-confirm:hover {
-    background-color: var(--warning-red);
-    color: var(--background-white);
-}
-
-.leave-match-cancel:hover {
+.delete-account-cancel:hover {
     background-color: var(--cancel-grey);
     color: var(--background-white);
 }
 
-.leave-match-button-container {
-    width: 100%;
+.delete-account-button-container {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-top: 10px;
+    margin-top: 15px;
 }
 
 @media screen and (max-width: 450px) {
-    .leave-match-container {
+    .profilepic-upload-container {
         padding: 10px;
         width: 310px;
     }

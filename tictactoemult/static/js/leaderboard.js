@@ -40,6 +40,6 @@ function loadLeaderboard() {
 
     .catch(error => {
         console.error(error)
-        tableContent.innerHTML = "<tr><td colspan='6'>There was a problem loading the leaderboard.</td></tr>"
+        tableContent.innerHTML = "<tr><td colspan='5'>There was a problem loading the leaderboard.</td></tr>"
     })
 }

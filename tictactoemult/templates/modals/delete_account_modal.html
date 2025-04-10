@@ -1,0 +1,15 @@
+<style>
+    {{ delete_account_modal_css | safe }}
+</style>
+<div class="delete-account-container">
+    <h1>Are you sure you want to delete your account?</h1>
+    <p>Your account will be removed from:</p>
+    <ul>
+        <li>Your friends friend list</li>
+        <li>The leaderboard</li>
+    </ul>
+    <div class="delete-account-button-container">
+        <button id="delete-confirm" title="Delete account" class="delete-account-button">Delete account</button>
+        <button onclick="hideDarkContainer()" title="Cancel" class="delete-account-cancel">Cancel</button>
+    </div>
+</div>

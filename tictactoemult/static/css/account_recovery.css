@@ -78,6 +78,16 @@ form input {
     background-color: var(--cancel-grey);
 }
 
+#delete-button {
+    border: solid 2px var(--warning-red);
+    color: var(--warning-red);
+}
+
+#delete-button:hover {
+    color: var(--background-white);
+    background-color: var(--warning-red);
+}
+
 #error-warning {
     color: var(--primary-red);
     display: none;
