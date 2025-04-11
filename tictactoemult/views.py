@@ -2555,3 +2555,15 @@ def delete_account(request):
     else:
         allowed = ['POST']
         return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
+
+# Renders the about page
+def about(request):
+    # If user is not logged in, redirect
+    if "user_id" not in request.session:
+        return HttpResponseRedirect("/")
+    
+    # import static files
+    context = importStaticFiles("about")
+
+    # Return render
+    return render(request, "about.html", context)

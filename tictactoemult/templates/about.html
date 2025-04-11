@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        {{about_css | safe}}
+    </style>
+    <style>
+        {{universal_css | safe}}
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe - About</title>
+    <link href="/static/img/favicon.ico" rel="icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+    <div id="dark-container"></div>
+    <div id="confirmContainer"></div>
+    <div class="friend-invite-popup-container" id="friend-invite-popup">
+        <div class="friend-invite-popup">
+            <div class="friend-invite-profile">
+                <div class="friend-invite-profilepic" id="friend-invite-profilepic"></div>
+                <p><b id="friend-invite-nickname"></b> invites you to a match!</p>
+            </div>
+            <div class="friend-invite-buttons">
+                <button id="friend-invite-accept" title="Accept invite">Accept</button>
+                <button id="friend-invite-decline" title="Decline invite">Decline</button>
+            </div>
+        </div>
+    </div>
+    <header class="about-header">
+        <button class="about-back-button" id="back-button" title="Back to main page">Back</button>
+    </header>
+    <div class="content">
+        <section class="about-top">
+            <img src="static/img/logo.svg" alt="Tic Tac Toe Multiplayer Logo" class="about-logo">
+            <p>Programmed by Jakob Johannes Hansgaard</p>
+            <p>Designed by Jakob Johannes Hansgaard</p>
+        </section>
+        <section class="about-technical">
+            <p class="section-header">TECHNICAL</p>
+            <div class="section-divider"></div>
+            <p>
+                Tic Tac Toe Multiplayer is a website built with a Python Django backend, a MySQL database, vanilla CSS and vanilla JavaScript
+                and some jQuery for certain animations. The website also uses the Daphne WebSocket for real time communication in matchmaking and matches.
+            </p>
+        </section>
+    </div>
+</body>
+<script>
+    {{universal_js | safe}}
+</script>
+<script>
+    {{about_js | safe}}
+</script>
+</html>

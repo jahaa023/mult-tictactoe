@@ -1,0 +1,73 @@
+/* Stylesheet for about page */
+.about-header {
+    width: calc(100% - 20px);
+    padding: 10px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: var(--primary-black);
+    display: flex;
+    align-items: center;
+}
+
+.about-back-button {
+    background-color: var(--primary-black);
+    color: var(--background-white);
+    font-size: 1rem;
+    font-weight: 600;
+    border: solid 3px var(--background-white);
+    border-radius: 10px;
+    padding: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    cursor: pointer;
+}
+
+.about-back-button:hover {
+    background-color: var(--background-white);
+    color: var(--primary-black);
+}
+
+.content {
+    width: 80%;
+    margin-top: 100px;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+.about-logo {
+    width: 10%;
+    min-width: 200px;
+}
+
+.about-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+.about-top p {
+    margin: 0;
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+.section-divider {
+    width: 100%;
+    height: 2px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.about-technical {
+    text-align: left;
+}
+
+.section-header {
+    margin: 0;
+    color: rgba(0, 0, 0, 0.5);
+    letter-spacing: 3px;
+    font-weight: 500;
+}
