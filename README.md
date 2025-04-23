@@ -76,7 +76,7 @@ tictactoemult\
     __init__.py
 ```
 Before we continue, we need to configure some settings inside of the <b>settings.py</b> file in the tictactoe directory.
-Inside the file, navigate to the <b>"ALLOWED_HOSTS"</b> varible, and add 127.0.0.1 and localhost to the array. This is to make sure it allows you to run the server locally.
+Inside the file, navigate to the <b>"ALLOWED_HOSTS"</b> variable, and add 127.0.0.1 and localhost to the array. This is to make sure it allows you to run the server locally.
 ```
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 ```
