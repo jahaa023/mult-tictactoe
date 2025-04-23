@@ -6,6 +6,11 @@ Multiplayer Tic Tac Toe, also known as mult-tictactoe, is a multiplayer tic tac 
 >The following tutorial shows you how to download and run the project on a Windows 11 machine.
 
 Before starting, make sure you have Python 3.12.2 downloaded on the machine as well as MySQL Community Server and git.
+Here are the links for all the downloads:
+- <a href="https://www.python.org/downloads/release/python-3122/">Python 3.12.2</a>
+- <a href="https://dev.mysql.com/downloads/mysql/">MySQL Community Server</a>
+- <a href="https://git-scm.com/downloads/win">Git</a>
+
 Open CMD and make a directory to put the project in. 
 ```
 mkdir C:\path\to\your\directory
