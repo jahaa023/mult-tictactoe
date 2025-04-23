@@ -82,8 +82,6 @@ ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 ```
 Then, navigate to the <b>"INSTALLED APPS"</b> variable and add 'daphne' and 'tictactoemult' to it
 ```
-# Application definition
-
 INSTALLED_APPS = [
     'daphne',
     'tictactoemult',
@@ -143,14 +141,6 @@ CHANNEL_LAYERS = {
 ```
 Next, open the <b>asgi.py</b> file and replace the contents with the following:
 ```
-"""
-ASGI config for tictactoe project.
-
-It exposes the ASGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/5.1/howto/deployment/asgi/
-"""
 import os
 
 from channels.auth import AuthMiddlewareStack
@@ -159,8 +149,6 @@ from channels.security.websocket import AllowedHostsOriginValidator
 from django.core.asgi import get_asgi_application
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tictactoe.settings")
-# Initialize Django ASGI application early to ensure the AppRegistry
-# is populated before importing code that may import ORM models.
 django_asgi_app = get_asgi_application()
 
 from tictactoemult.routing import websocket_urlpatterns
@@ -176,22 +164,6 @@ application = ProtocolTypeRouter(
 ```
 After that, open the <b>urls.py</b> file and replace the contents with the following:
 ```
-"""
-URL configuration for tictactoe project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
