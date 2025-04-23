@@ -188,3 +188,70 @@ RESEND_API_KEY = "<yourapikey>"
 Then finally, create a folder in the same directory as the <b>tictactoe</b> and <b>tictactoemult</b> folder called <b>media</b>. This folder is where files like images are temporarily uploaded.
 
 ## Setting up the database
+Before we continue, we can set up the database. I recommend using the <a href="https://www.mysql.com/products/workbench/">MySQL Workbench</a> tool to log in to the database and run SQL queries.
+Start of by logging in to the database as the root user with the password you made when you downloaded the database.
+> [!NOTE]
+> You might get a popup that says "Connection warning" and that MySQL workbench is incompatible. If you get this popup, just press "Continue anyway".
+
+After you log into the workbench, you can run a query on it. In the query input, write the following:
+```
+CREATE DATABASE tictactoe;
+```
+After typing this in, press the lightning icon to run the query. 
+If you get a green checkmark in the terminal below it, everything went well and you can close the workbench.
+## Downloading the project
+After you have created the database, we can now download the project from GitHub. Create a temporary directory somewhere on your computer in CMD.
+```
+mkdir C:\path\to\temp\directory
+```
+Then we can git clone the files into this directory
+```
+git clone https://github.com/jahaa023/mult-tictactoe C:\path\to\temp\directory
+```
+After all the files have been downloaded, we need to move the files into our Django project. We can do this with PowerShell. Type the following into CMD.
+```
+powershell.exe Copy-Item -Path C:\path\to\temp\directory\* -Destination C:\path\to\your\directory -Force -Recurse
+```
+This command will move the files from the GitHub into the directory and overwrite any existing files. Make sure to include the backslash and asterisk at the end.
+Now we can delete the temporary directory.
+```
+del /S /Q C:\path\to\temp\directory\*
+```
+After this, we can download all the pip dependensies. Make sure your CMD is running inside the virtual environment during these steps.
+We start off by cd'ing into our directory.
+```
+cd C:\path\to\your\directory
+```
+Then we can install all the requirements with the following command:
+```
+pip install -r requirements.txt
+```
+If you get an error during this step, try running CMD as an administrator and doing it again.
+After this step, we can run a Django migration to create all the tables we'll need in the database. Type the following command:
+```
+python manage.py makemigrations
+```
+After that, type in the following command:
+```
+python manage.py migrate
+```
+Then we can finally run the server:
+```
+python manage.py runserver
+```
+If you get an error during this step, you can try to change the port to something else. Replace <port> with a port of your choosing.
+```
+python manage.py runserver <port>
+```
+If you get the following in your terminal, you have been successfull.
+```
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+<date and time>
+Django version 5.1.4, using settings 'tictactoe.settings'
+Starting ASGI/Daphne version 4.1.2 development server at http://127.0.0.1:<port>/
+Quit the server with CTRL-BREAK.
+```
+To stop the server, press CTRL and C at the same time in the terminal.
