@@ -2,6 +2,7 @@
 Multiplayer Tic Tac Toe, also known as mult-tictactoe, is a multiplayer tic tac toe game built with Python Django with the Daphne WebSocket. It uses the MySQL Community database.
 ## Table of Contents
 <a href="#Installation">Installation</a>
+<a href="#Design">Design</a>
 ## Installation
 >[!NOTE]
 >The following tutorial shows you how to download and run the project on a Windows 11 machine.
@@ -261,3 +262,5 @@ Starting ASGI/Daphne version 4.1.2 development server at http://127.0.0.1:<port>
 Quit the server with CTRL-BREAK.
 ```
 To stop the server, press CTRL and C at the same time in the terminal.
+
+## Design
