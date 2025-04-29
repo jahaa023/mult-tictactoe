@@ -2,6 +2,7 @@
 Multiplayer Tic Tac Toe, also known as mult-tictactoe, is a multiplayer tic tac toe game built with Python Django with the Daphne WebSocket. It uses the MySQL Community database.
 ## Table of Contents
 <a href="#Installation">Installation</a>
+<br>
 <a href="#Design">Design</a>
 ## Installation
 >[!NOTE]
