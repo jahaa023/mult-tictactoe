@@ -275,4 +275,7 @@ The website also uses a very simple color pallette, consisting of a grey-ish whi
 | Cancel Grey       | `#646464`  | ![](https://github.com/jahaa023/mult-tictactoe/blob/main/.github/assets/cancel-grey.png) |
 | Warning Red       | `#d44848`  | ![](https://github.com/jahaa023/mult-tictactoe/blob/main/.github/assets/warning-red.png) |
 | Accept Green      | `#257e25`  | ![](https://github.com/jahaa023/mult-tictactoe/blob/main/.github/assets/accept-green.png) |
+ 
+Some of these colors also show up on the logo, like the primary black and primary red.
+Text is usually primary black on background white, but sometimes its the opposite with background white on primary black. 
 
