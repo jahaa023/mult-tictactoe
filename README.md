@@ -269,7 +269,7 @@ The only font on the website used is Roboto. But the Roboto font is used with di
 The website also uses a very simple color pallette, consisting of a grey-ish white, a light black and a dark red and some other variations of these colors as well as a green:
 | Color             | Hex Code   | Preview   |
 |------------------|------------|-----------|
-| Primary Red       | `#810D0D`  | ![#810D0D](https://via.placeholder.com/20/810D0D/000000?text=+) |
+| Primary Red       | `#810D0D`  | ![](assets/primary-red.png) |
 | Primary Black     | `#212121`  | ![#212121](https://via.placeholder.com/20/212121/000000?text=+) |
 | Background White  | `#e6e6e6`  | ![#e6e6e6](https://via.placeholder.com/20/e6e6e6/000000?text=+) |
 | Cancel Grey       | `#646464`  | ![#646464](https://via.placeholder.com/20/646464/000000?text=+) |
