@@ -10,6 +10,10 @@
     align-items: center;
 }
 
+section {
+    color: var(--primary-black);
+}
+
 .about-back-button {
     background-color: var(--primary-black);
     color: var(--background-white);
@@ -73,6 +77,42 @@
 
 .about-technical {
     text-align: left;
+}
+
+.about-design {
+    text-align: left;
+}
+
+.design-fonts {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.design-fonts * {
+    margin: 0;
+}
+
+.design-colors {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.design-colors-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.design-colors-row p {
+    margin: 0;
+}
+
+.design-colors-cube {
+    width: 25px;
+    height: 25px;
+    border: solid 1px black;
 }
 
 .section-header {
