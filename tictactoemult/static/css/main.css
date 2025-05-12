@@ -4,6 +4,22 @@
     background-color: var(--primary-black);
 }
 
+.tutorial-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 15px;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    background-color: transparent;
+    background-image: url(/static/img/icons/info.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 90%;
+    border: none;
+}
+
 header {
     height: 300px;
     width: 100%;
@@ -550,6 +566,11 @@ header {
 
     .mobile-dropdown-logout:hover {
         text-decoration: underline;
+    }
+
+    .tutorial-button {
+        left: auto;
+        right: 0;
     }
 }
 

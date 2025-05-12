@@ -69,6 +69,10 @@ document.getElementById("header-play-button-2").addEventListener("click", functi
     ajaxGet("/invite_friend_modal", "dark-container")
 })
 
+document.getElementById("tutorial-button").addEventListener("click", function() {
+    window.location.href = "/tutorial?origin=main";
+})
+
 // Function that invites friend to match
 function inviteToMatch(user_id) {
     var url = "/invite_friend"

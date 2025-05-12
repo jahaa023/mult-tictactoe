@@ -65,5 +65,7 @@ urlpatterns = [
     path('delete_account_code_send', views.delete_account_code_send),
     path('delete_account_final_modal', views.delete_account_final_modal),
     path('delete_account', views.delete_account),
-    path('about', views.about)
+    path('about', views.about),
+    path('tutorial', views.tutorial),
+    path('tutorial/<str:name>/', views.load_tutorial)
 ]

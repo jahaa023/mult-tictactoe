@@ -2567,3 +2567,17 @@ def about(request):
 
     # Return render
     return render(request, "about.html", context)
+
+# Renders the tutorial page
+def tutorial(request):
+    # Import static files
+    context = importStaticFiles("tutorial")
+
+    # Return render
+    return render(request, "tutorial.html", context)
+
+# Loads a page for the tutorial
+def load_tutorial(request, name):
+    html_file = f"tutorial_pages/{name}.html"
+    
+    return render(request, html_file)

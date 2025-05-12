@@ -1,0 +1,26 @@
+/* Stylesheet for the tutorial page */
+.tutorial-page-container {
+    width: calc(100% - 370px);
+    height: calc(100% - 20px);
+    padding-left: 20px;
+    margin-left: 350px;
+    padding-top: 20px;
+    background-color: var(--background-white);
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.tutorial-page-container img {
+    max-width: 80%;
+    min-width: 30%;
+}
+
+@media screen and (max-width: 1300px) {
+    .tutorial-page-container {
+        width: calc(100% - 20px);
+        margin-left: 0;
+        margin-top: 50px;
+        overflow: auto;
+        height: fit-content;
+    }
+}

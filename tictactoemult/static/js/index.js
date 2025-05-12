@@ -49,3 +49,7 @@ document.getElementById("login-form").addEventListener("submit", function(e) {
 document.getElementById("password-visibility-button").addEventListener("click", function() {
     changeVisibility('id_password', 'password-visibility-button')
 })
+
+document.getElementById("tutorial-button").addEventListener("click", function() {
+    window.location.href = "/tutorial?origin=index"
+})
