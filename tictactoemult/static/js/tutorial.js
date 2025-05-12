@@ -55,7 +55,7 @@ if (origin == "index") {
 }
 
 
-const pages = ["welcome", "creating-account", "editing-profile"]
+const pages = ["welcome", "creating-account", "editing-profile", "personal-info"]
 
 pages.forEach(function(pageName) {
     document.getElementById(pageName).addEventListener("click", function() {
