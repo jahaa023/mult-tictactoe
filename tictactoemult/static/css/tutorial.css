@@ -11,8 +11,8 @@
 }
 
 .tutorial-page-container img {
-    max-width: 80%;
-    min-width: 30%;
+    max-width: 40%;
+    min-width: 40%;
 }
 
 @media screen and (max-width: 1300px) {

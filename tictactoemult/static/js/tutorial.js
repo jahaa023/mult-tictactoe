@@ -55,7 +55,7 @@ if (origin == "index") {
 }
 
 
-const pages = ["welcome", "creating-account", "editing-profile", "personal-info"]
+const pages = ["welcome", "creating-account", "editing-profile", "personal-info", "deleting-account", "friends-list", "playing-match", "playing-friend", "leaderboard"]
 
 pages.forEach(function(pageName) {
     document.getElementById(pageName).addEventListener("click", function() {
@@ -70,3 +70,16 @@ pages.forEach(function(pageName) {
         }
     })
 })
+
+if (origin == "main") {
+    setInterval(function() {
+        ping();
+        checkMatchInvites();
+    }, 5000)
+
+    // When document loads in, ping and show online friends
+    document.addEventListener("DOMContentLoaded", function() {
+        ping();
+        checkMatchInvites();
+    })
+}
