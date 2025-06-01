@@ -1,1 +1,24 @@
-<h1>hei</h1>
+{% if leaderboard_rows %}
+    {% for row in leaderboard_rows %}
+        <tr>
+            <td class="profile-row">
+                <img src="/static/img/profile_pictures/{{ row.profile_picture }}" alt="{{ row.nickname }}'s profile picture" onclick="displayProfile('{{ row.user_id }}')">
+                <p>{{ row.nickname }}</p>
+            </td>
+            <td>
+                {{ row.wins }}
+            </td>
+            <td>
+                {{ row.losses }}
+            </td>
+            <td>
+                {{ row.matches_played }}
+            </td>
+            <td>
+                {{ row.win_loss }}
+            </td>
+        </tr>
+    {% endfor %}
+{% else %}
+    <td colspan="5">No users found with nickname or username containing '{{ query }}'</td>
+{% endif %}

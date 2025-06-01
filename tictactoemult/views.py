@@ -2411,11 +2411,55 @@ def leaderboard_page(request):
 
 # Loads in a html table of the leaderboard table
 def load_leaderboard(request):
-    # If user is not logged in, redirect
-    if "user_id" not in request.session:
-        return HttpResponseRedirect("/")
+    if request.method == "POST":
+        # If user is not logged in, redirect
+        if "user_id" not in request.session:
+            return HttpResponseRedirect("/")
+        
+        # Get search query and order by
+        body = json.loads(request.body)
+        query = body["query"]
+        order_by = body["order_by"]
 
-    return render(request, "leaderboard/leaderboard_load.html")
+        # If order by is empty default to wins
+        if not order_by:
+            order_by = "wins"
+
+        # If query is empty make it an empty string
+        if not query:
+            query = ""
+
+        # Check if order by is a valid column
+        valid_cols = ["wins", "losses", "matches_played", "win_loss"]
+        if order_by not in valid_cols:
+            return JsonResponse({"error": "invalid_column"}, status=400)
+
+        # Get 15 rows in leaderboard table with the order_by
+        leaderboard_rows = []
+        leaderboard_result = leaderboard.objects.all().order_by(f"-{order_by}")[:15]
+        for row in leaderboard_result:
+            user_row = users.objects.get(pk=row.user_id)
+            if query.lower() in user_row.nickname.lower() or query.lower() in user_row.username.lower():
+                leaderboard_rows.append({
+                    "nickname": user_row.nickname,
+                    "profile_picture": user_row.profile_picture,
+                    "user_id": user_row.user_id,
+                    "wins": row.wins,
+                    "losses": row.losses,
+                    "matches_played": row.matches_played,
+                    "win_loss": row.win_loss
+                })
+
+        # Define context
+        context = {
+            "query": query,
+            "leaderboard_rows": leaderboard_rows
+        }
+
+        return render(request, "leaderboard/leaderboard_load.html", context)
+    else:
+        allowed = ['POST']
+        return HttpResponseNotAllowed(allowed, f"Method not Allowed. <br> Allowed: {allowed}. <br> <a href='/'>To Login</a>")
 
 # Renders a modal to confirm deletion of account
 def delete_account_modal(request):
