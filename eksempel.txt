@@ -1,0 +1,14 @@
+SELECT 
+    users.user_id,
+    users.nickname,
+    users.profile_picture,
+    leaderboard.wins,
+    leaderboard.losses,
+    leaderboard.matches_played,
+    leaderboard.win_loss
+FROM users
+WHERE lower(username) LIKE CONCAT('%', ?, '%') OR lower(nickname) LIKE CONCAT('%', ?, '%')
+INNER JOIN leaderboard
+ON users.user_id = leaderboard.user_id
+ORDER BY leaderboard.wins
+LIMIT 15

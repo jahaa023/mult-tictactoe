@@ -1,5 +1,14 @@
 // JavaScript for leaderboard page
 
+// Get csrftoken from cookie
+const csrfmiddlewaretoken = document.cookie.split(';')
+    .find(cookie => cookie.trim().startsWith('csrftoken='))
+    ?.split('=')[1];
+
+// Define order by and query vars
+var order_by = "wins"
+var query = ""
+
 // Interval that pings and checks match invites
 setInterval(function() {
     ping();
@@ -19,7 +28,15 @@ document.getElementById("back-button").addEventListener("click", function() {
 })
 
 // Event listener for sort by dropdown
-document.getElementById("sortby").addEventListener("change", function() {
+document.getElementById("sortby").addEventListener("change", function(e) {
+    order_by = e.target.value
+    loadLeaderboard()
+})
+
+// Event listener for search bar
+document.getElementById("search-input").addEventListener("keyup", function(e) {
+    query = e.target.value
+    loadLeaderboard()
 })
 
 // Loads in the leaderboard 
@@ -28,8 +45,15 @@ function loadLeaderboard() {
     var tableContent = document.getElementById("table-content")
 
     fetch(url, {
-        method: "GET",
-        credentials: "same-origin"
+        method: "POST",
+        credentials: "same-origin",
+        body: JSON.stringify({
+            query: query,
+            order_by: order_by
+        }),
+        headers : {
+            "X-CSRFToken" : csrfmiddlewaretoken
+        },
     })
 
     .then(response => response.text())
